@@ -9,9 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "hero": "url('/assets/hero-1.png')"
+      },
+      colors: {
+        'blue-charcoal': {
+          '50': '#eef6ff',
+          '100': '#dcecff',
+          '200': '#b2daff',
+          '300': '#6dbcff',
+          '400': '#2099ff',
+          '500': '#007cff',
+          '600': '#005fdf',
+          '700': '#004bb4',
+          '800': '#004095',
+          '900': '#00357a',
+          '950': '#000814',
+        },
       },
     },
   },
