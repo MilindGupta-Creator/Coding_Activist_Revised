@@ -13,8 +13,8 @@ const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex relative justify-between items-center py-2">
-      <div className="flex items-center gap-x-2">
+    <div className="flex relative justify-between items-center py-2 z-10">
+      <Link href="/" className="flex items-center gap-x-2">
         <Image
           src={Logo}
           alt="logo"
@@ -23,7 +23,7 @@ const Navbar = () => {
           className="bg-white rounded-full"
         />
         <p className="font-bold">Coding Activist</p>
-      </div>
+      </Link>
       <div className="md:flex items-center gap-x-20 hidden relative">
         <Link
           href="/"
