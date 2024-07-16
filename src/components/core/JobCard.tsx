@@ -5,7 +5,7 @@ interface JobCardProps {
 const JobCard = (jobs: JobCardProps) => {
   console.log(jobs);
   return (
-    <div className="bg-[#1A0F33] rounded-lg p-5 w-[30%] h-[40%]">
+    <div className="bg-[#1A0F33] rounded-lg p-5 w-80 h-80">
       <div className="flex flex-col items-start">
         <div className="flex gap-x-2 items-center">
           <img
@@ -22,9 +22,9 @@ const JobCard = (jobs: JobCardProps) => {
           </div>
         </div>
         <p className="my-5 capitalize">Role: {jobs.job.role}</p>
-        <div className="flex justify-evenly gap-x-2 text-center">
-          <p className="bg-[#737373] px-3 py-1 rounded-lg w-max">{jobs.job.address}</p>
-          <p className="bg-[#737373] px-3 py-1 rounded-lg w-1/2">{jobs.job.salary || "N.A"}</p>
+        <div className="flex justify-between w-full gap-x-2 text-center">
+          <p className="bg-[#737373] px-3 py-1 rounded-lg text-xs">{jobs.job.address}</p>
+          <p className="bg-[#737373] px-3 py-1 rounded-lg w-1/2 text-xs">{jobs.job.salary || "N.A"}</p>
         </div>
         <div className="flex my-5">
           <p>Skills</p>

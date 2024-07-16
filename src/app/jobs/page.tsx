@@ -81,7 +81,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex justify-between h-screen mt-20 gap-x-5">
-      <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 w-full overflow-scroll jobs-section">
+      <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
         {jobData.map((job) => (
           <JobCard key={job.id} job={job} />
         ))}
