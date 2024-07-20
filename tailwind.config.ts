@@ -26,6 +26,21 @@ const config: Config = {
           '950': '#000814',
         },
       },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+        'transform': 'transform'
+      },
+      transform: {
+        'translateY-full': 'translateY(100%)',
+        'translateY-0': 'translateY(0)',
+      },
+      transitionTimingFunction: {
+        'ease-in-out': 'ease-in-out'
+      },
+      transitionDuration: {
+        '300': '300ms'
+      }
     },
   },
   plugins: [],

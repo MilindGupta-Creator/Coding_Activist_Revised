@@ -5,7 +5,8 @@ import JobCard from "@/components/core/JobCard";
 import { db } from "@/firebase/firebase";
 import { useEffect, useState, useCallback } from "react";
 import { formatDate } from "@/utils/index";
-import { throttle } from "lodash";
+import _ from "lodash";
+import Loading from "./loading";
 
 interface JobData {
   id: string;
@@ -20,19 +21,16 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchJobsData = useCallback(async () => {
+  const fetchJobsData = async () => {
     if (loading || !hasMore) return;
-
     setLoading(true);
     let query = db
       .collection("jobsDataCollection")
       .orderBy("createdAt", "desc")
-      .limit(5);
-
+      .limit(6);
     if (lastVisible) {
       query = query.startAfter(lastVisible);
     }
-
     try {
       const snapshot = await query.get();
       if (snapshot.empty) {
@@ -49,46 +47,53 @@ const Home: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching jobs data:", error);
-    } finally {
-      setLoading(false);
     }
-  }, [lastVisible, loading, hasMore]);
+    setLoading(false);
+  };
 
   useEffect(() => {
     fetchJobsData();
-  }, [fetchJobsData]);
+  }, []);
 
   const handleScroll = useCallback(
-    throttle(() => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      if (windowHeight + scrollTop === documentHeight && !loading) {
-        fetchJobsData();
+    _.debounce(() => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+        document.documentElement.offsetHeight
+      ) {
+        return;
       }
-    }, 200),
-    [fetchJobsData, loading]
+      fetchJobsData();
+    }, 300),
+    [fetchJobsData]
   );
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      handleScroll.cancel();
     };
   }, [handleScroll]);
 
   return (
-    <div className="flex justify-between h-screen mt-20 gap-x-5">
-      <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
-        {jobData.map((job) => (
-          <JobCard key={job.id} job={job} />
+    <div className="flex justify-between mt-20 gap-x-5">
+      <div className="flex flex-wrap justify-between relative items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
+        {jobData.map((job, index) => (
+          <div key={index}>
+            <JobCard
+              key={job.id}
+              job={job}
+              id={""}
+              title={""}
+              description={""}
+              createdAt={""}
+            />
+          </div>
         ))}
-        {loading && <p>Loading more jobs...</p>}
+        {loading && <Loading />}
         {!hasMore && <p>No more jobs to load.</p>}
       </div>
-      <div className="w-1/5 md:block hidden">
+      <div className="w-1/5 md:block hidden static top-10 right-0">
         <HotUpdates />
       </div>
     </div>

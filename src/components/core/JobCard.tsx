@@ -1,13 +1,16 @@
 import { FaLocationDot } from "react-icons/fa6";
 
 interface JobCardProps {
-  job: JobData;
+  job: any;
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
 }
 
 const JobCard = (jobs: JobCardProps) => {
-  console.log(jobs);
   return (
-    <div className="bg-[#1A0F33] rounded-lg p-5 w-80 h-auto">
+    <div className="bg-[#1A0F33] rounded-lg p-5 w-80 h-auto items-baseline  ">
       <div className="flex flex-col items-start">
         <div className="flex gap-x-2 items-center">
           <img
@@ -34,9 +37,14 @@ const JobCard = (jobs: JobCardProps) => {
         </div>
         <div className="flex my-5 w-full flex-wrap gap-2 items-center">
           <p>Skills </p>
-          {jobs.job.skills.slice(0, 3).map((item: string) => {
+          {jobs.job.skills.slice(0, 3).map((item: string, index: number) => {
             return (
-              <p className="border p-1 rounded-md border-violet-600">{item}</p>
+              <p
+                className="border p-1 rounded-md border-violet-600"
+                key={index}
+              >
+                {item}
+              </p>
             );
           })}
           <p></p>

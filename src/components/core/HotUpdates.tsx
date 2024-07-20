@@ -1,7 +1,5 @@
 const HotUpdates = () => {
-  return (
-    <div>Coming Soon✨✨</div>
-  )
-}
+  return <>Coming Soon✨✨</>;
+};
 
-export default HotUpdates
+export default HotUpdates;
