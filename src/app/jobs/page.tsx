@@ -58,10 +58,10 @@ const Home: React.FC = () => {
   const handleScroll = useCallback(
     _.debounce(() => {
       if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 5
       ) {
-        return;
+        console.log("Bottom of page reached");
       }
       fetchJobsData();
     }, 300),
