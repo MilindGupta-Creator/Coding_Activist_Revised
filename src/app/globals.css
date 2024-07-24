@@ -5,3 +5,18 @@
 .jobs-section::-webkit-scrollbar {
   display: none;
 }
+
+.bottom-bar-wrapper {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.bottom-bar-wrapper.hide {
+  transform: translateY(100%);
+}
+
+.bottom-bar-wrapper.show {
+  transform: translateY(0);
+}

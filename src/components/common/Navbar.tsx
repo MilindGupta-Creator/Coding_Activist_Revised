@@ -21,6 +21,7 @@ const Navbar = () => {
           width="60"
           height="60"
           className="bg-white rounded-full"
+          loading="lazy"
         />
         <p className="font-bold">Coding Activist</p>
       </Link>
