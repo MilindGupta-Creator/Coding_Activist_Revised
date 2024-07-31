@@ -26,41 +26,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [showBottomBar, setShowBottomBar] = useState<boolean>(true);
-  const [lastScrollTop, setLastScrollTop] = useState<number>(0);
-
-  const handleScroll = useCallback(
-    _.debounce(() => {
-      const scrollTop = document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop) {
-        setShowBottomBar(false);
-      } else {
-        setShowBottomBar(true);
-      }
-      setLastScrollTop(scrollTop <= 0 ? 0 : scrollTop);
-    }, 300),
-    [lastScrollTop]
-  );
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll]);
   return (
     <html lang="en">
+      <head>
+        <title>Coding Activist | Jobs for Freshers</title>
+      </head>
       <body
         className={`${inter.className} relative bg-blue-charcoal-950 text-white bg-hero bg-contain bg-no-repeat`}
       >
-        <section className="w-4/5 mx-auto">
-          <Navbar />
+        <div>
+          <section className="fixed top-0 w-full z-10">
+            <Navbar />
+          </section>
           {children}
-        </section>
+        </div>
         <div
-          className={`fixed bottom-0 w-full transition-transform duration-300 ease-in-out ${
-            showBottomBar ? "translate-y-0 z-10" : "translate-y-full -z-10"
-          }`}
+          className={`fixed bottom-0 w-full transition-transform duration-300 ease-in-out`}
         >
           <BottomBar />
         </div>

@@ -76,7 +76,7 @@ const Home: React.FC = () => {
   }, [handleScroll]);
 
   return (
-    <div className="flex justify-between mt-20 gap-x-5">
+    <div className="flex justify-between mt-20 gap-x-5 w-4/5 mx-auto">
       <div className="flex flex-wrap justify-between relative items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
         {jobData.map((job, index) => (
           <div key={index}>

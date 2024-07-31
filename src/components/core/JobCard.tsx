@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 
 interface JobCardProps {
@@ -49,7 +50,12 @@ const JobCard = (jobs: JobCardProps) => {
           })}
           <p></p>
         </div>
-        <button className="bg-[#8244FF] rounded-lg px-4 py-3">Read more</button>
+        <Link
+          href={`/job-details/${jobs.job.id}`}
+          className="bg-[#8244FF] rounded-lg px-4 py-3"
+        >
+          Read more
+        </Link>
       </div>
     </div>
   );
