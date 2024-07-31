@@ -11,9 +11,8 @@ const Navbar = () => {
   const [showCloseMenu, setShowCloseMenu] = useState(false);
 
   const pathname = usePathname();
-
   return (
-    <div className="w-full rounded-lg bg-white bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10">
+    <div className="w-full rounded-lg bg-slate-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10">
       <div className="flex justify-between items-center py-2 w-4/5 mx-auto ">
         <Link href="/" className="flex items-center gap-x-2">
           <Image
@@ -24,7 +23,7 @@ const Navbar = () => {
             className="bg-white rounded-full"
             loading="lazy"
           />
-          <p className="font-bold">Coding Activist</p>
+          <p className={`font-bold  text-gray-400`}>Coding Activist</p>
         </Link>
         <div className="md:flex items-center gap-x-20 hidden relative">
           <Link
