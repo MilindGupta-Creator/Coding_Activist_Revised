@@ -6,7 +6,7 @@ import { db } from "@/firebase/firebase";
 import { useEffect, useState, useCallback } from "react";
 import { formatDate } from "@/utils/index";
 import _ from "lodash";
-import Loading from "./loading";
+import Loading from "@/components/common/Loading";
 
 interface JobData {
   id: string;

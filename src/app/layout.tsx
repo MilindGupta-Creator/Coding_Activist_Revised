@@ -49,7 +49,7 @@ export default function RootLayout({
         <Image
           src={Blur}
           alt="blur"
-          className="absolute bottom-0"
+          className="absolute bottom-0 -z-10"
           loading="lazy"
         />
       </body>
