@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const pathname = usePathname();
   return (
-    <div className="w-full rounded-lg bg-slate-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10">
+    <div className="w-full rounded-lg bg-slate-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border-b border-gray-500">
       <div className="flex justify-between items-center py-2 w-4/5 mx-auto ">
         <Link href="/" className="flex items-center gap-x-2">
           <Image
@@ -57,12 +57,13 @@ const Navbar = () => {
           </RiCloseLargeLine>
         )}
         {showCloseMenu && (
-          <div className="absolute top-20 bg-white rounded-lg flex flex-col gap-y-2 px-9 py-5 justify-center items-center right-0">
+          <div className="absolute top-20 bg-white rounded-lg text-lg flex flex-col gap-y-2 px-9 py-5 justify-center items-center right-10">
             <Link
               href="/"
               className={`hover:scale-100 duration-500 ${
                 pathname === "/" ? "text-[#5E548E]" : "text-black"
               }`}
+              onClick={() => setShowCloseMenu((prev) => !prev)}
             >
               Home
             </Link>
@@ -71,6 +72,7 @@ const Navbar = () => {
               className={`hover:scale-100 duration-500 ${
                 pathname === "/jobs" ? "text-[#5E548E]" : "text-black"
               }`}
+              onClick={() => setShowCloseMenu((prev) => !prev)}
             >
               Jobs
             </Link>

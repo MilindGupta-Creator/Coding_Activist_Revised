@@ -4,7 +4,7 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 export default function Home() {
   return (
     <div className="flex md:justify-center md:items-center items-start h-screen">
-      <div className="flex flex-col items-center gap-y-12">
+      <div className="flex flex-col items-center gap-y-12 pt-28">
         <h1 className="font-extrabold text-6xl text-center leading-tight">
           Create .Connect. Discover
         </h1>
