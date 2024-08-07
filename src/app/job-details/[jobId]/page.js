@@ -85,7 +85,7 @@ const JobDetails = () => {
         {/* heading */}
         <div className="flex justify-between items-start">
           <div className="flex flex-col">
-            <Image
+            <img
               src={job?.image}
               height={100}
               width={100}
