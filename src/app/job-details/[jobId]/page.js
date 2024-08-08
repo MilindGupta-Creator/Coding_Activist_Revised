@@ -78,12 +78,12 @@ const JobDetails = () => {
   }
   console.log(job);
   return (
-    <div className="bg-white bg-hero bg-no-repeat">
+    <div className="bg-hero bg-no-repeat">
       <Toaster />
-      <p className="pt-20 mb-5 text-center font-bold text-3xl text-black">Job Description</p>
-      <div className="bg-[#1A0F33] w-4/5 rounded-lg mx-auto p-5">
+      <p className="pt-20 mb-5 text-center font-bold text-3xl">Job Description</p>
+      <div className="bg-white w-4/5 rounded-lg mx-auto p-5">
         {/* heading */}
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start text-black">
           <div className="flex flex-col">
             <img
               src={job?.image}
@@ -92,7 +92,7 @@ const JobDetails = () => {
               alt="company-logo"
               className="rounded-full w-20 h-20 bg-white object-contain shadow-2xl shadow-blue-500/20"
             />
-            <p className="text-2xl">{job?.role}</p>
+            <p className="text-2xl">Role: {job?.role}</p>
             <p className="text-xl">{job?.name}</p>
           </div>
           {/* share button */}
@@ -122,7 +122,7 @@ const JobDetails = () => {
             Qualification:{" "}
             {job?.qualification?.map((item, index) => {
               return (
-                <ul className="list-disc pl-10 text-white" key={index}>
+                <ul className="list-disc pl-10 text-black" key={index}>
                   <li>{item}</li>
                 </ul>
               );
@@ -135,7 +135,7 @@ const JobDetails = () => {
             Responsibilities:{" "}
             {job?.responsibility?.map((item, index) => {
               return (
-                <ul className="pl-10 list-disc text-white" key={index}>
+                <ul className="pl-10 list-disc text-black" key={index}>
                   <li>{item}</li>
                 </ul>
               );

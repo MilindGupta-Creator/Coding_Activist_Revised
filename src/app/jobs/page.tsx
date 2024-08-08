@@ -7,6 +7,8 @@ import { useEffect, useState, useCallback } from "react";
 import { formatDate } from "@/utils/index";
 import _ from "lodash";
 import Loading from "@/components/common/Loading";
+import { VscSettings } from "react-icons/vsc";
+import Showfilter from "@/components/core/Showfilter";
 
 interface JobData {
   id: string;
@@ -20,6 +22,7 @@ const Home: React.FC = () => {
   const [lastVisible, setLastVisible] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [showfilter, setShowFilter] = useState<boolean>(false);
 
   const fetchJobsData = async () => {
     if (loading || !hasMore) return;
@@ -76,25 +79,37 @@ const Home: React.FC = () => {
   }, [handleScroll]);
 
   return (
-    <div className="flex justify-between mt-20 gap-x-5 w-4/5 mx-auto">
-      <div className="flex flex-wrap justify-between relative items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
-        {jobData.map((job, index) => (
-          <div key={index}>
-            <JobCard
-              key={job.id}
-              job={job}
-              id={""}
-              title={""}
-              description={""}
-              createdAt={""}
-            />
-          </div>
-        ))}
-        {loading && <Loading />}
-        {!hasMore && <p>No more jobs to load.</p>}
-      </div>
-      <div className="w-1/5 md:block hidden static top-10 right-0">
-        <HotUpdates />
+    <div className="w-4/5 mx-auto pt-20">
+      {!showfilter && (
+        <button
+          className="bg-violet-500 mt-5 w-[calc(80%-20px)] py-2 rounded-lg flex items-center justify-center gap-x-1"
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
+          Show Filter
+          <VscSettings />
+        </button>
+      )}
+      {showfilter && <Showfilter showfilter={showfilter} />}
+      <div className="flex justify-between mt-10 gap-x-5 ">
+        <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
+          {jobData.map((job, index) => (
+            <div key={index}>
+              <JobCard
+                key={job.id}
+                job={job}
+                id={""}
+                title={""}
+                description={""}
+                createdAt={""}
+              />
+            </div>
+          ))}
+          {loading && <Loading />}
+          {!hasMore && <p>No more jobs to load.</p>}
+        </div>
+        <div className="w-1/5 md:block hidden sticky top-0 right-0">
+          <HotUpdates />
+        </div>
       </div>
     </div>
   );
