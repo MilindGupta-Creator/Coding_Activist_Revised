@@ -8,7 +8,6 @@ import { formatDate } from "@/utils/index";
 import _ from "lodash";
 import Loading from "@/components/common/Loading";
 import { VscSettings } from "react-icons/vsc";
-import Showfilter from "@/components/core/Showfilter";
 
 interface JobData {
   type: string;
