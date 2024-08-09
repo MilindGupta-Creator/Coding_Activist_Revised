@@ -1,20 +1,69 @@
+import { useState } from "react";
+
 type filter = {
   showfilter: boolean;
 };
 
-const Showfilter = (showfilter: filter): JSX.Element => {
+const Showfilter = (
+  showfilter: filter,
+): JSX.Element => {
+  const [filters, setFilters] = useState({
+    jobType: "all",
+    location: "all",
+  });
+
+  const handleSubmit = () => {
+    localStorage.setItem("user-jobtype", filters.jobType);
+    localStorage.setItem("user-location", filters.location);
+  };
+
+  const handleChange = (event: { target: { name: string; value: string } }) => {
+    const { name, value } = event.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
   return (
-    <div className="w-[calc(80%-20px)]  mt-1  0 bg-[#8244FF] p-2 rounded-lg">
+    <div className=" mx-auto  mt-1  0 bg-[#8244FF] p-2 rounded-lg">
       {showfilter ? (
         <div>
-          <p className="mb-4">Job Type</p>
-          <div className="flex gap-x-2 items-center">
-            <input type="checkbox" name="fullTime" id="full-time" />
-            <label htmlFor="full-time">Full time</label>
+          <h1 className="text-lg tracking-wide">Filter</h1>
+          <hr />
+          <div className="flex gap-x-5 mt-5">
+            <label htmlFor="">
+              <p>Job Type</p>
+              <select
+                name="jobType"
+                id=""
+                className="text-black outline-none rounded-lg"
+                onChange={handleChange}
+                value={filters.jobType}
+              >
+                <option value="all">All</option>
+                <option value="fulltime">Full Time</option>
+                <option value="internship">Internship</option>
+              </select>
+            </label>
+            <label htmlFor="">
+              <p>Location</p>
+              <select
+                name="location"
+                id=""
+                className="text-black outline-none rounded-lg"
+                onChange={handleChange}
+                value={filters.location}
+              >
+                <option value="all">All</option>
+                <option value="banglore">Banglore</option>
+                <option value="gurgaon">Gurgaon</option>
+              </select>
+            </label>
           </div>
-          <div className="flex gap-x-2 items-center">
-            <input type="checkbox" name="internship" id="internship" />
-            <label htmlFor="internship">Internship</label>
+          <div className="flex justify-end">
+            <button
+              className="bg-[#1A0F33] der mt-5 py-2 rounded-lg flex items-center justify-end gap-x-1 px-2 tracking-wider"
+              onClick={handleSubmit}
+            >
+              Apply
+            </button>
           </div>
         </div>
       ) : null}

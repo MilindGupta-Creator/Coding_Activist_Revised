@@ -10,7 +10,6 @@ interface JobCardProps {
 }
 
 const JobCard = (jobs: JobCardProps) => {
-  console.log(jobs);
   return (
     <div className="bg-[#1A0F33] rounded-lg p-5 w-80 h-auto items-baseline  ">
       <div className="flex flex-col items-start">
