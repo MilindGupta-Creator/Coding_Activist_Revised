@@ -10,9 +10,8 @@ interface JobCardProps {
 }
 
 const JobCard = (jobs: JobCardProps) => {
-  console.log(jobs);
   return (
-    <div className="bg-[#1A0F33] rounded-lg p-5 w-80 h-auto items-baseline  ">
+    <div className="bg-[#000] rounded-lg p-5 w-80 h-auto items-baseline  ">
       <div className="flex flex-col items-start">
         <div className="flex gap-x-2 items-center">
           <img
@@ -28,7 +27,7 @@ const JobCard = (jobs: JobCardProps) => {
             </p>
           </div>
         </div>
-        <p className="my-5 capitalize">Role: {jobs.job.role}</p>
+        <p className="mt-5 capitalize">Role: {jobs.job.role}</p>
         <div className="flex w-full gap-x-2 text-center">
           <p className="bg-[#737373] px-3 py-1 rounded-lg text-xs flex items-center">
             <FaLocationDot /> {jobs.job.address}
@@ -49,7 +48,7 @@ const JobCard = (jobs: JobCardProps) => {
               </p>
             );
           })}
-          <p></p>
+          <p className="mb-2 capitalize">Date Posted: {jobs.job.createdAt}</p>
         </div>
         <Link
           href={`/job-details/${jobs.job.id}`}

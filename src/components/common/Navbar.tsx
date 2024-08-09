@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const pathname = usePathname();
   return (
-    <div className="w-full rounded-lg bg-slate-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border-b border-gray-500">
+    <div className="w-full rounded-lg bg-[#181818] bg-clip-padding backdrop-filter backdrop-blur-sm border-b border-gray-500">
       <div className="flex justify-between items-center py-2 w-4/5 mx-auto ">
         <Link href="/" className="flex items-center gap-x-2">
           <Image
