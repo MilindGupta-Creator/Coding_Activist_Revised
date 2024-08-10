@@ -34,7 +34,7 @@ const EmailPopUp = () => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
         <button
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+          className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-lg"
           onClick={() => setShowPopup(false)}
         >
           &times;
