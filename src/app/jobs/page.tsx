@@ -30,6 +30,7 @@ const Home: React.FC = () => {
   const [showfilter, setShowFilter] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState("all");
+
   const handleChange = (event: { target: { name: string; value: string } }) => {
     setFilters(event.target.value);
     setShowFilter((prev) => !prev);
@@ -37,9 +38,7 @@ const Home: React.FC = () => {
 
   const filteredJobs = jobData.filter((item: JobData) => {
     return (
-      (filters === "all" ||
-        item.type === filters ||
-        (item.type === "internship" && filters === "fulltime")) &&
+      (filters === "all" || item.type === filters) &&
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
@@ -112,16 +111,24 @@ const Home: React.FC = () => {
         )}
       </div>
       {showfilter && (
-        <div className="md:w-[calc(80%-15px)]  mt-1  0 bg-[#8244FF] p-2 rounded-lg">
-          <h1 className="text-lg tracking-wide">Filter</h1>
-          <hr />
+        <div className="md:w-[calc(80%-15px)] mt-1 bg-white p-4 rounded-lg shadow-lg">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl font-semibold text-gray-800">Filter</h1>
+            <button
+              className="text-gray-800 bg-transparent border border-gray-300 hover:bg-gray-200 px-3 py-1 rounded-full transition duration-300"
+              onClick={() => setShowFilter(false)}
+            >
+              &times; Close
+            </button>
+          </div>
+          <hr className="border-gray-300" />
           <div className="flex gap-x-5 mt-5">
-            <label htmlFor="">
-              <p>Job Type</p>
+            <label className="block text-gray-700 text-sm font-medium">
+              Job Type
               <select
                 name="jobType"
                 id=""
-                className="text-black outline-none rounded-lg"
+                className="block w-full mt-1 p-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 onChange={handleChange}
                 value={filters}
               >
@@ -133,6 +140,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       )}
+
       <div className="flex justify-between mt-10 gap-x-5 ">
         <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
           {filteredJobs ? (
