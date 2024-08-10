@@ -24,17 +24,17 @@ export default function RootLayout({
         <title>Coding Activist | Jobs for Freshers</title>
       </head>
       <body
-        className={`${inter.className} bg-[#2C2B2B] bg-hero text-white bg-contain bg-no-repeat`}
+        className={`${inter.className} relative bg-[#2C2B2B] bg-hero text-white bg-contain bg-no-repeat`}
       >
         <section className="fixed top-0 w-full z-10">
           <Navbar />
         </section>
         {children}
+        <EmailPopUp />
         <Toaster />
         <div
           className={`fixed bottom-0 w-full transition-transform duration-300 ease-in-out`}
         >
-        <EmailPopUp />
           <BottomBar />
         </div>
 
