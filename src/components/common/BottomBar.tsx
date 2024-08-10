@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FaWhatsapp, FaTelegramPlane, FaLinkedinIn } from "react-icons/fa";
 
 const BottomBar = () => {
   return (
