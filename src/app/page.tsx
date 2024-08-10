@@ -19,15 +19,15 @@ export default function Home() {
           </span>{" "}
           and are building a unique product.
         </p>
-        <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden">
-          <Link
-            href="/jobs"
-            className="flex items-center gap-x-2 z-10 text-white text-xl"
-          >
+        <Link
+          href="/jobs"
+          className="flex items-center justify-center bg-[#5E548E] px-12 py-2 rounded-lg group relative overflow-hidden hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)]"
+        >
+          <div className="flex items-center gap-x-2 z-10 text-white text-xl">
             Jobs
             <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-black" />
-          </Link>
-        </button>
+          </div>
+        </Link>
       </div>
     </div>
   );
