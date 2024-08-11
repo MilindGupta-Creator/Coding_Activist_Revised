@@ -174,15 +174,26 @@ const Home: React.FC = () => {
               ))}
             </>
           )}
-          {loading && <Loading />}
+          {loading && <Skeleton />}
           {!hasMore && <p>No more jobs to load.</p>}
         </div>
-        <div className="w-1/5 md:block hidden sticky top-0 right-0">
+        {/* <div className="w-1/5 md:block hidden sticky top-0 right-0">
           <HotUpdates />
-        </div>
+        </div> */}
       </div>
     </div>
   );
 };
 
 export default Home;
+
+const Skeleton = () => {
+  return (
+    <div className="mb-2 w-full px-4 grid lg:grid-cols-2 gap-4 ">
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+    </div>
+  );
+};

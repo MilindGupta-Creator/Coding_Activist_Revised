@@ -48,8 +48,9 @@ const JobCard = (jobs: JobCardProps) => {
               </p>
             );
           })}
-          <p className="mb-2 capitalize">Date Posted: {jobs.job.createdAt}</p>
         </div>
+        <p className="mb-2 capitalize">Posted: {jobs.job.createdAt}</p>
+
         <Link
           href={`/job-details/${jobs.job.id}`}
           className="bg-[#8244FF] rounded-lg px-4 py-3"
