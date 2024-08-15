@@ -81,7 +81,7 @@ const JobDetails = () => {
     <div className="bg-hero bg-no-repeat">
       <Toaster />
       <p className="pt-20 mb-5 text-center font-bold text-3xl">Job Description</p>
-      <div className="bg-white w-4/5 rounded-lg mx-auto p-5">
+      <div className="bg-white md:w-4/5 rounded-lg mx-auto p-5">
         {/* heading */}
         <div className="flex justify-between items-start text-black">
           <div className="flex flex-col">
@@ -149,7 +149,7 @@ const JobDetails = () => {
         </div>
       </div>
       {/* similar job section */}
-      <section className="w-4/5 mx-auto py-10 ">
+      <section className="md:w-4/5 mx-auto py-10 ">
         <SimilarJob similarJob={similarJobs} />
       </section>
     </div>
