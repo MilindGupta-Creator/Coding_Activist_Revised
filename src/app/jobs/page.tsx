@@ -3,7 +3,7 @@
 import HotUpdates from "@/components/core/HotUpdates";
 import JobCard from "@/components/core/JobCard";
 import { db } from "@/firebase/firebase";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { formatDate } from "@/utils/index";
 import _ from "lodash";
 import Loading from "@/components/common/Loading";
@@ -31,8 +31,6 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState("all");
 
-  const containerRef = useRef(null);
-
   const handleChange = (event: { target: { name: string; value: string } }) => {
     setFilters(event.target.value);
     setShowFilter((prev) => !prev);
@@ -40,9 +38,7 @@ const Home: React.FC = () => {
 
   const filteredJobs = jobData.filter((item: JobData) => {
     return (
-      (filters === "all" ||
-        item.type === filters ||
-        (item.type === "internship" && filters === "fulltime")) &&
+      (filters === "all" || item.type === filters) &&
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
@@ -84,10 +80,10 @@ const Home: React.FC = () => {
   const handleScroll = useCallback(
     _.debounce(() => {
       if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 5
       ) {
-        return;
+        console.log("Bottom of page reached");
       }
       fetchJobsData();
     }, 300),
@@ -95,108 +91,95 @@ const Home: React.FC = () => {
   );
 
   useEffect(() => {
-    const element = containerRef.current as HTMLElement | null;
-
-    if (element) {
-      element.addEventListener("scroll", handleScroll);
-    }
-
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      if (element) {
-        element.removeEventListener("scroll", handleScroll);
-      }
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
-  return (
-    <div className="flex items-center justify-center">
-      <div className="container flex gap-2 relative ">
-        <div
-          ref={containerRef}
-          className="lg:w-4/5 w-full px-6 lg:px-0 h-[100vh] overflow-scroll hideScroll "
-        >
-          <div className="flex justify-end px-10 mt-24">
-            {!showfilter && (
-              <button
-                className="border-violet-500 border mt-5 py-2 rounded-lg flex items-center justify-end gap-x-1 px-2 tracking-wider"
-                onClick={() => setShowFilter((prev) => !prev)}
-              >
-                Filter
-                <VscSettings />
-              </button>
-            )}
-          </div>
-          {showfilter && (
-            <div className=" w-full p-5 mt-1  bg-[#8244FF] rounded-lg">
-              <h1 className="text-lg tracking-wide">Filter</h1>
-              <hr />
-              <div className="flex gap-x-5 mt-5">
-                <label htmlFor="">
-                  <p>Job Type</p>
-                  <select
-                    name="jobType"
-                    id=""
-                    className="text-black outline-none rounded-lg"
-                    onChange={handleChange}
-                    value={filters}
-                  >
-                    <option value="all">All</option>
-                    <option value="fulltime">Full Time</option>
-                    <option value="internship">Internship</option>
-                  </select>
-                </label>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => setShowFilter((prev) => !prev)}
-                  className="bg-blue-charcoal-950 px-2 py-2 rounded-lg mt-2"
-                >
-                  Hide
-                </button>
-              </div>
-            </div>
-          )}
-          <div className="overflow-scroll jobs-section columns md:columns-2 lg:columns-3 gap-4 mt-5 w-full">
-            {filteredJobs ? (
-              <>
-                {filteredJobs.map((job, index) => (
-                  <div key={index} className="mb-2 w-full break-inside-avoid ">
-                    <JobCard
-                      key={job.id}
-                      job={job}
-                      id={""}
-                      title={""}
-                      description={""}
-                      createdAt={""}
-                    />
-                  </div>
-                ))}
-              </>
-            ) : (
-              <>
-                {jobData.map((job, index) => (
-                  <div key={index}>
-                    <JobCard
-                      key={job.id}
-                      job={job}
-                      id={""}
-                      title={""}
-                      description={""}
-                      createdAt={""}
-                    />
-                  </div>
-                ))}
-              </>
-            )}
-            {!hasMore && <p>No more jobs to load.</p>}
-          </div>
 
-          {loading && <Skeletion />}
-        </div>
-        <div className="w-1/5  mt-20 hidden absolute top-0  right-0 lg:block  p-5 text-white ">
-          <div className="    h-full">
-            <HotUpdates />
+  return (
+    <div className="w-4/5 mx-auto pt-20">
+      <div className="flex justify-end w-[calc(80%-20px)]">
+        {!showfilter && (
+          <button
+            className="border-violet-500 border mt-5 py-2 rounded-lg flex items-center justify-end gap-x-1 px-2 tracking-wider"
+            onClick={() => setShowFilter((prev) => !prev)}
+          >
+            Filter
+            <VscSettings />
+          </button>
+        )}
+      </div>
+      {showfilter && (
+        <div className="md:w-[calc(80%-15px)] mt-1 bg-white p-4 rounded-lg shadow-lg">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl font-semibold text-gray-800">Filter</h1>
+            <button
+              className="text-gray-800 bg-transparent border border-gray-300 hover:bg-gray-200 px-3 py-1 rounded-full transition duration-300"
+              onClick={() => setShowFilter(false)}
+            >
+              &times; Close
+            </button>
+          </div>
+          <hr className="border-gray-300" />
+          <div className="flex gap-x-5 mt-5">
+            <label className="block text-gray-700 text-sm font-medium">
+              Job Type
+              <select
+                name="jobType"
+                id=""
+                className="block w-full mt-1 p-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                onChange={handleChange}
+                value={filters}
+              >
+                <option value="all">All</option>
+                <option value="fulltime">Full Time</option>
+                <option value="internship">Internship</option>
+              </select>
+            </label>
           </div>
         </div>
+      )}
+
+      <div className="flex justify-between mt-10 gap-x-5 ">
+        <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
+          {filteredJobs ? (
+            <>
+              {filteredJobs.map((job, index) => (
+                <div key={index}>
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    id={""}
+                    title={""}
+                    description={""}
+                    createdAt={""}
+                  />
+                </div>
+              ))}
+            </>
+          ) : (
+            <>
+              {jobData.map((job, index) => (
+                <div key={index}>
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    id={""}
+                    title={""}
+                    description={""}
+                    createdAt={""}
+                  />
+                </div>
+              ))}
+            </>
+          )}
+          {loading && <Skeleton />}
+          {!hasMore && <p>No more jobs to load.</p>}
+        </div>
+        {/* <div className="w-1/5 md:block hidden sticky top-0 right-0">
+          <HotUpdates />
+        </div> */}
       </div>
     </div>
   );
@@ -204,18 +187,13 @@ const Home: React.FC = () => {
 
 export default Home;
 
-const Skeletion = () => {
+const Skeleton = () => {
   return (
-    <div className="mb-2 w-full px-4 grid lg:grid-cols-3 gap-4 ">
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
-      <div className="bg-gray-300 bg-opacity-10 w-full h-[300px] rounded-xl animate-pulse"></div>
+    <div className="mb-2 w-full px-4 grid lg:grid-cols-2 gap-4 ">
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+      <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
     </div>
   );
 };

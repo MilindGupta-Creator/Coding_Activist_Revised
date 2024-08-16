@@ -1,6 +1,7 @@
 "use client";
 
 import Loading from "@/components/common/Loading";
+import HotUpdates from "@/components/core/HotUpdates";
 import SimilarJob from "@/components/core/SimilarJob";
 import { db } from "@/firebase/firebase";
 import { formatDate } from "@/utils";
@@ -148,8 +149,13 @@ const JobDetails = () => {
           </button>
         </div>
       </div>
+
+      {/* <div className="w-1/5  sticky top-0 right-0">
+        <HotUpdates />
+      </div> */}
+
       {/* similar job section */}
-      <section className="md:w-4/5 mx-auto py-10 ">
+      <section className="w-4/5 mx-auto pb-20 pt-10 ">
         <SimilarJob similarJob={similarJobs} />
       </section>
     </div>

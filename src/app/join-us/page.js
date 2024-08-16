@@ -14,14 +14,14 @@ const Home = () => {
         <Link href="https://t.me/codingactivist" target="_blank">
           <FaTelegramPlane className="bg-[#333333] p-5 rounded-lg" size={150} />
         </Link>
-        <Link href="https://www.linkedin.com/in/milindguptaji/" target="_blank">
+        {/* <Link href="https://www.linkedin.com/in/milindguptaji/" target="_blank">
           <img
             src="https://codingactivist.com/static/media/profile-pic.569cb494286da3d4eac8.png"
             alt="profile"
             height={150}
             width={150}
           />
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
