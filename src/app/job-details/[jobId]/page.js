@@ -12,6 +12,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaShare } from "react-icons/fa6";
+import { FaArrowLeft } from "react-icons/fa";
 
 const JobDetails = () => {
   const [job, setJob] = useState(null); // State for a single job
@@ -81,10 +82,17 @@ const JobDetails = () => {
   return (
     <div className="bg-hero bg-no-repeat">
       <Toaster />
-      <p className="pt-20 mb-5 text-center font-bold text-3xl">
+      <p className="pt-20 mb-5 mt-4 text-center font-bold text-3xl">
         Job Description
       </p>
+
       <div className="bg-white w-4/5 rounded-lg mx-auto p-5">
+        <Link
+          href="/jobs"
+          className="inline-flex items-center mb-7 px-6 py-3 bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white text-lg font-semibold rounded-md shadow-lg transform transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105"
+        >
+          <FaArrowLeft className="mr-2" /> Back to Jobs
+        </Link>
         {/* heading */}
         <div className="flex justify-between items-start text-black">
           <div className="flex flex-col">
@@ -100,7 +108,7 @@ const JobDetails = () => {
           </div>
           {/* share button */}
           <button
-            className="bg-violet-500 px-3 py-1 rounded-md flex items-center gap-x-2"
+            className="bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2"
             onClick={() => handleCopyToClipboard()}
           >
             Share <FaShare />
@@ -108,14 +116,14 @@ const JobDetails = () => {
         </div>
         {/* basic details */}
         <div className="mt-10">
-          <p className="text-violet-600">
-            Location: <span className="text-white"> {job?.address}</span>
+          <p className="text-violet-600 mb-4">
+            Location: <span className="text-black"> {job?.address}</span>
           </p>
-          <div className="text-violet-600 flex gap-2 items-center flex-wrap">
+          <div className="text-violet-600 flex gap-2 items-center flex-wrap mb-4">
             Skills Required:
             {job?.skills?.map((item, index) => {
               return (
-                <p className="bg-violet-300 px-2 py-1 rounded-md" key={index}>
+                <p className="bg-violet-300 px-3 py-1 rounded-md " key={index}>
                   {item}
                 </p>
               );
