@@ -29,14 +29,14 @@ export default function RootLayout({
         <section className="fixed top-0 w-full z-10">
           <Navbar />
         </section>
-        {children}
+        <main className="pb-16"> {/* Add padding-bottom to main content */}
+          {children}
+        </main>
         <EmailPopUp />
         <Toaster />
-        <div
-          className={`fixed bottom-0 w-full transition-transform duration-300 ease-in-out`}
-        >
-          <BottomBar />
-        </div>
+        
+        <BottomBar className="fixed bottom-0 w-full z-20" />
+       
 
         <Image
           src={Blur}

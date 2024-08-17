@@ -7,8 +7,8 @@
 }
 
 .bottom-bar-wrapper {
-  position: fixed;
-  bottom: 0;
+  
+  
   width: 100%;
   transition: transform 0.3s ease-in-out;
 }
