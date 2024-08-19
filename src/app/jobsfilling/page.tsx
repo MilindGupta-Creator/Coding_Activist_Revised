@@ -102,7 +102,7 @@ const Home = () => {
           className="border px-3 py-4 rounded-lg bg-black text-white"
           onClick={uploadData}
         >
-          Upload JSON Data
+          Upload JSON File
         </button>
       </div>
 
