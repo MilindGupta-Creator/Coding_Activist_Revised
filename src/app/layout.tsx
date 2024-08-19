@@ -7,11 +7,14 @@ import Image from "next/image";
 import _ from "lodash";
 import EmailPopUp from "@/components/common/EmailPopUp";
 import { Toaster } from "react-hot-toast";
+import Script from "next/script";
 
 const inter = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
+
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
 export default function RootLayout({
   children,
@@ -22,6 +25,19 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <title>Coding Activist | Jobs for Freshers</title>
+        {/* <!-- Google tag (gtag.js) --> */}
+        <Script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GTM_ID}`}
+        ></Script>
+        <Script id="google-analytics">
+          {`window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${GTM_ID}');
+    `}
+        </Script>
       </head>
       <body
         className={`${inter.className} relative bg-[#2C2B2B] bg-hero text-white bg-contain bg-no-repeat`}
@@ -29,14 +45,15 @@ export default function RootLayout({
         <section className="fixed top-0 w-full z-10">
           <Navbar />
         </section>
-        <main className="pb-16"> {/* Add padding-bottom to main content */}
+        <main className="pb-16">
+          {" "}
+          {/* Add padding-bottom to main content */}
           {children}
         </main>
         <EmailPopUp />
         <Toaster />
-        
+
         <BottomBar className="fixed bottom-0 w-full z-20" />
-       
 
         <Image
           src={Blur}

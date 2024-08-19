@@ -31,7 +31,7 @@ const Home = () => {
       if (!correctedData.trim().startsWith("[")) {
         correctedData = `[${correctedData.trim()}]`;
       }
-
+      console.log("Corrected Data:", correctedData);
       const parsedData: ParsedDataType = JSON.parse(correctedData);
       const formattedData = JSON.stringify(parsedData, null, 2); // Format with 2-space indentation
       console.log(formattedData);
