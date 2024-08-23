@@ -16,6 +16,7 @@ interface JobData {
   title: string;
   description: string;
   createdAt: string;
+  address: string; // Assuming location field exists
 }
 
 interface Props {
@@ -30,16 +31,19 @@ const Home: React.FC = () => {
   const [showfilter, setShowFilter] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState("all");
+  const [showRemote, setShowRemote] = useState<boolean>(false); // New state for remote filter
 
   const handleChange = (event: { target: { name: string; value: string } }) => {
     setFilters(event.target.value);
     setShowFilter((prev) => !prev);
   };
 
+  // Updated filteredJobs logic to consider remote filter
   const filteredJobs = jobData.filter((item: JobData) => {
     return (
       (filters === "all" || item.type === filters) &&
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (!showRemote || item.address === "Remote") // Check for remote filter
     );
   });
 
@@ -75,7 +79,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     fetchJobsData();
-  }, [filters]);
+  }, [filters, showRemote]); // Include showRemote in dependency array
 
   const handleScroll = useCallback(
     _.debounce(() => {
@@ -99,7 +103,16 @@ const Home: React.FC = () => {
 
   return (
     <div className="w-4/5 mx-auto pt-20">
-      <div className="flex justify-end w-[calc(80%-20px)]">
+      <div className="flex justify-end w-[calc(80%-20px)] gap-2">
+        {/* Remote button */}
+        <button
+          className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${showRemote ? "bg-slate-800 text-white" : ""}`}
+          onClick={() => setShowRemote((prev) => !prev)}
+        >
+          Remote
+        </button>
+        
+        {/* Filter button */}
         {!showfilter && (
           <button
             className="border-violet-500 border mt-5 py-2 rounded-lg flex items-center justify-end gap-x-1 px-2 tracking-wider"
@@ -141,7 +154,7 @@ const Home: React.FC = () => {
         </div>
       )}
 
-      <div className="flex justify-between mt-10 gap-x-5 ">
+      <div className="flex justify-between mt-10 gap-x-5">
         <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
           {filteredJobs ? (
             <>
