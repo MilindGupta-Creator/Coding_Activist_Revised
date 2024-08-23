@@ -24,6 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+
+        {/* Hydra implemented */}
+        <Script id="hydro_config" type="text/javascript">
+          window.Hydro_tagId = "6933d487-2f23-4d2b-98e1-6a5373d30267";
+        </Script>
+        <Script id="hydro_script" src="https://track.hydro.online/"></Script>
+        
         <title>Coding Activist | Jobs for Freshers</title>
         {/* <!-- Google tag (gtag.js) --> */}
         <Script
