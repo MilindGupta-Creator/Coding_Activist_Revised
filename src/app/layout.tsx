@@ -24,8 +24,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-
         <title>Coding Activist | Jobs for Freshers</title>
+        <meta
+          name="description"
+          content="Find the latest off-campus job opportunities for Students and Professionals, Freshers Jobs, Graduate Jobs, BTech, Software Engineer Jobs, Software Engineer Intern Jobs, Frontend Developer Jobs, Frontend Developer Intern Jobs, Career Switch and more. Start your career journey now!"
+        />
+        <meta name="robots" content="index, follow" />
+        <meta
+          name="googlebot"
+          content="index, max-image-preview:large, max-snippet:-1"
+        />
+        <meta name="monetag" content="e7fd09404f5020b0b03bd8bea971d925"></meta>
         {/* <!-- Google tag (gtag.js) --> */}
         <Script
           async
