@@ -34,16 +34,6 @@ export default function RootLayout({
           name="googlebot"
           content="index, max-image-preview:large, max-snippet:-1"
         />
-        <meta name="monetag" content="e7fd09404f5020b0b03bd8bea971d925"></meta>
-
-        {/* Your custom script tag using Next.js Script component */}
-        <Script
-          id="custom-script"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(s,u,z,p){s.src=u,s.setAttribute('data-zone',z),p.appendChild(s);})(document.createElement('script'),'https://zovidree.com/tag.min.js',7962583,document.body||document.documentElement);`,
-          }}
-        />
 
         {/* Google tag (gtag.js) */}
         <Script
