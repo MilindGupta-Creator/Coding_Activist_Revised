@@ -119,7 +119,7 @@ export default function Component() {
   const [activeTab, setActiveTab] = useState("all");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [showSettings, setShowSettings] = useState(false);
-  const [questionsPerPage, setQuestionsPerPage] = useState(6);
+  const [questionsPerPage, setQuestionsPerPage] = useState(12);
   const [notes, setNotes] = useState<{ [key: number]: string }>({});
   const [selectedDPLevels, setSelectedDPLevels] = useState<DPLevel[]>([]);
   const [user, setUser] = useState<firebase.User | null>(null);
@@ -834,9 +834,9 @@ export default function Component() {
                     }
                     className="ml-2 p-2 border border-gray-300 rounded-md"
                   >
-                    <option value={6}>6</option>
                     <option value={12}>12</option>
                     <option value={24}>24</option>
+                    <option value={36}>36</option>
                   </select>
                 </div>
               </div>
