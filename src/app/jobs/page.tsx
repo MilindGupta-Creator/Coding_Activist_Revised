@@ -8,6 +8,7 @@ import { formatDate } from "@/utils/index";
 import _ from "lodash";
 import Loading from "@/components/common/Loading";
 import { VscSettings } from "react-icons/vsc";
+import { ArrowUp } from "lucide-react";
 
 interface JobData {
   type: string;
@@ -101,12 +102,18 @@ const Home: React.FC = () => {
     };
   }, [handleScroll]);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   return (
     <div className="w-4/5 mx-auto pt-20">
       <div className="flex justify-end w-[calc(80%-20px)] gap-2">
         {/* Remote button */}
         <button
-          className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${showRemote ? "bg-slate-800 text-white" : ""}`}
+          className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${
+            showRemote ? "bg-slate-800 text-white" : ""
+          }`}
           onClick={() => setShowRemote((prev) => !prev)}
         >
           Remote
@@ -194,6 +201,12 @@ const Home: React.FC = () => {
           <HotUpdates />
         </div> */}
       </div>
+      <button
+        className="mb-16 fixed bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
+        onClick={scrollToTop}
+      >
+        <ArrowUp className="h-6 w-6" />
+      </button>
     </div>
   );
 };
