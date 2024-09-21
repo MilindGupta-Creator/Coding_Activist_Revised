@@ -37,7 +37,7 @@ const JobCard = (jobs: JobCardProps) => {
           </p>
         </div>
         <div className="flex my-5 w-full flex-wrap gap-2 items-center">
-          <p>Skills </p>
+          <p>Skills : </p>
           {jobs.job.skills.slice(0, 3).map((item: string, index: number) => {
             return (
               <p

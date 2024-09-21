@@ -736,6 +736,118 @@
     "spaceComplexity": "O(1)",
     "tags": ["Implementation"],
     "leetCodeUrl": "https://www.hackerrank.com/challenges/birthday-cake-candles/problem"
+  },
+  {
+    "id": 66,
+    "title": "Beautiful Year",
+    "companies": ["Yandex", "VK"],
+    "difficulty": "Easy",
+    "description": "It seems that the year of 2013 came only yesterday. However, it's been many years since then. Now it's 2023 (or even more). Find the year that is strictly larger than y and has only distinct digits.",
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)",
+    "tags": ["Brute Force", "Implementation"],
+    "leetCodeUrl": "https://codeforces.com/problemset/problem/271/A"
+  },
+  {
+    "id": 67,
+    "title": "Chef and Dolls",
+    "companies": ["Zomato", "Swiggy"],
+    "difficulty": "Easy",
+    "description": "Chef is fan of pairs and he likes all things that come in pairs. He even has a doll collection in which the dolls come in pairs. One day while going through his collection he found that there are odd number of dolls. Someone had stolen a doll! Help chef find which type of doll is missing.",
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "tags": ["XOR", "Bit Manipulation"],
+    "leetCodeUrl": "https://www.codechef.com/problems/MISSP"
+  },
+  {
+    "id": 68,
+    "title": "Frog 2",
+    "companies": ["Google", "Line"],
+    "difficulty": "Easy",
+    "description": "There are N stones, numbered 1,2,…,N. For each i (1≤i≤N), the height of Stone i is hi. There is a frog who is initially on Stone 1. He will repeat the following action some number of times to reach Stone N: If the frog is currently on Stone i, jump to one of the following: Stone i+1,i+2,…,i+K. Here, a cost of |hi−hj| is incurred, where j is the stone to land on. Find the minimum possible total cost incurred before the frog reaches Stone N.",
+    "timeComplexity": "O(NK)",
+    "spaceComplexity": "O(N)",
+    "tags": ["Dynamic Programming"],
+    "leetCodeUrl": "https://atcoder.jp/contests/dp/tasks/dp_b"
+  },
+  {
+    "id": 69,
+    "title": "Kangaroo",
+    "companies": ["Amazon", "Microsoft"],
+    "difficulty": "Easy",
+    "description": "You are choreographing a circus show with various animals. For one act, you are given two kangaroos on a number line ready to jump in the positive direction (i.e, toward positive infinity). The first kangaroo starts at location x1 and moves at a rate of v1 meters per jump. The second kangaroo starts at location x2 and moves at a rate of v2 meters per jump. You have to figure out a way to get both kangaroos at the same location at the same time as part of the show. If it is possible, return YES, otherwise return NO.",
+    "timeComplexity": "O(1)",
+    "spaceComplexity": "O(1)",
+    "tags": ["Math", "Implementation"],
+    "leetCodeUrl": "https://www.hackerrank.com/challenges/kangaroo/problem"
+  },
+  {
+    "id": 70,
+    "title": "Paint the Array",
+    "companies": ["Yandex", "Mail.Ru"],
+    "difficulty": "Medium",
+    "description": "You are given an array a of n positive integers. You want to paint this array in two colors (blue and red) in such a way that: Each element is painted in exactly one color. For each pair of adjacent elements of the same color their greatest common divisor (GCD) is 1. If there are multiple valid ways to paint the array, you can choose any of them. If it's impossible to paint the array in two colors under the given conditions, you should report about it.",
+    "timeComplexity": "O(n * log(max(a)))",
+    "spaceComplexity": "O(1)",
+    "tags": ["Math", "Greedy"],
+    "leetCodeUrl": "https://codeforces.com/problemset/problem/1618/C"
+  },
+  {
+    "id": 71,
+    "title": "Coin Combinations II",
+    "companies": ["Amazon", "Goldman Sachs"],
+    "difficulty": "Medium",
+    "description": "Consider a money system consisting of n coins. Each coin has a positive integer value. Your task is to calculate the number of distinct ordered ways you can produce a money sum x using the available coins. For example, if the coins are {2,3,5} and the desired sum is 9, there are 3 ways: 2+2+5, 3+3+3, 2+2+2+3",
+    "timeComplexity": "O(nx)",
+    "spaceComplexity": "O(x)",
+    "tags": ["Dynamic Programming"],
+    "leetCodeUrl": "https://cses.fi/problemset/task/1636"
+  },
+  {
+    "id": 72,
+    "title": "Non-Negative Product",
+    "companies": ["Flipkart", "Amazon"],
+    "difficulty": "Easy",
+    "description": "Given an array A of size N. You need to find if there exists a subsequence of size 2 or more such that the product of all numbers in the subsequence is non-negative.",
+    "timeComplexity": "O(N)",
+    "spaceComplexity": "O(1)",
+    "tags": ["Greedy", "Math"],
+    "leetCodeUrl": "https://www.codechef.com/problems/NNPROD"
+  },
+  {
+    "id": 73,
+    "title": "Grid 1",
+    "companies": ["Google", "Line"],
+    "difficulty": "Medium",
+    "description": "There is a grid with H rows and W columns. Let (i,j) denote the square at the i-th row from the top and the j-th column from the left. For each i and j (1≤i≤H, 1≤j≤W), Square (i,j) is described by a character ai,j. If ai,j is ., Square (i,j) is empty; if ai,j is #, Square (i,j) is a wall. Taro will start from Square (1,1) and reach Square (H,W) by repeatedly moving right or down to an adjacent empty square. Find the number of such paths, modulo 10^9+7.",
+    "timeComplexity": "O(HW)",
+    "spaceComplexity": "O(HW)",
+    "tags": ["Dynamic Programming"],
+    "leetCodeUrl": "https://atcoder.jp/contests/dp/tasks/dp_h"
+  },
+  {
+    "id": 74,
+    "title": "Breaking the Records",
+    "companies": ["IBM", "Microsoft"],
+    "difficulty": "Easy",
+    "description": "Maria plays college basketball and wants to go pro. Each season she maintains a record of her play. She tabulates the number of times she breaks her season record for most points and least points in a game. Points scored in the first game establish her record for the season, and she begins counting from there.",
+    "timeComplexity": "O(n)",
+    "spaceComplexity": "O(1)",
+    "tags": ["Implementation", "Arrays"],
+    "leetCodeUrl": "https://www.hackerrank.com/challenges/breaking-best-and-worst-records/problem"
+  },
+  {
+    "id": 75,
+    "title": "Phoenix and Puzzle",
+    "companies": ["Yandex", "VK"],
+    "difficulty": "Easy",
+    "description": "A number is called a puzzle number if it can be represented as both 2x^2 and 4y^2, where x and y are positive integers. You are given a number n. You have to determine if it's a puzzle number or not.",
+    "timeComplexity": "O(sqrt(n))",
+    "spaceComplexity": "O(1)",
+    "tags": ["Math", "Number Theory"],
+    "leetCodeUrl": "https://codeforces.com/problemset/problem/1515/B"
   }
+
+
 ]
 }

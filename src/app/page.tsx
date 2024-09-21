@@ -76,14 +76,24 @@ export default function Home() {
           )}
         </div>
         <div className="md:w-1/2 w-full h-0.5 bg-white opacity-10 mt-3 mb-6" />
-        <Link href="/jobs">
-          <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
-            <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
-              Jobs
-              <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
-            </div>
-          </button>
-        </Link>
+        <section className="flex flex-col gap-y-3 mt-4">
+          <Link href="/jobs">
+            <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
+              <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
+                Jobs
+                <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
+              </div>
+            </button>
+          </Link>
+          <Link href="/questions">
+            <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
+              <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
+                Questions
+                <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
+              </div>
+            </button>
+          </Link>
+        </section>
       </div>
     </div>
   );

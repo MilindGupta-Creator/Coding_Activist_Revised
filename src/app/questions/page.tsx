@@ -477,7 +477,9 @@ export default function Component() {
           <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2">Notes</h3>
             <textarea
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className={`w-full p-2 border border-gray-300 rounded-md ${
+                theme === "dark" ? "text-gray-900" : "text-gray-900"
+              } `}
               rows={3}
               placeholder="Add your notes here..."
               value={localNote}
