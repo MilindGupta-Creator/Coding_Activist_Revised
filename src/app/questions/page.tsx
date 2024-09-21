@@ -88,7 +88,7 @@ const companyLogos: { [key: string]: string } = {
   Zomato: "https://logo.clearbit.com/zomato.com",
   HackerRank: "https://logo.clearbit.com/hackerrank.com",
   Swiggy: "https://logo.clearbit.com/swiggy.com",
-}
+};
 
 const questions: Question[] = questiondata.questions.map((q) => ({
   ...q,
@@ -548,9 +548,13 @@ export default function Component() {
         className="flex items-center justify-between cursor-pointer p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors duration-200"
         onClick={toggleExpand}
       >
-        <h3 className={`text-lg font-semibold ${
-              theme === "dark" ? "text-gray-900" : "text-gray-900"
-            } `}>Filter by Tags:</h3>
+        <h3
+          className={`text-lg font-semibold ${
+            theme === "dark" ? "text-gray-900" : "text-gray-900"
+          } `}
+        >
+          Filter by Tags:
+        </h3>
         <button
           onClick={() => setIsTagsExpanded(!isTagsExpanded)}
           className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
@@ -927,6 +931,7 @@ export default function Component() {
           {totalPages > 1 && (
             <div className="mt-8 flex justify-center">
               <nav className="inline-flex rounded-md shadow">
+                {/* Previous Button */}
                 <a
                   href="#"
                   onClick={(e) =>
@@ -938,22 +943,39 @@ export default function Component() {
                 >
                   Previous
                 </a>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <a
-                      key={page}
-                      href="#"
-                      onClick={(e) => handlePageChange(page, e)}
-                      className={`px-3 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                        currentPage === page
-                          ? "text-blue-600 bg-blue-50"
-                          : "text-gray-500 hover:bg-gray-50"
-                      }`}
-                    >
-                      {page}
-                    </a>
-                  )
-                )}
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((page) => {
+                    if (page === 1 || page === totalPages) return true; // Always show the first and last page
+                    if (page >= currentPage - 2 && page <= currentPage + 2)
+                      return true; // Show pages around the current one
+                    return false;
+                  })
+                  .map((page, idx, pages) => (
+                    <>
+                      {/* Ellipsis for skipped pages */}
+                      {idx > 0 && page - pages[idx - 1] > 1 && (
+                        <span className="px-3 py-2 border text-gray-500">
+                          ...
+                        </span>
+                      )}
+                      <a
+                        key={page}
+                        href="#"
+                        onClick={(e) => handlePageChange(page, e)}
+                        className={`px-3 py-2 border border-gray-300 bg-white text-sm font-medium ${
+                          currentPage === page
+                            ? "text-blue-600 bg-blue-50"
+                            : "text-gray-500 hover:bg-gray-50"
+                        }`}
+                      >
+                        {page}
+                      </a>
+                    </>
+                  ))}
+
+                {/* Next Button */}
                 <a
                   href="#"
                   onClick={(e) =>
