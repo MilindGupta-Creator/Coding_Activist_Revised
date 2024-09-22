@@ -1,5 +1,6 @@
 "use client";
 
+import Head from "next/head";
 import Loading from "@/components/common/Loading";
 import HotUpdates from "@/components/core/HotUpdates";
 import SimilarJob from "@/components/core/SimilarJob";
@@ -12,7 +13,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaShare } from "react-icons/fa6";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaBriefcase } from "react-icons/fa";
 
 const JobDetails = () => {
   const [job, setJob] = useState(null); // State for a single job
@@ -33,12 +34,15 @@ const JobDetails = () => {
     }
   };
 
-  const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href);
-
-    toast.success("Copied to clipboard!", {
-      position: "top-right",
-    });
+  const shareJob = () => {
+    if (job) {
+      navigator.clipboard.writeText(
+        `Check out this job opportunity: ${job.role} at ${job.name} - ${window.location.href}`
+      );
+      toast.success("Job details copied to clipboard!", {
+        position: "top-right",
+      });
+    }
   };
 
   useEffect(() => {
@@ -47,7 +51,21 @@ const JobDetails = () => {
     }
   }, [jobId]);
 
+  useEffect(() => {
+    if (job) {
+      // Update the document title when job data is loaded
+      document.title = `${job.role} at ${job.name}`;
+    }
+  }, [job]);
+
   const [similarJobs, setSimilarJobs] = useState([]);
+
+  const pageTitle = job
+    ? `${job.role} at ${job.name} - Job Description`
+    : "Loading...";
+  const pageDescription = job
+    ? `Apply for the ${job.role} position at ${job.name}. Location: ${job.address}. Find out more about the job responsibilities and qualifications.`
+    : "Job details are loading...";
 
   useEffect(() => {
     const fetchSimilarJobs = async () => {
@@ -80,95 +98,136 @@ const JobDetails = () => {
   }
   console.log(job);
   return (
-    <div className="bg-hero bg-no-repeat">
-      <Toaster />
-      <p className="pt-20 mb-5 mt-4 text-center font-bold text-3xl">
-        Job Description
-      </p>
+    <>
+      <Head>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:image" content={job.image} />
+        <link rel="canonical" href={window.location.href} />
+      </Head>
 
-      <div className="bg-white w-4/5 rounded-lg mx-auto p-5">
-        <Link
-          href="/jobs"
-          className="inline-flex items-center mb-7 px-6 py-3 bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white text-lg font-semibold rounded-md shadow-lg transform transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105"
+      <main className="bg-hero bg-no-repeat">
+        <Toaster />
+        <p className="pt-20 mb-5 mt-4 text-center font-bold text-3xl">
+          Job Description
+        </p>
+
+        <article className="bg-white w-4/5 rounded-lg mx-auto p-5">
+          <nav className="section-container">
+            <Link href="/jobs" className="back-link">
+              <FaArrowLeft /> Back to Jobs
+            </Link>
+            {/* <div className="hidden lg:block">
+              <HotUpdates />
+            </div> */}
+          </nav>
+          {/* heading */}
+          <header className="flex justify-between items-start text-black">
+            <div className="flex flex-col">
+              <img
+                src={job?.image}
+                height={100}
+                width={100}
+                alt="company-logo"
+                className="rounded-full w-20 h-20 bg-white object-contain shadow-2xl shadow-blue-500/20"
+              />
+              <p className="text-2xl">Role: {job?.role}</p>
+              <p className="text-xl">{job?.name}</p>
+            </div>
+            {/* share button */}
+            <button
+              className="bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2"
+              onClick={shareJob}
+              aria-label={`Share ${job.role} job at ${job.name}`}
+            >
+              Share <FaShare />
+            </button>
+          </header>
+          {/* basic details */}
+          <section className="mt-10">
+            <p className="text-violet-600 mb-4">
+              Location: <span className="text-black"> {job?.address}</span>
+            </p>
+            <div className="text-violet-600 flex gap-2 items-center flex-wrap mb-4">
+              Skills Required:
+              {job.skills?.map((skill, index) => (
+                <span
+                  key={index}
+                  className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+            <div className="text-violet-600">
+              Qualification:{" "}
+              {job?.qualification?.map((item, index) => {
+                return (
+                  <ul className="list-disc pl-10 text-black" key={index}>
+                    <li>{item}</li>
+                  </ul>
+                );
+              })}{" "}
+            </div>
+          </section>
+          {/* salary box */}
+          <div className="mt-5">
+            <div className="text-violet-600">
+              Responsibilities:{" "}
+              {job?.responsibility?.map((item, index) => {
+                return (
+                  <ul className="pl-10 list-disc text-black" key={index}>
+                    <li>{item}</li>
+                  </ul>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex justify-end w-full mt-5">
+            <button className="bg-violet-500 px-3 py-1 rounded-md flex items-center gap-x-2">
+              <Link href={job?.apply}>Apply Now</Link>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-external-link ml-2"
+              >
+                <path d="M15 3h6v6"></path>
+                <path d="M10 14 21 3"></path>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <section
+          className="section-container flex pt-6 pr-8"
+          style={{ alignItems: "end" }}
         >
-          <FaArrowLeft className="mr-2" /> Back to Jobs
-        </Link>
-        {/* heading */}
-        <div className="flex justify-between items-start text-black">
-          <div className="flex flex-col">
-            <img
-              src={job?.image}
-              height={100}
-              width={100}
-              alt="company-logo"
-              className="rounded-full w-20 h-20 bg-white object-contain shadow-2xl shadow-blue-500/20"
-            />
-            <p className="text-2xl">Role: {job?.role}</p>
-            <p className="text-xl">{job?.name}</p>
-          </div>
-          {/* share button */}
-          <button
-            className="bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2"
-            onClick={() => handleCopyToClipboard()}
-          >
-            Share <FaShare />
-          </button>
-        </div>
-        {/* basic details */}
-        <div className="mt-10">
-          <p className="text-violet-600 mb-4">
-            Location: <span className="text-black"> {job?.address}</span>
-          </p>
-          <div className="text-violet-600 flex gap-2 items-center flex-wrap mb-4">
-            Skills Required:
-            {job?.skills?.map((item, index) => {
-              return (
-                <p className="bg-violet-300 px-3 py-1 rounded-md " key={index}>
-                  {item}
-                </p>
-              );
-            })}{" "}
-          </div>
-          <div className="text-violet-600">
-            Qualification:{" "}
-            {job?.qualification?.map((item, index) => {
-              return (
-                <ul className="list-disc pl-10 text-black" key={index}>
-                  <li>{item}</li>
-                </ul>
-              );
-            })}{" "}
-          </div>
-        </div>
-        {/* salary box */}
-        <div className="mt-5">
-          <div className="text-violet-600">
-            Responsibilities:{" "}
-            {job?.responsibility?.map((item, index) => {
-              return (
-                <ul className="pl-10 list-disc text-black" key={index}>
-                  <li>{item}</li>
-                </ul>
-              );
-            })}
-          </div>
-        </div>
-        <div className="flex justify-end w-full mt-5">
-          <button className="bg-violet-500 px-3 py-1 rounded-md flex items-center gap-x-2">
-            <Link href={job?.apply}>Apply Now</Link>
-          </button>
-        </div>
-      </div>
+          {/* <Link href="/jobs" className="back-link">
+          <FaArrowLeft /> Back to Jobs
+        </Link> */}
+          {/* <div className="block md:hidden">
+            <HotUpdates />
+          </div> */}
+        </section>
 
-      {/* <div className="w-1/5  sticky top-0 right-0">
-        <HotUpdates />
-      </div> */}
-
-      {/* similar job section */}
-      <section className="w-4/5 mx-auto pb-20 pt-10 ">
-        <SimilarJob similarJob={similarJobs} />
-      </section>
-    </div>
+        {/* similar job section */}
+        <section className="w-4/5 mx-auto pb-20 pt-10 ">
+          <SimilarJob similarJob={similarJobs} />
+        </section>
+      </main>
+    </>
   );
 };
 
