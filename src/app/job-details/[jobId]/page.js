@@ -121,9 +121,9 @@ const JobDetails = () => {
             <Link href="/jobs" className="back-link">
               <FaArrowLeft /> Back to Jobs
             </Link>
-            {/* <div className="hidden lg:block">
+            <div className="hidden lg:block">
               <HotUpdates />
-            </div> */}
+            </div>
           </nav>
           {/* heading */}
           <header className="flex justify-between items-start text-black">
@@ -211,15 +211,15 @@ const JobDetails = () => {
         </article>
 
         <section
-          className="section-container flex pt-6 pr-8"
-          style={{ alignItems: "end" }}
+          className="flex pt-6 pr-8"
+          style={{ alignItems: "end",display:"flex",flexDirection:"row-reverse"}}
         >
           {/* <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
         </Link> */}
-          {/* <div className="block md:hidden">
+          <div className="block md:hidden">
             <HotUpdates />
-          </div> */}
+          </div>
         </section>
 
         {/* similar job section */}
