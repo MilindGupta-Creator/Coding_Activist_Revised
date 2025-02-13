@@ -83,14 +83,12 @@ const Home: React.FC = () => {
   }, [filters, showRemote]); // Include showRemote in dependency array
 
   const handleScroll = useCallback(
-    _.debounce(() => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 5
-      ) {
-        console.log("Bottom of page reached");
+    _.throttle(() => {
+      const scrollPosition = window.innerHeight + window.pageYOffset;
+      const offset = 100; // Buffer before bottom
+      if (scrollPosition >= document.documentElement.offsetHeight - offset) {
+        fetchJobsData();
       }
-      fetchJobsData();
     }, 300),
     [fetchJobsData]
   );
@@ -122,12 +120,17 @@ const Home: React.FC = () => {
         {/* Filter button */}
         {!showfilter && (
           <button
-            className="border-violet-500 border mt-5 py-2 rounded-lg flex items-center justify-end gap-x-1 px-2 tracking-wider"
-            onClick={() => setShowFilter((prev) => !prev)}
-          >
-            Filter
-            <VscSettings />
-          </button>
+          className={`
+            border border-violet-500 mt-5 py-2 rounded-lg 
+            flex items-center px-4 tracking-wider
+            hover:bg-violet-700 
+            ${showfilter ? 'bg-violet-50' : ''}
+          `}
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
+          <span className="mr-2">Filter</span>
+          <VscSettings className="w-4 h-4" />
+        </button>
         )}
       </div>
       {showfilter && (
@@ -162,7 +165,7 @@ const Home: React.FC = () => {
       )}
 
       <div className="flex justify-between mt-10 gap-x-5">
-        <div className="flex flex-wrap justify-between items-start gap-5 md:w-4/5 overflow-scroll jobs-section">
+        <div className="flex flex-wrap justify-between items-start gap-5 md:w-2/3 overflow-scroll jobs-section">
           {filteredJobs ? (
             <>
               {filteredJobs.map((job, index) => (

@@ -29,10 +29,10 @@ const JobCard = (jobs: JobCardProps) => {
         </div>
         <p className="mt-5 capitalize">Role: {jobs.job.role}</p>
         <div className="flex w-full gap-x-2 text-center">
-          <p className="bg-[#737373] px-3 py-1 rounded-lg text-xs flex items-center">
-            <FaLocationDot /> {jobs.job.address}
+          <p className="w-28 bg-[#737373] px-3 py-1 rounded-lg text-xs flex items-center truncate">
+            <FaLocationDot className="mr-1" /> {jobs.job.address.split(" ")[0]}{" "}
           </p>
-          <p className="bg-[#737373] px-3 py-1 rounded-lg text-xs">
+          <p className="bg-[#737373] px-3 py-1 rounded-lg text-xs truncate">
             {jobs.job.salary || "N.A"}
           </p>
         </div>
