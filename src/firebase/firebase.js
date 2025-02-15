@@ -1,5 +1,6 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
+import "firebase/compat/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,15 +12,21 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+let app;
+let auth;
+
 try {
   if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-    console.log("Firebase initialized successfully");
+    app = firebase.initializeApp(firebaseConfig);
+  } else {
+    app = firebase.app();
   }
+  auth = firebase.auth();
+  console.log("Firebase Auth initialized successfully");
 } catch (error) {
   console.error("Firebase initialization error:", error);
 }
 
 const db = firebase.firestore();
 
-export { db };
+export { db, auth };

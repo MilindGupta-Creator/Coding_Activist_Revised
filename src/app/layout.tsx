@@ -8,6 +8,7 @@ import _ from "lodash";
 import EmailPopUp from "@/components/common/EmailPopUp";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
+import { AuthProvider } from "@/auth/AuthContext";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -52,25 +53,27 @@ export default function RootLayout({
       <body
         className={`${inter.className} relative bg-[#2C2B2B] bg-hero text-white bg-contain bg-no-repeat`}
       >
-        <section className="fixed top-0 w-full z-10">
-          <Navbar />
-        </section>
-        <main className="pb-16">
-          {" "}
-          {/* Add padding-bottom to main content */}
-          {children}
-        </main>
-        <EmailPopUp />
-        <Toaster />
+        <AuthProvider>
+          <section className="fixed top-0 w-full z-10">
+            <Navbar />
+          </section>
+          <main className="pb-16">
+            {" "}
+            {/* Add padding-bottom to main content */}
+            {children}
+          </main>
+          <EmailPopUp />
+          <Toaster />
 
-        <BottomBar className="fixed bottom-0 w-full z-20" />
+          <BottomBar className="fixed bottom-0 w-full z-20" />
 
-        <Image
-          src={Blur}
-          alt="blur"
-          className="absolute bottom-0 -z-10"
-          loading="lazy"
-        />
+          <Image
+            src={Blur}
+            alt="blur"
+            className="absolute bottom-0 -z-10"
+            loading="lazy"
+          />
+        </AuthProvider>
       </body>
     </html>
   );
