@@ -19,20 +19,18 @@ import {
   Clock,
   Award,
   X,
-  Filter,
   Settings,
   Save,
   Trash2,
-  Play,
   PlayCircle,
 } from "lucide-react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import questiondata from "../../components/ui/questions.json";
+import blind75data from "../../components/ui/blind75-questions.json";
+import { capitalizeWords } from "../../../src/utils/commonUtils";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBegkaVBpkSz2UWnespSWZdBBKJFN2-aiw",
@@ -64,6 +62,7 @@ type Question = {
   tags: string[];
   dpLevel?: DPLevel;
   leetCodeUrl: string;
+  isBlind75?: boolean;
 };
 
 const companyLogos: { [key: string]: string } = {
@@ -88,13 +87,20 @@ const companyLogos: { [key: string]: string } = {
   Zomato: "https://logo.clearbit.com/zomato.com",
   HackerRank: "https://logo.clearbit.com/hackerrank.com",
   Swiggy: "https://logo.clearbit.com/swiggy.com",
-}
+};
 
-const questions: Question[] = questiondata.questions.map((q) => ({
-  ...q,
-  difficulty: q.difficulty as "Easy" | "Medium" | "Hard",
-  dpLevel: q.dpLevel as DPLevel | undefined,
-}));
+const questions: Question[] = [
+  ...questiondata.questions.map((q) => ({
+    ...q,
+    difficulty: q.difficulty as "Easy" | "Medium" | "Hard",
+    dpLevel: q.dpLevel as DPLevel | undefined,
+  })),
+  ...blind75data.blind75.map((q) => ({
+    ...q,
+    difficulty: q.difficulty as "Easy" | "Medium" | "Hard",
+    isBlind75: true,
+  })),
+];
 
 const allCompanies = Array.from(new Set(questions.flatMap((q) => q.companies)));
 const allTags = Array.from(new Set(questions.flatMap((q) => q.tags)));
@@ -125,6 +131,8 @@ export default function Component() {
   const [user, setUser] = useState<firebase.User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const router = useRouter();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [showBlind75Only, setShowBlind75Only] = useState(false);
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -136,6 +144,16 @@ export default function Component() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    document.title = "Blind 75 Coding Questions - Improve Your DSA Skills";
+    document
+      .querySelector("meta[name='description']")
+      ?.setAttribute(
+        "content",
+        "Explore the Blind 75 coding questions collection to enhance your data structures and algorithms skills. Perfect for coding interviews!"
+      );
   }, []);
 
   const fetchUserData = async (userId: string) => {
@@ -187,7 +205,9 @@ export default function Component() {
           (activeTab === "easy" && q.difficulty === "Easy") ||
           (activeTab === "medium" && q.difficulty === "Medium") ||
           (activeTab === "hard" && q.difficulty === "Hard") ||
-          (activeTab === "dp" && q.dpLevel))
+          (activeTab === "dp" && q.dpLevel) ||
+          (activeTab === "blind75" && q.isBlind75)) &&
+        (showBlind75Only ? q.isBlind75 : true)
     );
   }, [
     selectedCompanies,
@@ -198,6 +218,7 @@ export default function Component() {
     selectedTags,
     selectedDPLevels,
     activeTab,
+    showBlind75Only,
   ]);
 
   const sortedQuestions = useMemo(() => {
@@ -234,6 +255,7 @@ export default function Component() {
     selectedTags,
     selectedDPLevels,
     activeTab,
+    showBlind75Only,
   ]);
 
   useEffect(() => {
@@ -370,10 +392,10 @@ export default function Component() {
     return (
       <motion.div
         key={question.id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.3 }}
+        // initial={{ opacity: 0, y: 20 }}
+        // animate={{ opacity: 1, y: 0 }}
+        // exit={{ opacity: 0, y: -20 }}
+        // transition={{ duration: 0.3 }}
         className={`bg-white shadow-lg rounded-lg p-6 mb-4 transform hover:scale-102 transition-all duration-300 w-full hover:shadow-xl ${
           theme === "dark" ? "bg-gray-800 text-white" : ""
         }`}
@@ -457,6 +479,11 @@ export default function Component() {
               {question.dpLevel}
             </span>
           )}
+          {question.isBlind75 && (
+            <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 ml-2">
+              Blind 75
+            </span>
+          )}
         </div>
         <motion.div
           initial={false}
@@ -478,8 +505,8 @@ export default function Component() {
             <h3 className="text-lg font-semibold mb-2">Notes</h3>
             <textarea
               className={`w-full p-2 border border-gray-300 rounded-md ${
-              theme === "dark" ? "text-gray-900" : "text-gray-900"
-            } `}
+                theme === "dark" ? "text-gray-900" : "text-gray-900"
+              } `}
               rows={3}
               placeholder="Add your notes here..."
               value={localNote}
@@ -548,9 +575,13 @@ export default function Component() {
         className="flex items-center justify-between cursor-pointer p-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors duration-200"
         onClick={toggleExpand}
       >
-        <h3 className={`text-lg font-semibold ${
-              theme === "dark" ? "text-gray-900" : "text-gray-900"
-            } `}>Filter by Tags:</h3>
+        <h3
+          className={`text-lg font-semibold ${
+            theme === "dark" ? "text-gray-900" : "text-gray-900"
+          } `}
+        >
+          Filter by Tags:
+        </h3>
         <button
           onClick={() => setIsTagsExpanded(!isTagsExpanded)}
           className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
@@ -658,7 +689,8 @@ export default function Component() {
           {user ? (
             <div className="flex items-center space-x-4">
               <span className="text-lg font-semibold text-blue-600">
-                Welcome, {user.displayName}
+                Welcome,{" "}
+                {user?.displayName ? capitalizeWords(user.displayName) : "User"}
               </span>
             </div>
           ) : (
@@ -693,6 +725,33 @@ export default function Component() {
                 <path d="M0 0h32v32H0z" fill="currentColor" fillOpacity=".05" />
                 <path d="M0 0h32L0 32z" fill="currentColor" fillOpacity=".05" />
               </svg>
+            </div>
+          </div>
+          <div className="mb-8 flex justify-center items-center">
+            <div className="flex items-center space-x-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+              <span
+                className={`text-lg font-semibold ${
+                  showBlind75Only ? "text-gray-500" : "text-blue-600"
+                }`}
+              >
+                All Questions
+              </span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={showBlind75Only}
+                  onChange={() => setShowBlind75Only(!showBlind75Only)}
+                />
+                <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              </label>
+              <span
+                className={`text-lg font-semibold ${
+                  showBlind75Only ? "text-blue-600" : "text-gray-500"
+                }`}
+              >
+                Blind 75
+              </span>
             </div>
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -867,7 +926,7 @@ export default function Component() {
           <DPLevelFilter />
           <div className="mb-6">
             <div className="flex space-x-2 overflow-x-auto pb-2">
-              {["all", "easy", "medium", "hard", "dp"].map((tab) => (
+              {["all", "easy", "medium", "hard", "dp", "blind75"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -879,6 +938,8 @@ export default function Component() {
                 >
                   {tab === "dp"
                     ? "Dynamic Programming"
+                    : tab === "blind75"
+                    ? "Blind 75"
                     : tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </button>
               ))}
@@ -938,22 +999,86 @@ export default function Component() {
                 >
                   Previous
                 </a>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <a
-                      key={page}
-                      href="#"
-                      onClick={(e) => handlePageChange(page, e)}
-                      className={`px-3 py-2 border border-gray-300 bg-white text-sm font-medium ${
-                        currentPage === page
-                          ? "text-blue-600 bg-blue-50"
-                          : "text-gray-500 hover:bg-gray-50"
-                      }`}
-                    >
-                      {page}
-                    </a>
-                  )
-                )}
+                {(() => {
+                  const pageNumbers = [];
+                  const maxVisiblePages = 3;
+                  const halfVisible = Math.floor(maxVisiblePages / 2);
+
+                  let startPage = Math.max(1, currentPage - halfVisible);
+                  let endPage = Math.min(
+                    totalPages,
+                    startPage + maxVisiblePages - 1
+                  );
+
+                  if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                  }
+
+                  if (startPage > 1) {
+                    pageNumbers.push(
+                      <a
+                        key={1}
+                        href="#"
+                        onClick={(e) => handlePageChange(1, e)}
+                        className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                      >
+                        1
+                      </a>
+                    );
+                    if (startPage > 2) {
+                      pageNumbers.push(
+                        <span
+                          key="start-ellipsis"
+                          className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500"
+                        >
+                          ...
+                        </span>
+                      );
+                    }
+                  }
+
+                  for (let i = startPage; i <= endPage; i++) {
+                    pageNumbers.push(
+                      <a
+                        key={i}
+                        href="#"
+                        onClick={(e) => handlePageChange(i, e)}
+                        className={`px-3 py-2 border border-gray-300 bg-white text-sm font-medium ${
+                          currentPage === i
+                            ? "text-blue-600 bg-blue-50"
+                            : "text-gray-500 hover:bg-gray-50"
+                        }`}
+                      >
+                        {i}
+                      </a>
+                    );
+                  }
+
+                  if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                      pageNumbers.push(
+                        <span
+                          key="end-ellipsis"
+                          className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500"
+                        >
+                          ...
+                        </span>
+                      );
+                    }
+                    pageNumbers.push(
+                      <a
+                        key={totalPages}
+                        href="#"
+                        onClick={(e) => handlePageChange(totalPages, e)}
+                        className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                      >
+                        {totalPages}
+                      </a>
+                    );
+                  }
+
+                  return pageNumbers;
+                })()}
                 <a
                   href="#"
                   onClick={(e) =>
