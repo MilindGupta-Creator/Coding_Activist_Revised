@@ -128,19 +128,13 @@ const JobDetails = () => {
           {/* heading */}
           <header className="flex justify-between items-start text-black">
             <div className="flex flex-col">
-              {job.image ? (
-                <img
-                  src={job?.image}
-                  height={100}
-                  width={100}
-                  alt="company-logo"
-                  className="rounded-full w-20 h-20 bg-white object-contain shadow-2xl shadow-blue-500/20"
-                />
-              ) : (
-                <div className="bg-violet-600 rounded-full h-12 w-12 flex items-center justify-center">
-                  <FaBriefcase className="text-white text-2xl" />
-                </div>
-              )}
+              <img
+                src={job?.image}
+                height={100}
+                width={100}
+                alt="company-logo"
+                className="rounded-full w-20 h-20 bg-white object-contain shadow-2xl shadow-blue-500/20"
+              />
               <p className="text-2xl">Role: {job?.role}</p>
               <p className="text-xl">{job?.name}</p>
             </div>
