@@ -17,6 +17,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { JobMarketData } from "./JobMarketData";
+import { useEffect } from "react";
 
 interface PathDetailProps {
   path: LearningPath;
@@ -24,6 +25,10 @@ interface PathDetailProps {
 }
 
 export function PathDetail({ path, onBack }: PathDetailProps) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const getResourceIcon = (type: string) => {
     switch (type) {
       case "video":
