@@ -178,16 +178,16 @@ const Home: React.FC = () => {
                     description={""}
                     createdAt={""}
                   />
-                  {(index + 1) % 6 === 0 && (
+                  {/* {(index + 1) % 6 === 0 && (
                     <section className="section-container flex pt-6" style={{alignItems:"end"}}>
-                      {/* <Link href="/jobs" className="back-link">
+                      <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
-        </Link> */}
+        </Link>
                       <div className="block md:hidden">
                         <HotUpdates />
                       </div>
                     </section>
-                  )}
+                  )} */}
                 </div>
               ))}
             </>
@@ -203,16 +203,16 @@ const Home: React.FC = () => {
                     description={""}
                     createdAt={""}
                   />
-                  {(index + 1) % 6 === 0 && (
+                  {/* {(index + 1) % 6 === 0 && (
                     <section className="section-container">
-                      {/* <Link href="/jobs" className="back-link">
+                      <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
-        </Link> */}
+        </Link>
                       <div className="block md:hidden">
                         <HotUpdates />
                       </div>
                     </section>
-                  )}
+                  )} */}
                 </div>
               ))}
             </>
@@ -220,9 +220,9 @@ const Home: React.FC = () => {
           {loading && <Skeleton />}
           {!hasMore && <p>No more jobs to load.</p>}
         </div>
-        <div className="w-1/5 md:block hidden sticky top-0 right-0">
+        {/* <div className="w-1/5 md:block hidden sticky top-0 right-0">
           <HotUpdates />
-        </div>
+        </div> */}
       </div>
       <button
         className="mb-16 fixed bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
