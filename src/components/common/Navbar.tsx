@@ -43,7 +43,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // 1.5 second delay
       await firebase.auth().signOut();
     } catch (error) {
       console.error("Error signing out:", error);
@@ -66,7 +66,7 @@ const Navbar = () => {
           />
           <p className={`font-bold  text-gray-400`}>Coding Activist</p>
         </Link>
-        <div className="md:flex items-center gap-x-20 hidden relative">
+        <div className="md:flex items-center gap-x-10 hidden relative">
           <Link
             href="/"
             className={`hover:scale-100 duration-500 ${
@@ -84,6 +84,14 @@ const Navbar = () => {
             Questions
           </Link>
           <Link
+            href="/visualizing_paths"
+            className={`hover:scale-100 duration-500 ${
+              pathname === "/visualizing_paths" ? "text-white" : " text-[#5E548E]"
+            }`}
+          >
+            Tech Roadmap
+          </Link>
+          <Link
             href="/jobs"
             className={`hover:scale-100 duration-500 ${
               pathname === "/jobs" ? "text-white" : " text-[#5E548E]"
@@ -96,19 +104,35 @@ const Navbar = () => {
               onClick={handleSignOut}
               disabled={isSigningOut}
               className={`bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ${
-                isSigningOut ? 'opacity-50 cursor-not-allowed' : ''
+                isSigningOut ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {isSigningOut ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Signing Out...
                 </span>
               ) : (
-                'Sign Out'
+                "Sign Out"
               )}
             </button>
           ) : (
@@ -145,6 +169,15 @@ const Navbar = () => {
               Home
             </Link>
             <Link
+              href="/visualizing_paths"
+              className={`hover:scale-100 duration-500 ${
+                pathname === "/visualizing_paths" ? "text-[#5E548E]" : "text-black"
+              }`}
+              onClick={() => setShowCloseMenu((prev) => !prev)}
+            >
+              Tech Roadmap
+            </Link>
+            <Link
               href="/questions"
               className={`hover:scale-100 duration-500 ${
                 pathname === "/questions" ? "text-[#5E548E]" : "text-black"
@@ -170,19 +203,35 @@ const Navbar = () => {
                 }}
                 disabled={isSigningOut}
                 className={`bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ${
-                  isSigningOut ? 'opacity-50 cursor-not-allowed' : ''
+                  isSigningOut ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
                 {isSigningOut ? (
                   <span className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Signing Out...
                   </span>
                 ) : (
-                  'Sign Out'
+                  "Sign Out"
                 )}
               </button>
             ) : (

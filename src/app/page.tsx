@@ -93,6 +93,14 @@ export default function Home() {
               </div>
             </button>
           </Link>
+          <Link href="/visualizing_paths">
+            <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
+              <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
+                Tech Roadmap
+                <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
+              </div>
+            </button>
+          </Link>
         </section>
       </div>
     </div>
