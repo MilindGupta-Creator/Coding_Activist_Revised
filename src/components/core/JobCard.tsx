@@ -7,16 +7,24 @@ interface JobCardProps {
   title: string;
   description: string;
   createdAt: string;
+  className?: string;
 }
 
-const JobCard = (jobs: JobCardProps) => {
+const JobCard = ({
+  job,
+  id,
+  title,
+  description,
+  createdAt,
+  className,
+}: JobCardProps) => {
   return (
-    <div className="bg-[#000] rounded-lg p-5 w-80 h-auto items-baseline  ">
+    <div className={`bg-[#000] rounded-lg p-5 w-80 h-auto items-baseline`}>
       <div className="flex flex-col items-start">
         <div className="flex gap-x-2 items-center">
-          {jobs.job.image ? (
+          {job.image ? (
             <img
-              src={jobs.job.image || "/placeholder.svg"}
+              src={job.image || "/placeholder.svg"}
               alt="company-logo"
               className="bg-white rounded-full object-contain h-12 w-12"
               loading="lazy"
@@ -27,24 +35,28 @@ const JobCard = (jobs: JobCardProps) => {
             </div>
           )}
           <div className="flex flex-col justify-between">
-            <p className="text-xl">{jobs.job.name}</p>
+            <p className="text-xl">{job.name}</p>
             <p className="text-sm bg-[#8244FF] w-max px-2 py-1 rounded-xl mt-2 capitalize">
-              {jobs.job.type}
+              {job.type}
             </p>
           </div>
         </div>
-        <p className="mt-2 capitalize ">Role: {jobs.job.role}</p>
+        <p className="mt-2 capitalize ">Role: {job.role}</p>
         <div className="flex w-full gap-x-2 text-center mt-3">
           <p className="w-24 bg-gray-700 px-3 py-2 rounded-lg text-xs flex items-center truncate justify-center ">
-            <FaLocationDot className="mr-1" /> {jobs.job.address.split(" ")[0]}
+            <FaLocationDot className="mr-1" /> {job.address.split(" ")[0]}
           </p>
           <p className="w-44 truncate bg-gray-700 px-3 py-2 rounded-lg text-xs">
-            {jobs.job.salary || "Salary N/A"}
+            {job.salary || "Salary N/A"}
           </p>
         </div>
-        <div className="flex my-4 w-full flex-wrap gap-2 items-center">
+        <div
+          className={`flex my-4 w-full flex-wrap gap-2 items-center ${
+            className ? "blur" : ""
+          }`}
+        >
           <p className="text-gray-200">Skills:</p>
-          {jobs.job.skills.slice(0, 3).map((item: string, index: number) => (
+          {job.skills.slice(0, 3).map((item: string, index: number) => (
             <p
               className="border border-violet-600 text-violet-300 p-1 rounded-md text-xs"
               key={index}
@@ -53,13 +65,15 @@ const JobCard = (jobs: JobCardProps) => {
             </p>
           ))}
         </div>
-        <p className="mb-4 text-gray-200 text-sm">
-          Posted: {jobs.job.createdAt}
+        <p className={`mb-4 text-gray-200 text-sm ${className ? "blur" : ""}`}>
+          Posted: {createdAt}
         </p>
 
         <Link
-          href={`/job-details/${jobs.job.id}`}
-          className="bg-violet-600 hover:bg-violet-700 transition-colors duration-300 rounded-lg px-4 py-2 text-white "
+          href={`/job-details/${job.id}`}
+          className={`bg-violet-600 hover:bg-violet-700 transition-colors duration-300 rounded-lg px-4 py-2 text-white ${
+            className ? "blur pointer-events-none" : ""
+          }`}
         >
           Read more
         </Link>
