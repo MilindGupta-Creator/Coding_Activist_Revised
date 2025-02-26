@@ -36,6 +36,8 @@ export default function RootLayout({
           content="index, max-image-preview:large, max-snippet:-1"
         />
 
+        <meta name="google-adsense-account" content="ca-pub-2570738441831963" />
+
         {/* Google tag (gtag.js) */}
         <Script
           async
@@ -56,7 +58,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
-        
+
       </head>
       <body
         className={`${inter.className} relative bg-[#2C2B2B] bg-hero text-white bg-contain bg-no-repeat`}
