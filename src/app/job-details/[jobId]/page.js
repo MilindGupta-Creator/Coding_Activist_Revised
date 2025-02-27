@@ -37,7 +37,7 @@ const JobDetails = () => {
   const shareJob = () => {
     if (job) {
       navigator.clipboard.writeText(
-        `Check out this job opportunity: ${job.role} at ${job.name} - ${window.location.href}`
+        `${job.role} at ${job.name} - ${window.location.href}`
       );
       toast.success("Job details copied to clipboard!", {
         position: "top-right",
@@ -73,7 +73,7 @@ const JobDetails = () => {
         const snapshot = await db
           .collection("jobsDataCollection")
           .orderBy("createdAt", "desc")
-          .limit(2)
+          .limit(6)
           .get();
         const similarJobsData = snapshot.docs.map((doc) => {
           const data = doc.data();
