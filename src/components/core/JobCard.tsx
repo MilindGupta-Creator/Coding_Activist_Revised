@@ -11,7 +11,7 @@ interface JobCardProps {
 
 const JobCard = (jobs: JobCardProps) => {
   return (
-    <div className="bg-[#000] rounded-lg p-5 w-80 h-auto items-baseline  ">
+    <div className="bg-[#000] rounded-lg p-5 sm:w-80 h-auto items-baseline  ">
       <div className="flex flex-col items-start">
         <div className="flex gap-x-2 items-center">
           {jobs.job.image ? (
