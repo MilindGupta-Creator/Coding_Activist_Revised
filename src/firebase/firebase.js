@@ -29,4 +29,16 @@ try {
 
 const db = firebase.firestore();
 
+// Add persistence to cache data locally
+db.enablePersistence({ synchronizeTabs: true })
+  .catch((err) => {
+    if (err.code === 'failed-precondition') {
+      // Multiple tabs open, persistence can only be enabled in one tab at a time
+      console.log('Persistence failed: Multiple tabs open');
+    } else if (err.code === 'unimplemented') {
+      // The current browser does not support all required features
+      console.log('Persistence not supported by this browser');
+    }
+  });
+
 export { db, auth };

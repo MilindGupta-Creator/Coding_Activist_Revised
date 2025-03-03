@@ -8,7 +8,10 @@ import { formatDate } from "@/utils/index";
 import _ from "lodash";
 import Loading from "@/components/common/Loading";
 import { VscSettings } from "react-icons/vsc";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Briefcase, MapPin, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
+import { StatsCard } from "@/components/ui/stats-card";
+import TrendingSidebar from "@/components/ui/TrendingSidebar";
 
 interface JobData {
   type: string;
@@ -33,6 +36,14 @@ const Home: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState("all");
   const [showRemote, setShowRemote] = useState<boolean>(false); // New state for remote filter
+  const [stats, setStats] = useState({
+    totalJobs: 0,
+    remoteJobs: 0,
+    fullTimeJobs: 0,
+    internships: 0,
+  });
+
+
 
   const handleChange = (event: { target: { name: string; value: string } }) => {
     setFilters(event.target.value);
@@ -47,6 +58,33 @@ const Home: React.FC = () => {
       (!showRemote || item.address === "Remote") // Check for remote filter
     );
   });
+
+  const fetchJobStats = async () => {
+    try {
+      // Use a single query with where clauses or Firebase's aggregation features
+      const statsQuery = await db.collection("jobsDataCollection").get();
+      const jobs = statsQuery.docs.map(doc => doc.data());
+
+      // Calculate stats from this single query
+      setStats({
+        totalJobs: jobs.length,
+        remoteJobs: jobs.filter((job) => job.address === "Remote").length,
+        fullTimeJobs: jobs.filter((job) => job.type === "fulltime").length,
+        internships: jobs.filter((job) => job.type === "internship").length,
+      });
+
+      // Also set initial job data from this same query
+      const formattedJobs = jobs.map(job => ({
+        ...job,
+        id: job.id,
+        createdAt: formatDate(job.createdAt.toDate())
+      }));
+      setJobData(formattedJobs as JobData[]);
+
+    } catch (error) {
+      console.error("Error fetching job stats:", error);
+    }
+  };
 
   const fetchJobsData = async () => {
     if (loading || !hasMore) return;
@@ -79,7 +117,12 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
+    fetchJobStats();
+  }, []);
+
+  useEffect(() => {
     fetchJobsData();
+
   }, [filters, showRemote]); // Include showRemote in dependency array
 
   const handleScroll = useCallback(
@@ -106,31 +149,71 @@ const Home: React.FC = () => {
 
   return (
     <div className="w-4/5 mx-auto pt-20">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center mt-8"
+      >
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          Find Your Dream <span className="text-violet-500">Tech Job</span>
+        </h1>
+        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          Browse through hundreds of tech opportunities from top companies around the world.
+        </p>
+      </motion.div>
+
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4 mt-8">
+        <StatsCard
+          title="Total Jobs"
+          value={stats.totalJobs}
+          icon={<Briefcase className="text-violet-500" />}
+          change={{ value: "12%", positive: true }}
+        />
+        <StatsCard
+          title="Remote Jobs"
+          value={stats.remoteJobs}
+          icon={<MapPin className="text-green-500" />}
+          change={{ value: "8%", positive: true }}
+        />
+        <StatsCard
+          title="Full Time"
+          value={stats.fullTimeJobs}
+          icon={<Briefcase className="text-blue-500" />}
+        />
+        <StatsCard
+          title="Internships"
+          value={stats.internships}
+          icon={<TrendingUp className="text-yellow-500" />}
+          change={{ value: "5%", positive: false }}
+        />
+      </div>
+
       <div className="flex justify-end w-[calc(80%-20px)] gap-2">
         {/* Remote button */}
         <button
-          className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${
-            showRemote ? "bg-slate-800 text-white" : ""
-          }`}
+          className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${showRemote ? "bg-slate-800 text-white" : ""
+            }`}
           onClick={() => setShowRemote((prev) => !prev)}
         >
           Remote
         </button>
-        
+
         {/* Filter button */}
         {!showfilter && (
           <button
-          className={`
+            className={`
             border border-violet-500 mt-5 py-2 rounded-lg 
             flex items-center px-4 tracking-wider
             hover:bg-violet-700 
             ${showfilter ? 'bg-violet-50' : ''}
           `}
-          onClick={() => setShowFilter((prev) => !prev)}
-        >
-          <span className="mr-2">Filter</span>
-          <VscSettings className="w-4 h-4" />
-        </button>
+            onClick={() => setShowFilter((prev) => !prev)}
+          >
+            <span className="mr-2">Filter</span>
+            <VscSettings className="w-4 h-4" />
+          </button>
         )}
       </div>
       {showfilter && (
@@ -220,9 +303,9 @@ const Home: React.FC = () => {
           {loading && <Skeleton />}
           {!hasMore && <p>No more jobs to load.</p>}
         </div>
-        {/* <div className="w-1/5 md:block hidden sticky top-0 right-0">
-          <HotUpdates />
-        </div> */}
+        <div className="w-1/4 md:block hidden sticky top-20 right-0 h-[calc(100vh-5rem)]">
+          <TrendingSidebar trendingJobs={jobData.slice(0, 3)} />
+        </div>
       </div>
       <button
         className="mb-16 fixed bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"

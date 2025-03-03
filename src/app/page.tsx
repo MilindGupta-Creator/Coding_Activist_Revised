@@ -152,23 +152,25 @@ export default function Home() {
         </section> */}
 
         <section className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
-          <ButtonHoverEffect as={Link} href="/jobs" containerClassName="w-[90%] sm:w-auto">
-            <span className="flex items-center justify-center">
+          <Button asChild size="lg" className="w-full bg-black sm:w-auto">
+            <Link href="/jobs">
+              <Briefcase className="mr-2 h-5 w-5" />
               Explore Jobs
-            </span>
-          </ButtonHoverEffect>
-
-          <ButtonHoverEffect as={Link} href="/questions" containerClassName="w-[90%] sm:w-auto">
-            <span className="flex items-center justify-center">
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full sm:w-auto">
+            <Link href="/questions">
+              <Code className="mr-2 h-5 w-5" />
               Browse Questions
-            </span>
-          </ButtonHoverEffect>
+            </Link>
+          </Button>
 
-          <ButtonHoverEffect as={Link} href="/visualizing_paths" containerClassName="w-[90%] sm:w-auto">
-            <span className="flex items-center justify-center">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
+            <Link href="/visualizing_paths">
+              <GitFork className="mr-2 h-5 w-5" />
               Tech Roadmaps
-            </span>
-          </ButtonHoverEffect>
+            </Link>
+          </Button>
         </section>
 
 
