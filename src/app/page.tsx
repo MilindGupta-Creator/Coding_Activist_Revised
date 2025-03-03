@@ -16,8 +16,10 @@ import export3 from "../../public/assets/export-3.svg";
 import export4 from "../../public/assets/export-4.svg";
 import export5 from "../../public/assets/export-5.svg";
 import { ButtonHoverEffect } from "@/components/ui/button-hover-effect";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Briefcase, Code, GitFork } from "lucide-react";
 import { formatDate } from "@/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface Job {
   id: string;
