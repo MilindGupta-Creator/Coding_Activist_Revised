@@ -7,6 +7,7 @@ import {
   Server,
   Brain,
   Box,
+  Shield,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -2223,4 +2224,335 @@ export const learningPaths: LearningPath[] = [
       ],
     },
   },
+  {
+    id: "cybersecurity",
+    title: "Cybersecurity",
+    description:
+      "Master the art of protecting systems, networks, and data from digital attacks and security threats",
+    icon: Shield,
+    color: "bg-red-500",
+    category: "infrastructure",
+    totalDuration: "36 weeks",
+    careers: [
+      "Security Analyst",
+      "Penetration Tester",
+      "Security Engineer",
+      "Security Architect",
+      "CISO (Chief Information Security Officer)",
+      "Security Consultant",
+      "Incident Responder"
+    ],
+    whatsNext: {
+      topics: [
+        "Advanced Threat Hunting",
+        "Cloud Security Architecture",
+        "Security Automation with AI",
+        "Zero Trust Implementation",
+        "Quantum Cryptography",
+        "Advanced Malware Analysis",
+        "Security Orchestration (SOAR)",
+        "Red Team Operations"
+      ],
+      resources: [
+        {
+          name: "Advanced Penetration Testing",
+          url: "https://www.offensive-security.com/pwk-oscp/",
+          type: "course"
+        },
+        {
+          name: "Cloud Security Alliance Guidance",
+          url: "https://cloudsecurityalliance.org/research/guidance/",
+          type: "article"
+        },
+        {
+          name: "The Art of Memory Forensics",
+          url: "https://www.memoryanalysis.net/memory-forensics-book",
+          type: "book"
+        }
+      ]
+    },
+    salary: {
+      min: "85,000",
+      max: "200,000",
+      currency: "USD"
+    },
+    steps: [
+      {
+        title: "Security Fundamentals",
+        description:
+          "Learn the core concepts of cybersecurity, including basic principles, terminology, and security models",
+        resources: [
+          {
+            name: "CompTIA Security+ Certification",
+            url: "https://www.comptia.org/certifications/security",
+            type: "course"
+          },
+          {
+            name: "Cybersecurity Fundamentals",
+            url: "https://www.coursera.org/learn/cybersecurity-fundamentals",
+            type: "course"
+          },
+          {
+            name: "NIST Cybersecurity Framework",
+            url: "https://www.nist.gov/cyberframework",
+            type: "article"
+          },
+          {
+            name: "Introduction to Cybersecurity",
+            url: "https://www.youtube.com/watch?v=rcDO8km6R6c",
+            type: "video"
+          }
+        ],
+        timeEstimate: "8 weeks",
+        skillLevel: "beginner",
+        keyTakeaways: [
+          "Security principles (CIA triad)",
+          "Basic threat modeling",
+          "Security controls and frameworks",
+          "Risk assessment fundamentals"
+        ],
+        projects: [
+          {
+            title: "Security Assessment",
+            description: "Conduct a basic security assessment of a small network environment"
+          },
+          {
+            title: "Security Policy Development",
+            description: "Create a comprehensive security policy for a fictional organization"
+          }
+        ]
+      },
+      {
+        title: "Network Security",
+        description:
+          "Master the techniques for securing networks, understanding protocols, and implementing defensive measures",
+        resources: [
+          {
+            name: "Network Security Fundamentals",
+            url: "https://www.sans.org/cyber-security-courses/network-security-fundamentals/",
+            type: "course"
+          },
+          {
+            name: "Wireshark for Network Analysis",
+            url: "https://www.wireshark.org/docs/",
+            type: "article"
+          },
+          {
+            name: "Practical Packet Analysis",
+            url: "https://nostarch.com/packet3",
+            type: "book"
+          },
+          {
+            name: "Firewall Configuration Best Practices",
+            url: "https://www.youtube.com/watch?v=W5mhKrRUvD0",
+            type: "video"
+          }
+        ],
+        timeEstimate: "6 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "Network protocols and vulnerabilities",
+          "Firewall configuration and management",
+          "Intrusion detection/prevention systems",
+          "VPN and secure communications"
+        ],
+        prerequisites: [
+          "Basic networking knowledge",
+          "Understanding of TCP/IP",
+          "Familiarity with security principles"
+        ],
+        projects: [
+          {
+            title: "Network Defense Setup",
+            description: "Configure a secure network with proper segmentation and monitoring"
+          },
+          {
+            title: "Traffic Analysis",
+            description: "Analyze network traffic to identify and mitigate potential threats"
+          }
+        ]
+      },
+      {
+        title: "Ethical Hacking and Penetration Testing",
+        description:
+          "Learn offensive security techniques to identify vulnerabilities before malicious actors can exploit them",
+        resources: [
+          {
+            name: "Penetration Testing: A Hands-On Introduction",
+            url: "https://nostarch.com/pentesting",
+            type: "book"
+          },
+          {
+            name: "Kali Linux Revealed",
+            url: "https://kali.training/",
+            type: "course"
+          },
+          {
+            name: "OWASP Top 10",
+            url: "https://owasp.org/www-project-top-ten/",
+            type: "article"
+          },
+          {
+            name: "Metasploit Framework Tutorial",
+            url: "https://www.offensive-security.com/metasploit-unleashed/",
+            type: "course"
+          }
+        ],
+        timeEstimate: "8 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "Vulnerability assessment methodologies",
+          "Penetration testing frameworks",
+          "Exploitation techniques",
+          "Reporting and remediation"
+        ],
+        prerequisites: [
+          "Network security knowledge",
+          "Basic scripting skills",
+          "Understanding of operating systems"
+        ],
+        projects: [
+          {
+            title: "Web Application Penetration Test",
+            description: "Conduct a comprehensive penetration test on a web application"
+          },
+          {
+            title: "Network Vulnerability Assessment",
+            description: "Perform a vulnerability assessment and create a detailed report"
+          }
+        ]
+      },
+      {
+        title: "Security Operations and Incident Response",
+        description:
+          "Master the art of monitoring, detecting, and responding to security incidents effectively",
+        resources: [
+          {
+            name: "Incident Response & Computer Forensics",
+            url: "https://www.amazon.com/Incident-Response-Computer-Forensics-Third/dp/0071798684",
+            type: "book"
+          },
+          {
+            name: "SANS Incident Handling",
+            url: "https://www.sans.org/cyber-security-courses/advanced-incident-response-threat-hunting-training/",
+            type: "course"
+          },
+          {
+            name: "SIEM Implementation",
+            url: "https://www.splunk.com/en_us/resources/videos/getting-started-with-splunk-security.html",
+            type: "video"
+          },
+          {
+            name: "NIST Incident Response Framework",
+            url: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf",
+            type: "article"
+          }
+        ],
+        timeEstimate: "6 weeks",
+        skillLevel: "advanced",
+        keyTakeaways: [
+          "Security monitoring and SIEM",
+          "Incident response procedures",
+          "Digital forensics basics",
+          "Threat hunting techniques"
+        ],
+        prerequisites: [
+          "Network security experience",
+          "Understanding of common attacks",
+          "Log analysis skills"
+        ],
+        projects: [
+          {
+            title: "Incident Response Plan",
+            description: "Develop a comprehensive incident response plan for an organization"
+          },
+          {
+            title: "SIEM Implementation",
+            description: "Set up a Security Information and Event Management system"
+          }
+        ]
+      },
+      {
+        title: "Cloud Security",
+        description:
+          "Learn how to secure cloud environments and understand the unique challenges of cloud security",
+        resources: [
+          {
+            name: "AWS Security Fundamentals",
+            url: "https://aws.amazon.com/training/course-descriptions/security-fundamentals/",
+            type: "course"
+          },
+          {
+            name: "Azure Security Best Practices",
+            url: "https://docs.microsoft.com/en-us/azure/security/fundamentals/best-practices-and-patterns",
+            type: "article"
+          },
+          {
+            name: "Cloud Security Alliance Guidance",
+            url: "https://cloudsecurityalliance.org/research/guidance/",
+            type: "article"
+          },
+          {
+            name: "Securing DevOps",
+            url: "https://www.manning.com/books/securing-devops",
+            type: "book"
+          }
+        ],
+        timeEstimate: "8 weeks",
+        skillLevel: "advanced",
+        keyTakeaways: [
+          "Cloud security models (shared responsibility)",
+          "Identity and access management in the cloud",
+          "Secure cloud architecture",
+          "Container and serverless security"
+        ],
+        prerequisites: [
+          "Basic cloud computing knowledge",
+          "Security fundamentals",
+          "Understanding of virtualization"
+        ],
+        projects: [
+          {
+            title: "Secure Cloud Deployment",
+            description: "Design and implement a secure cloud infrastructure"
+          },
+          {
+            title: "Cloud Security Assessment",
+            description: "Conduct a security assessment of a cloud environment"
+          }
+        ]
+      }
+    ],
+    prerequisites: [
+      "Basic understanding of networking concepts",
+      "Familiarity with operating systems (Windows, Linux)",
+      "Problem-solving skills and logical thinking",
+      "Basic programming or scripting knowledge"
+    ],
+    tools: [
+      "Kali Linux",
+      "Wireshark",
+      "Metasploit",
+      "Nmap",
+      "Burp Suite",
+      "Splunk or ELK Stack",
+      "OWASP ZAP",
+      "Hashcat/John the Ripper"
+    ],
+    industryTrends: [
+      "Zero Trust Architecture",
+      "Cloud-native security",
+      "Security automation and orchestration",
+      "AI/ML in cybersecurity",
+      "DevSecOps integration",
+      "Supply chain security",
+      "Ransomware protection strategies"
+    ],
+    shareableLink: "https://techpaths.com/share/cybersecurity",
+    jobMarketData: {
+      openPositions: 715000,
+      growthRate: "33% (Much faster than average)",
+      topCompanies: ["Microsoft", "Cisco", "IBM", "Palo Alto Networks", "CrowdStrike", "Mandiant"]
+    }
+  }
 ];
