@@ -16,7 +16,7 @@ import export3 from "../../public/assets/export-3.svg";
 import export4 from "../../public/assets/export-4.svg";
 import export5 from "../../public/assets/export-5.svg";
 import { ButtonHoverEffect } from "@/components/ui/button-hover-effect";
-import { ArrowRight, Briefcase, Code, GitFork } from "lucide-react";
+import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer } from 'lucide-react';
 import { formatDate } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,24 @@ interface Job {
   id: string;
   [key: string]: any;
 }
+
+const benefits = [
+  {
+    icon: <Globe2 className="w-8 h-8 text-blue-500" />,
+    title: "Work from Anywhere",
+    description: "Choose your perfect work environment, whether it's home, a café, or across the globe."
+  },
+  {
+    icon: <Timer className="w-8 h-8 text-green-500" />,
+    title: "Flexible Hours",
+    description: "Balance your work and life with schedules that adapt to your needs."
+  },
+  {
+    icon: <Laptop2 className="w-8 h-8 text-purple-500" />,
+    title: "Latest Tech Stack",
+    description: "Work with cutting-edge technologies and keep your skills sharp."
+  }
+];
 
 export default function Home() {
   const [isMarqueeVisible, setIsMarqueeVisible] = useState(false);
@@ -209,6 +227,24 @@ export default function Home() {
             </Link>
           </div>
 
+        </div>
+
+        <div className="pt-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Why Remote Work?</h2>
+              <p className="text-gray-400">Embrace the future of work with these amazing benefits</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="text-center p-6">
+                  <div className="mb-4 flex justify-center">{benefit.icon}</div>
+                  <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
+                  <p className="text-gray-400">{benefit.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
 

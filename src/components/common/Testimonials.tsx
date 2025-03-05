@@ -125,7 +125,7 @@ export default function CommunityVoices() {
     };
 
     return (
-        <div className="w-full mt-12 py-8 text-white overflow-hidden">
+        <div className="w-full mt-12 pb-8 text-white overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
                     <div className="flex items-center justify-center mb-4">
