@@ -90,8 +90,13 @@ export default function Home() {
   return (
     <div className="flex md:justify-center md:items-center items-start min-h-screen w-full">
       <div className="flex flex-col items-center justify-center pt-20 pb-4 w-full">
-        <h1 className="font-extrabold md:text-6xl mb-5 text-4xl text-center leading-tight mt-12">
-          Create .Connect. Discover
+
+        <Badge className=" mt-12 mb-4 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-500 border-blue-500/20">
+          #1 Remote Job Platform for Tech Professionals
+        </Badge>
+
+        <h1 className="font-extrabold md:text-6xl mb-5 text-4xl text-center leading-tight mt-8">
+          Connect .Create. <span className="text-blue-500">Discover</span>
         </h1>
         <p className="text-center md:text-xl font-bold">
           This is a Community of Coders{" "}
@@ -144,32 +149,7 @@ export default function Home() {
           )}
         </div>
         <div className="md:w-2/3 w-full h-0.5 bg-white opacity-10 mt-3 mb-6" />
-        {/* <section className="flex gap-y-3 mt-4 z-0">
-          <Link href="/jobs">
-            <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
-              <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
-                Jobs
-                <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
-              </div>
-            </button>
-          </Link>
-          <Link href="/questions">
-            <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
-              <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
-                Questions
-                <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
-              </div>
-            </button>
-          </Link>
-          <Link href="/visualizing_paths">
-            <button className="bg-[#5E548E] px-12 flex hover:shadow-[4.0px_8.0px_8.0px_rgba(0,0,0,0.38)] justify-center rounded-lg py-2 group relative overflow-hidden w-full">
-              <div className="flex items-center gap-x-2 z-10 text-white text-xl font-medium w-full justify-center">
-                Tech Roadmap
-                <AiOutlineArrowRight className="group-hover:translate-x-1 duration-200 transition-all ease-in-out text-white" />
-              </div>
-            </button>
-          </Link>
-        </section> */}
+
 
         <section className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
           <Button asChild size="lg" className="w-full bg-black sm:w-auto">
