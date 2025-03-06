@@ -30,7 +30,11 @@ interface Props {
 const Home: React.FC = () => {
   const [jobData, setJobData] = useState<JobData[]>([]);
   const [lastVisible, setLastVisible] = useState<any>(null);
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [dataLoading, setDataLoading] = useState<boolean>(false);
+  const [loadingTime, setLoadingTime] = useState<number>(0);
+  const [loadingMessage, setLoadingMessage] = useState<string>("Initializing...");
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [showfilter, setShowFilter] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -43,6 +47,50 @@ const Home: React.FC = () => {
     internships: 0,
   });
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (initialLoading) {
+      // Start a timer that increments every second
+      timer = setInterval(() => {
+        setLoadingTime(prev => {
+          const newTime = prev + 1;
+
+          // Update loading message based on time elapsed
+          if (newTime === 3) {
+            setLoadingMessage("Connecting to database...");
+          } else if (newTime === 6) {
+            setLoadingMessage("Fetching job listings...");
+          } else if (newTime === 9) {
+            setLoadingMessage("Almost there...");
+          } else if (newTime > 12) {
+            setLoadingMessage("Still loading... This is taking longer than usual.");
+          }
+
+          return newTime;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [initialLoading]);
+
+  const LoadingIndicator = () => (
+    <div className="w-full flex flex-col items-center justify-center py-10">
+      <div className="bg-gray-300 bg-opacity-10 w-24 h-24 rounded-full flex items-center justify-center mb-4">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-violet-500"></div>
+      </div>
+      <p className="text-gray-300 text-lg">{loadingMessage}</p>
+      <p className="text-gray-400 text-sm mt-2">Loading for {loadingTime} seconds</p>
+
+      <div className="mt-8 w-full">
+        <Skeleton />
+      </div>
+
+    </div>
+  );
 
 
   const handleChange = (event: { target: { name: string; value: string } }) => {
@@ -60,6 +108,7 @@ const Home: React.FC = () => {
   });
 
   const fetchJobStats = async () => {
+    if (!initialLoading) setDataLoading(true);
     try {
       // Use a single query with where clauses or Firebase's aggregation features
       const statsQuery = await db.collection("jobsDataCollection").get();
@@ -83,8 +132,12 @@ const Home: React.FC = () => {
 
     } catch (error) {
       console.error("Error fetching job stats:", error);
+    } finally {
+      setInitialLoading(false);
+      setDataLoading(false);
     }
   };
+
 
   const fetchJobsData = async () => {
     if (loading || !hasMore) return;
@@ -117,7 +170,11 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchJobStats();
+    const initializeApp = async () => {
+      await fetchJobStats(); // This will set initialLoading to false when done
+    };
+
+    initializeApp();
   }, []);
 
   useEffect(() => {
@@ -163,105 +220,114 @@ const Home: React.FC = () => {
         </p>
       </motion.div>
 
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4 mt-8">
-        <StatsCard
-          title="Total Jobs"
-          value={stats.totalJobs}
-          icon={<Briefcase className="text-violet-500" />}
-          change={{ value: "12%", positive: true }}
-        />
-        <StatsCard
-          title="Remote Jobs"
-          value={stats.remoteJobs}
-          icon={<MapPin className="text-green-500" />}
-          change={{ value: "8%", positive: true }}
-        />
-        <StatsCard
-          title="Full Time"
-          value={stats.fullTimeJobs}
-          icon={<Briefcase className="text-blue-500" />}
-        />
-        <StatsCard
-          title="Internships"
-          value={stats.internships}
-          icon={<TrendingUp className="text-yellow-500" />}
-          change={{ value: "5%", positive: false }}
-        />
-      </div>
+      {initialLoading || dataLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4 mt-8">
 
-      <div className="flex justify-end w-[calc(80%-20px)] gap-2">
-        {/* Remote button */}
-        <button
-          className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${showRemote ? "bg-slate-800 text-white" : ""
-            }`}
-          onClick={() => setShowRemote((prev) => !prev)}
-        >
-          Remote
-        </button>
+            <>
+              <StatsCard
+                title="Total Jobs"
+                value={stats.totalJobs}
+                icon={<Briefcase className="text-violet-500" />}
+                change={{ value: "12%", positive: true }}
+              />
+              <StatsCard
+                title="Remote Jobs"
+                value={stats.remoteJobs}
+                icon={<MapPin className="text-green-500" />}
+                change={{ value: "8%", positive: true }}
+              />
+              <StatsCard
+                title="Full Time"
+                value={stats.fullTimeJobs}
+                icon={<Briefcase className="text-blue-500" />}
+              />
+              <StatsCard
+                title="Internships"
+                value={stats.internships}
+                icon={<TrendingUp className="text-yellow-500" />}
+                change={{ value: "5%", positive: false }}
+              />
+            </>
 
-        {/* Filter button */}
-        {!showfilter && (
-          <button
-            className={`
+          </div>
+
+          <div className="flex justify-end w-[calc(80%-20px)] gap-2">
+            {/* Remote button */}
+            <button
+              className={`border-blue-500 border mt-5 py-2 px-4 rounded-lg ${showRemote ? "bg-slate-800 text-white" : ""
+                }`}
+              onClick={() => setShowRemote((prev) => !prev)}
+            >
+              Remote
+            </button>
+
+            {/* Filter button */}
+            {!showfilter && (
+              <button
+                className={`
             border border-violet-500 mt-5 py-2 rounded-lg 
             flex items-center px-4 tracking-wider
             hover:bg-violet-700 
             ${showfilter ? 'bg-violet-50' : ''}
           `}
-            onClick={() => setShowFilter((prev) => !prev)}
-          >
-            <span className="mr-2">Filter</span>
-            <VscSettings className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-      {showfilter && (
-        <div className="md:w-[calc(80%-15px)] mt-1 bg-white p-4 rounded-lg shadow-lg">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-semibold text-gray-900">Filter</h1>
-            <button
-              className="text-gray-800 bg-gray-100 border border-gray-300 hover:bg-gray-200 px-3 py-1 rounded-full transition duration-300"
-              onClick={() => setShowFilter(false)}
-            >
-              &times; Close
-            </button>
-          </div>
-          <hr className="border-gray-300" />
-          <div className="flex gap-x-5 mt-5">
-            <label className="block text-gray-800 text-sm font-medium">
-              Job Type
-              <select
-                name="jobType"
-                id=""
-                className="block w-full mt-2 p-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition ease-in-out duration-200"
-                onChange={handleChange}
-                value={filters}
+                onClick={() => setShowFilter((prev) => !prev)}
               >
-                <option value="all">🔍 All </option>
-                <option value="fulltime">💼 Full Time</option>
-                <option value="internship">👩‍💻 Internship</option>
-              </select>
-            </label>
+                <span className="mr-2">Filter</span>
+                <VscSettings className="w-4 h-4" />
+              </button>
+            )}
           </div>
-        </div>
-      )}
+          {showfilter && (
+            <div className="md:w-[calc(80%-15px)] mt-1 bg-white p-4 rounded-lg shadow-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-semibold text-gray-900">Filter</h1>
+                <button
+                  className="text-gray-800 bg-gray-100 border border-gray-300 hover:bg-gray-200 px-3 py-1 rounded-full transition duration-300"
+                  onClick={() => setShowFilter(false)}
+                >
+                  &times; Close
+                </button>
+              </div>
+              <hr className="border-gray-300" />
+              <div className="flex gap-x-5 mt-5">
+                <label className="block text-gray-800 text-sm font-medium">
+                  Job Type
+                  <select
+                    name="jobType"
+                    id=""
+                    className="block w-full mt-2 p-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition ease-in-out duration-200"
+                    onChange={handleChange}
+                    value={filters}
+                  >
+                    <option value="all">🔍 All </option>
+                    <option value="fulltime">💼 Full Time</option>
+                    <option value="internship">👩‍💻 Internship</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          )}
 
-      <div className="flex justify-between mt-10 gap-x-5">
-        <div className="flex flex-wrap justify-between items-start gap-5 md:w-2/3 overflow-scroll jobs-section">
-          {filteredJobs ? (
-            <>
-              {filteredJobs.map((job, index) => (
-                <div key={index}>
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                    id={""}
-                    title={""}
-                    description={""}
-                    createdAt={""}
-                  />
-                  {/* {(index + 1) % 6 === 0 && (
+          <div className="flex justify-between mt-10 gap-x-5">
+            <div className="flex flex-wrap justify-between items-start gap-5 md:w-2/3 overflow-scroll jobs-section">
+              {initialLoading || dataLoading ? (
+                <LoadingIndicator />
+              ) : filteredJobs.length > 0 ? (
+                <>
+                  {filteredJobs.map((job, index) => (
+                    <div key={index}>
+                      <JobCard
+                        key={job.id}
+                        job={job}
+                        id={""}
+                        title={""}
+                        description={""}
+                        createdAt={""}
+                      />
+                      {/* {(index + 1) % 6 === 0 && (
                     <section className="section-container flex pt-6" style={{alignItems:"end"}}>
                       <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
@@ -271,22 +337,22 @@ const Home: React.FC = () => {
                       </div>
                     </section>
                   )} */}
-                </div>
-              ))}
-            </>
-          ) : (
-            <>
-              {jobData.map((job, index) => (
-                <div key={index}>
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                    id={""}
-                    title={""}
-                    description={""}
-                    createdAt={""}
-                  />
-                  {/* {(index + 1) % 6 === 0 && (
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {jobData.map((job, index) => (
+                    <div key={index}>
+                      <JobCard
+                        key={job.id}
+                        job={job}
+                        id={""}
+                        title={""}
+                        description={""}
+                        createdAt={""}
+                      />
+                      {/* {(index + 1) % 6 === 0 && (
                     <section className="section-container">
                       <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
@@ -296,23 +362,27 @@ const Home: React.FC = () => {
                       </div>
                     </section>
                   )} */}
-                </div>
-              ))}
-            </>
-          )}
-          {loading && <Skeleton />}
-          {!hasMore && <p>No more jobs to load.</p>}
+                    </div>
+                  ))}
+                </>
+              )}
+              {loading && <Skeleton />}
+              {!hasMore && <p>No more jobs to load.</p>}
+            </div>
+            <div className="w-1/4 md:block hidden sticky top-20 right-0 h-[calc(100vh-5rem)]">
+              <TrendingSidebar trendingJobs={jobData.slice(0, 3)} />
+            </div>
+          </div>
+          <button
+            className="mb-16 fixed bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
+            onClick={scrollToTop}
+          >
+            <ArrowUp className="h-6 w-6" />
+          </button>
         </div>
-        <div className="w-1/4 md:block hidden sticky top-20 right-0 h-[calc(100vh-5rem)]">
-          <TrendingSidebar trendingJobs={jobData.slice(0, 3)} />
-        </div>
-      </div>
-      <button
-        className="mb-16 fixed bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
-        onClick={scrollToTop}
-      >
-        <ArrowUp className="h-6 w-6" />
-      </button>
+      )
+      }
+
     </div>
   );
 };
