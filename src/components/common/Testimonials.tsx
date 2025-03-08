@@ -55,7 +55,7 @@ const testimonials: Testimonial[] = [
 ];
 
 // Duplicate testimonials to create an infinite effect
-const duplicatedTestimonials = [...testimonials];
+const duplicatedTestimonials = [...testimonials,...testimonials];
 
 export default function CommunityVoices() {
     const [isPaused, setIsPaused] = useState(false);
