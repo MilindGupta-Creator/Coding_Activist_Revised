@@ -16,10 +16,16 @@ import export3 from "../../public/assets/export-3.svg";
 import export4 from "../../public/assets/export-4.svg";
 import export5 from "../../public/assets/export-5.svg";
 import { ButtonHoverEffect } from "@/components/ui/button-hover-effect";
-import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer } from 'lucide-react';
+import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer, Blocks, Brain, Cpu, Database, LineChart, Shield, Users, Building2, Gem } from 'lucide-react';
 import { formatDate } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Job {
   id: string;
@@ -41,6 +47,50 @@ const benefits = [
     icon: <Laptop2 className="w-8 h-8 text-purple-500" />,
     title: "Latest Tech Stack",
     description: "Work with cutting-edge technologies and keep your skills sharp."
+  }
+];
+
+const stats = [
+  {
+    icon: <Users className="w-8 h-8 text-blue-500" />,
+    value: "8,000+",
+    label: "Active Users",
+    description: "Tech professionals in our community"
+  },
+  {
+    icon: <Building2 className="w-8 h-8 text-green-500" />,
+    value: "300+",
+    label: "Companies",
+    description: "Jobs posted through our platform"
+  },
+  {
+    icon: <Gem className="w-8 h-8 text-purple-500" />,
+    value: "95%",
+    label: "Success Rate",
+    description: "Of active job seekers find roles"
+  }
+];
+
+const faqs = [
+  {
+    question: "How does the remote job platform work?",
+    answer: "Our platform connects tech professionals with companies offering remote positions. Create a profile, browse opportunities that match your skills, and apply with a single click. Companies can review your application and reach out directly through our messaging system."
+  },
+  {
+    question: "What types of companies hire through the platform?",
+    answer: "We partner with a diverse range of companies, from fast-growing startups to established tech giants. All companies are verified and committed to remote work culture, offering competitive compensation and benefits packages."
+  },
+  {
+    question: "Is the platform free for job seekers?",
+    answer: "Yes, job seekers can create profiles, browse jobs, and apply to positions completely free of charge. Premium features are available for enhanced visibility and additional tools, but the core functionality is always free."
+  },
+  {
+    question: "How can I increase my chances of getting hired?",
+    answer: "Complete your profile with detailed information about your skills and experience, keep your portfolio up-to-date, and actively participate in our community discussions. We also recommend following our blog for tips on remote job hunting and interview preparation."
+  },
+  {
+    question: "What makes this platform different from other job boards?",
+    answer: "We focus exclusively on remote tech positions and build a community around them. Our platform offers not just job listings, but also learning resources, mentorship opportunities, and networking events specifically for remote tech professionals."
   }
 ];
 
@@ -71,7 +121,6 @@ export default function Home() {
           return {
             id: doc.id,
             ...data,
-
             createdAt,
           };
         });
@@ -90,8 +139,7 @@ export default function Home() {
   return (
     <div className="flex md:justify-center md:items-center items-start min-h-screen w-full">
       <div className="flex flex-col items-center justify-center pt-20 pb-4 w-full">
-
-        <Badge className=" mt-12 mb-4 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-500 border-blue-500/20">
+        <Badge className="mt-12 mb-4 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-500 border-blue-500/20">
           #1 Remote Job Platform for Tech Professionals
         </Badge>
 
@@ -150,7 +198,6 @@ export default function Home() {
         </div>
         <div className="md:w-2/3 w-full h-0.5 bg-white opacity-10 mt-3 mb-6" />
 
-
         <section className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
           <Button asChild size="lg" className="w-full bg-black sm:w-auto">
             <Link href="/jobs">
@@ -164,7 +211,6 @@ export default function Home() {
               Browse Questions
             </Link>
           </Button>
-
           <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link href="/visualizing_paths">
               <GitFork className="mr-2 h-5 w-5" />
@@ -173,8 +219,23 @@ export default function Home() {
           </Button>
         </section>
 
+        {/* Statistics Section */}
+        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center p-6 bg-white/5 rounded-lg backdrop-blur-sm">
+                <div className="mb-4 flex justify-center">{stat.icon}</div>
+                <div className="text-4xl font-bold mb-2">{stat.value}</div>
+                <h3 className="text-xl font-semibold mb-2">{stat.label}</h3>
+                <p className="text-gray-400">{stat.description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        <div className=" mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+       
+      
+        <div className="mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Recently Added <span className="text-blue-500">Jobs</span>
@@ -186,7 +247,6 @@ export default function Home() {
             ) : recentJobs.length > 0 ? (
               recentJobs.map((job) => (
                 <JobCard
-
                   key={job.id}
                   job={job}
                   id={job.id}
@@ -206,7 +266,6 @@ export default function Home() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>
-
         </div>
 
         <div className="pt-12">
@@ -227,14 +286,27 @@ export default function Home() {
           </div>
         </div>
 
-
+        {/* FAQ Section */}
+        <section className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-gray-400">Everything you need to know about our platform</p>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                <AccordionContent>{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
 
         <Testimonials />
 
-        <div className=" w-full pt-8 border-t border-white/10 text-center text-gray-500">
+        <div className="w-full pt-8 border-t border-white/10 text-center text-gray-500">
           <p>© {new Date().getFullYear()} Coding Activist Community. All rights reserved.</p>
         </div>
-
       </div>
     </div>
   );
