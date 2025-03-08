@@ -16,7 +16,7 @@ import export3 from "../../public/assets/export-3.svg";
 import export4 from "../../public/assets/export-4.svg";
 import export5 from "../../public/assets/export-5.svg";
 import { ButtonHoverEffect } from "@/components/ui/button-hover-effect";
-import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer, Blocks, Brain, Cpu, Database, LineChart, Shield, Users, Building2, Gem } from 'lucide-react';
+import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer, Blocks, Brain, Cpu, Database, Users, Building2, Gem, Rocket, BarChart, GraduationCap } from 'lucide-react';
 import { formatDate } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card } from "@/components/ui/card";
 
 interface Job {
   id: string;
@@ -47,6 +48,32 @@ const benefits = [
     icon: <Laptop2 className="w-8 h-8 text-purple-500" />,
     title: "Latest Tech Stack",
     description: "Work with cutting-edge technologies and keep your skills sharp."
+  }
+];
+
+const technologies = [
+  "React", "Node.js", "Python", "Java", "TypeScript", "AWS", "Docker", "Kubernetes",
+  "GraphQL", "MongoDB", "PostgreSQL", "Vue.js", "Angular", "Go", "Ruby", "Rust"
+];
+
+const careerTracks = [
+  {
+    icon: <Rocket className="w-8 h-8 text-pink-400" />,
+    title: "Web Development",
+    description: "Master both front-end and back-end technologies",
+    skills: ["React", "Node.js", "PostgreSQL"]
+  },
+  {
+    icon: <BarChart className="w-8 h-8 text-emerald-400" />,
+    title: "Data Engineering",
+    description: "Design and implement data infrastructure Units.",
+    skills: ["Python", "Spark", "Kafka"]
+  },
+  {
+    icon: <Database className="w-8 h-8 text-purple-400" />,
+    title: "Blockchain Development",
+    description: "Build decentralized applications and smart contracts",
+    skills: ["Solidity", "Web3.js", "Smart Contracts"]
   }
 ];
 
@@ -233,8 +260,6 @@ export default function Home() {
           </div>
         </section>
 
-       
-      
         <div className="mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -267,6 +292,30 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        {/* Career Tracks Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Specialized Career Tracks</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {careerTracks.map((track, index) => (
+                <Link href="/visualizing_paths" key={index}>
+                  <div className="p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="mb-4">{track.icon}</div>
+                    <h3 className="text-xl font-semibold mb-2">{track.title}</h3>
+                    <p className="text-gray-400 mb-4">{track.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {track.skills.map((skill, skillIndex) => (
+                        <span key={skillIndex} className="px-3 py-1 rounded-full bg-white/10 text-sm">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <div className="pt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -285,6 +334,19 @@ export default function Home() {
             </div>
           </div>
         </div>
+        {/* Technologies Section */}
+        <section className="pt-8">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Technologies We Cover</h2>
+            <div className="flex flex-wrap justify-center gap-4">
+              {technologies.map((tech, index) => (
+                <span key={index} className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* FAQ Section */}
         <section className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
