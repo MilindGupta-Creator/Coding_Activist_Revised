@@ -317,6 +317,8 @@ export default function Home() {
           </div>
         </section>
 
+        <Testimonials />
+
         <div className="pt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
@@ -364,7 +366,179 @@ export default function Home() {
           </Accordion>
         </section>
 
-        <Testimonials />
+
+
+        {/* Industry Insights Section - NEW */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Industry Insights</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-2xl font-semibold mb-4">Remote Work Trends 2025</h3>
+                <p className="text-gray-400 mb-4">
+                  The landscape of remote work continues to evolve rapidly. Our latest research indicates that by 2025:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>85% of tech companies will maintain hybrid or fully remote work policies</li>
+                  <li>Cross-timezone collaboration tools will see a 200% growth in adoption</li>
+                  <li>AI-powered productivity tools will become standard in remote teams</li>
+                  <li>Virtual reality meetings will account for 30% of all remote collaborations</li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-2xl font-semibold mb-4">Emerging Tech Roles</h3>
+                <p className="text-gray-400 mb-4">
+                  New technological advances are creating unprecedented career opportunities:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>AI Ethics Officers</li>
+                  <li>Quantum Computing Specialists</li>
+                  <li>Digital Transformation Architects</li>
+                  <li>Blockchain System Integrators</li>
+                  <li>Metaverse Experience Designers</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Professional Development Section - NEW */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Professional Development Resources</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-xl font-semibold mb-4">Technical Writing</h3>
+                <p className="text-gray-400 mb-4">
+                  Enhance your documentation skills with our comprehensive technical writing course. Learn to:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>Write clear and concise documentation</li>
+                  <li>Create effective API references</li>
+                  <li>Design user-friendly guides</li>
+                  <li>Collaborate on open-source documentation</li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-xl font-semibold mb-4">System Design</h3>
+                <p className="text-gray-400 mb-4">
+                  Master the art of designing scalable systems through:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>Architecture best practices</li>
+                  <li>Scalability patterns</li>
+                  <li>Performance optimization</li>
+                  <li>Real-world case studies</li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-xl font-semibold mb-4">Soft Skills</h3>
+                <p className="text-gray-400 mb-4">
+                  Develop essential non-technical skills:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>Remote team communication</li>
+                  <li>Cross-cultural collaboration</li>
+                  <li>Time management</li>
+                  <li>Leadership in distributed teams</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Global Impact Section - NEW */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Global Impact & Sustainability</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-2xl font-semibold mb-4">Environmental Impact</h3>
+                <p className="text-gray-400 mb-4">
+                  Remote work contributes to environmental sustainability:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>Reduced carbon emissions from daily commutes</li>
+                  <li>Lower energy consumption in office buildings</li>
+                  <li>Decreased paper waste through digital collaboration</li>
+                  <li>Smaller carbon footprint from business travel</li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-2xl font-semibold mb-4">Social Impact</h3>
+                <p className="text-gray-400 mb-4">
+                  Our platform promotes inclusive tech opportunities:
+                </p>
+                <ul className="list-disc list-inside text-gray-400 space-y-2">
+                  <li>Access to global job markets from any location</li>
+                  <li>Support for underrepresented groups in tech</li>
+                  <li>Flexible work options for caregivers</li>
+                  <li>Economic growth in emerging tech hubs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Research & Innovation Section - NEW */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">Research & Innovation Hub</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-xl font-semibold mb-4">Latest Research Papers</h3>
+                <ul className="space-y-4 text-gray-400">
+                  <li>
+                    <strong className="text-white">Remote Work Productivity Study</strong>
+                    <p>Analysis of productivity patterns in distributed teams</p>
+                  </li>
+                  <li>
+                    <strong className="text-white">Tech Skills Gap Analysis</strong>
+                    <p>Comprehensive review of industry skill demands</p>
+                  </li>
+                  <li>
+                    <strong className="text-white">Future of Work Report</strong>
+                    <p>Predictions and trends for the next decade</p>
+                  </li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-xl font-semibold mb-4">Innovation Projects</h3>
+                <ul className="space-y-4 text-gray-400">
+                  <li>
+                    <strong className="text-white">AI Career Guidance</strong>
+                    <p>Personalized career path recommendations</p>
+                  </li>
+                  <li>
+                    <strong className="text-white">Virtual Collaboration Tools</strong>
+                    <p>Next-generation remote team solutions</p>
+                  </li>
+                  <li>
+                    <strong className="text-white">Skill Assessment Platform</strong>
+                    <p>Advanced technical evaluation systems</p>
+                  </li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-lg bg-white/5">
+                <h3 className="text-xl font-semibold mb-4">Upcoming Initiatives</h3>
+                <ul className="space-y-4 text-gray-400">
+                  <li>
+                    <strong className="text-white">Global Tech Census</strong>
+                    <p>Worldwide developer community survey</p>
+                  </li>
+                  <li>
+                    <strong className="text-white">Remote Work Standards</strong>
+                    <p>Industry best practices framework</p>
+                  </li>
+                  <li>
+                    <strong className="text-white">Tech Education Index</strong>
+                    <p>Comprehensive learning resource database</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <div className="w-full pt-8 border-t border-white/10 text-center text-gray-500">
           <p>© {new Date().getFullYear()} Coding Activist Community. All rights reserved.</p>
