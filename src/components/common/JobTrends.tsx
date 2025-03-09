@@ -451,7 +451,7 @@ const JobTrends = () => {
 
   return (
     <div className="space-y-8">
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+      <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 lg:p-6">
 
 
 

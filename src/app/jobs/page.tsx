@@ -386,7 +386,7 @@ const Home: React.FC = () => {
                 {!hasMore && <p>No more jobs to load.</p>}
               </div>
             ) : activeTab === "insights" ? (
-              <div>
+              <div className="w-[109%] ml-[-10px] md:w-3/4">
                 <JobTrends />
               </div>
             ) : null}
