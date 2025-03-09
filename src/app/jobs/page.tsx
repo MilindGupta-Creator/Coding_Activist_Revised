@@ -12,6 +12,8 @@ import { ArrowUp, Briefcase, MapPin, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/ui/stats-card";
 import TrendingSidebar from "@/components/ui/TrendingSidebar";
+import { Tabs } from "../../components/ui/tabs";
+import JobTrends from "@/components/common/JobTrends";
 
 interface JobData {
   type: string;
@@ -30,6 +32,7 @@ interface Props {
 const Home: React.FC = () => {
   const [jobData, setJobData] = useState<JobData[]>([]);
   const [lastVisible, setLastVisible] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("jobs");
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [dataLoading, setDataLoading] = useState<boolean>(false);
@@ -46,6 +49,13 @@ const Home: React.FC = () => {
     fullTimeJobs: 0,
     internships: 0,
   });
+
+  const tabs = [
+    { id: "jobs", label: "Available Jobs" },
+    // { id: "stats", label: "Statistics" },
+    { id: "insights", label: "Market Insights" },
+    // { id: "companies", label: "Company Features" },
+  ];
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -179,18 +189,19 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     fetchJobsData();
-
   }, [filters, showRemote]); // Include showRemote in dependency array
 
   const handleScroll = useCallback(
     _.throttle(() => {
-      const scrollPosition = window.innerHeight + window.pageYOffset;
-      const offset = 100; // Buffer before bottom
-      if (scrollPosition >= document.documentElement.offsetHeight - offset) {
-        fetchJobsData();
+      if (activeTab === "jobs") {
+        const scrollPosition = window.innerHeight + window.pageYOffset;
+        const offset = 100; // Buffer before bottom
+        if (scrollPosition >= document.documentElement.offsetHeight - offset) {
+          fetchJobsData();
+        }
       }
     }, 300),
-    [fetchJobsData]
+    [fetchJobsData, activeTab]
   );
 
   useEffect(() => {
@@ -311,23 +322,28 @@ const Home: React.FC = () => {
             </div>
           )}
 
-          <div className="flex justify-between mt-10 gap-x-5">
-            <div className="flex flex-wrap justify-between items-start gap-5 md:w-2/3 overflow-scroll jobs-section">
-              {initialLoading || dataLoading ? (
-                <LoadingIndicator />
-              ) : filteredJobs.length > 0 ? (
-                <>
-                  {filteredJobs.map((job, index) => (
-                    <div key={index}>
-                      <JobCard
-                        key={job.id}
-                        job={job}
-                        id={""}
-                        title={""}
-                        description={""}
-                        createdAt={""}
-                      />
-                      {/* {(index + 1) % 6 === 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          </div>
+
+          <div className="sm:flex justify-between mt-10 gap-x-5">
+            {activeTab === "jobs" ? (
+              <div className="flex flex-wrap justify-between items-start gap-5 md:w-2/3 overflow-scroll jobs-section">
+                {initialLoading || dataLoading ? (
+                  <LoadingIndicator />
+                ) : filteredJobs.length > 0 ? (
+                  <>
+                    {filteredJobs.map((job, index) => (
+                      <div key={index}>
+                        <JobCard
+                          key={job.id}
+                          job={job}
+                          id={""}
+                          title={""}
+                          description={""}
+                          createdAt={""}
+                        />
+                        {/* {(index + 1) % 6 === 0 && (
                     <section className="section-container flex pt-6" style={{alignItems:"end"}}>
                       <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
@@ -337,22 +353,22 @@ const Home: React.FC = () => {
                       </div>
                     </section>
                   )} */}
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <>
-                  {jobData.map((job, index) => (
-                    <div key={index}>
-                      <JobCard
-                        key={job.id}
-                        job={job}
-                        id={""}
-                        title={""}
-                        description={""}
-                        createdAt={""}
-                      />
-                      {/* {(index + 1) % 6 === 0 && (
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {jobData.map((job, index) => (
+                      <div key={index}>
+                        <JobCard
+                          key={job.id}
+                          job={job}
+                          id={""}
+                          title={""}
+                          description={""}
+                          createdAt={""}
+                        />
+                        {/* {(index + 1) % 6 === 0 && (
                     <section className="section-container">
                       <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
@@ -362,13 +378,18 @@ const Home: React.FC = () => {
                       </div>
                     </section>
                   )} */}
-                    </div>
-                  ))}
-                </>
-              )}
-              {loading && <Skeleton />}
-              {!hasMore && <p>No more jobs to load.</p>}
-            </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+                {loading && <Skeleton />}
+                {!hasMore && <p>No more jobs to load.</p>}
+              </div>
+            ) : activeTab === "insights" ? (
+              <div>
+                <JobTrends />
+              </div>
+            ) : null}
             <div className="w-1/4 md:block hidden sticky top-20 right-0 h-[calc(100vh-5rem)]">
               <TrendingSidebar trendingJobs={jobData.slice(0, 3)} />
             </div>
@@ -380,9 +401,7 @@ const Home: React.FC = () => {
             <ArrowUp className="h-6 w-6" />
           </button>
         </div>
-      )
-      }
-
+      )}
     </div>
   );
 };
