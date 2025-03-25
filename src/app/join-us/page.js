@@ -30,7 +30,7 @@ const Home = () => {
             {/* <p className="mt-2 text-center font-medium">Developer</p> */}
 
           <FaLinkedinIn className="bg-[#333333] p-5 rounded-lg" size={150} />
-          <p className="mt-2 text-center font-medium">Creator & Developer</p>
+          <p className="mt-2 text-center font-medium">Creator & Developer </p>
         </Link>
       </div>
     </div>
