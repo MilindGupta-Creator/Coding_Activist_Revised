@@ -77,3 +77,48 @@
     margin-bottom: 1rem;
   }
 } */
+
+/* AdSense Ad Container Styles */
+.ad-container {
+  position: relative;
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  text-align: center;
+  clear: both;
+}
+
+.ad-container::before {
+  content: "Advertisement";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a1a1a;
+  padding: 0 10px;
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+/* Ensure ads don't interfere with navigation */
+.ad-container {
+  z-index: 1;
+}
+
+nav, .navbar, .bottom-bar {
+  z-index: 10;
+}
+
+/* Prevent ads from being placed near navigation elements */
+.ad-container {
+  /* margin-top: 30px; */
+  margin-bottom: 30px;
+}
+
+/* Ensure ads are visually distinct from navigation links */
+.ad-container a {
+  pointer-events: none;
+}
