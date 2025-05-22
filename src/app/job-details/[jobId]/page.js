@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { FaShare } from "react-icons/fa6";
 import { FaArrowLeft, FaBriefcase } from "react-icons/fa";
+import AdComponent from "@/components/common/AdComponent";
 
 const JobDetails = () => {
   const [job, setJob] = useState(null); // State for a single job
@@ -116,6 +117,11 @@ const JobDetails = () => {
           Job Description
         </p>
 
+        {/* Top Ad - Before Job Details */}
+        <div className="w-4/5 mx-auto mb-8">
+          <AdComponent adSlot="5438523302" adFormat="auto" />
+        </div>
+
         <article className="bg-white w-4/5 rounded-lg mx-auto p-5">
           <nav className="section-container">
             <Link href="/jobs" className="back-link">
@@ -153,6 +159,7 @@ const JobDetails = () => {
               Share <FaShare />
             </button>
           </header>
+         
           {/* basic details */}
           <section className="mt-10">
             <p className="text-violet-600 mb-4">
@@ -180,6 +187,10 @@ const JobDetails = () => {
               })}{" "}
             </div>
           </section>
+          {/* Bottom Ad - Before Responsibilities */}
+          <div className="my-8">
+            <AdComponent adSlot="5438523302" adFormat="in-article" />
+          </div>
           {/* salary box */}
           <div className="mt-5">
             <div className="text-violet-600">
@@ -227,6 +238,11 @@ const JobDetails = () => {
             <HotUpdates />
           </div>
         </section>
+
+        {/* Ad before similar jobs */}
+        <div className="w-4/5 mx-auto my-8">
+          <AdComponent adSlot="5438523302" adFormat="auto" />
+        </div>
 
         {/* similar job section */}
         <section className="w-4/5 mx-auto pb-20 pt-10 ">

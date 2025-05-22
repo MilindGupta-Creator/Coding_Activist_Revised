@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    console.log("Auth object:", auth); // Debug log
+    // console.log("Auth object:", auth); // Debug log
     
     if (!auth) {
       console.error("Auth is not initialized");
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("Auth state changed:", user); // Debug log
+      // console.log("Auth state changed:", user); // Debug log
       setUser(user);
     });
 
