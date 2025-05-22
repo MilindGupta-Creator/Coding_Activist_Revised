@@ -11,6 +11,7 @@ interface AdComponentProps {
 const AdComponent = ({ adSlot, adFormat = 'auto', className = '', lazyLoad = true }: AdComponentProps) => {
   const [isVisible, setIsVisible] = useState(!lazyLoad);
   const adRef = useRef<HTMLDivElement>(null);
+  const [adInitialized, setAdInitialized] = useState(false);
 
   useEffect(() => {
     if (!lazyLoad) return;
@@ -34,6 +35,18 @@ const AdComponent = ({ adSlot, adFormat = 'auto', className = '', lazyLoad = tru
 
     return () => observer.disconnect();
   }, [lazyLoad]);
+
+  useEffect(() => {
+    if (isVisible && !adInitialized) {
+      try {
+        // @ts-ignore
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        setAdInitialized(true);
+      } catch (err) {
+        console.error('Error initializing ad:', err);
+      }
+    }
+  }, [isVisible, adInitialized]);
 
   return (
     <div ref={adRef} className={`ad-container p-4 border border-gray-700 rounded-lg ${className}`}>
@@ -62,7 +75,7 @@ const AdComponent = ({ adSlot, adFormat = 'auto', className = '', lazyLoad = tru
             data-ad-format={adFormat}
             data-full-width-responsive="true"
           />
-          <Script id={`adsense-init-${adSlot}`}>
+          <Script id={`adsense-init-${adSlot}`} strategy="afterInteractive">
             {`(adsbygoogle = window.adsbygoogle || []).push({});`}
           </Script>
         </>
