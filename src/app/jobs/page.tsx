@@ -343,16 +343,9 @@ const Home: React.FC = () => {
                           description={""}
                           createdAt={""}
                         />
-                        {/* {(index + 1) % 6 === 0 && (
-                    <section className="section-container flex pt-6" style={{alignItems:"end"}}>
-                      <Link href="/jobs" className="back-link">
-          <FaArrowLeft /> Back to Jobs
-        </Link>
-                      <div className="block md:hidden">
-                        <HotUpdates />
-                      </div>
-                    </section>
-                  )} */}
+                        {(index + 1) % 5 === 0 && index !== filteredJobs.length - 1 && (
+                          <Ad />
+                        )}
                       </div>
                     ))}
                   </>
@@ -368,16 +361,9 @@ const Home: React.FC = () => {
                           description={""}
                           createdAt={""}
                         />
-                        {/* {(index + 1) % 6 === 0 && (
-                    <section className="section-container">
-                      <Link href="/jobs" className="back-link">
-          <FaArrowLeft /> Back to Jobs
-        </Link>
-                      <div className="block md:hidden">
-                        <HotUpdates />
-                      </div>
-                    </section>
-                  )} */}
+                        {(index + 1) % 5 === 0 && index !== jobData.length - 1 && (
+                          <Ad />
+                        )}
                       </div>
                     ))}
                   </>
@@ -415,6 +401,20 @@ const Skeleton = () => {
       <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
       <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
       <div className="bg-gray-300 bg-opacity-10 w-full h-[350px] rounded-xl animate-pulse"></div>
+    </div>
+  );
+};
+
+// Add Ad component
+const Ad = () => {
+  return (
+    <div className="w-full p-4 bg-gray-800 rounded-lg my-4">
+      <div className="text-center text-gray-400">
+        <p className="text-sm">Advertisement</p>
+        <div className="h-32 flex items-center justify-center">
+          <p className="text-lg">Ad Space</p>
+        </div>
+      </div>
     </div>
   );
 };
