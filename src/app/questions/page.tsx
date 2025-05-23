@@ -23,6 +23,7 @@ import {
   Save,
   Trash2,
   PlayCircle,
+  Eye,
 } from "lucide-react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -133,6 +134,7 @@ export default function Component() {
   const router = useRouter();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [showBlind75Only, setShowBlind75Only] = useState(false);
+  const [showQuickPreview, setShowQuickPreview] = useState<Question | null>(null);
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -382,70 +384,237 @@ export default function Component() {
     }
   };
 
-  const QuestionCard = ({ question }: { question: Question }) => {
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'b' && showQuickPreview) {
+        toggleBookmark(showQuickPreview.id);
+      } else if (e.key === 'n' && showQuickPreview) {
+        const currentIndex = currentQuestions.findIndex(q => q.id === showQuickPreview.id);
+        if (currentIndex < currentQuestions.length - 1) {
+          setShowQuickPreview(currentQuestions[currentIndex + 1]);
+        }
+      } else if (e.key === 'p' && showQuickPreview) {
+        const currentIndex = currentQuestions.findIndex(q => q.id === showQuickPreview.id);
+        if (currentIndex > 0) {
+          setShowQuickPreview(currentQuestions[currentIndex - 1]);
+        }
+      } else if (e.key === 'Escape') {
+        setShowQuickPreview(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [showQuickPreview, currentQuestions]);
+
+  // Quick Preview Modal Component
+  const QuickPreviewModal = ({ question }: { question: Question }) => {
     const [localNote, setLocalNote] = useState(notes[question.id] || "");
 
-    const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setLocalNote(e.target.value);
-    };
+    useEffect(() => {
+      setLocalNote(notes[question.id] || "");
+    }, [question.id, notes]);
 
     return (
       <motion.div
-        key={question.id}
-        // initial={{ opacity: 0, y: 20 }}
-        // animate={{ opacity: 1, y: 0 }}
-        // exit={{ opacity: 0, y: -20 }}
-        // transition={{ duration: 0.3 }}
-        className={`bg-white shadow-lg rounded-lg p-6 mb-4 transform hover:scale-102 transition-all duration-300 w-full hover:shadow-xl ${
-          theme === "dark" ? "bg-gray-800 text-white" : ""
-        }`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+        onClick={() => setShowQuickPreview(null)}
       >
-        <div className="flex justify-between items-start mb-2">
-          <h2
-            className={`text-xl font-semibold flex items-center ${
-              theme === "dark" ? "text-gray-900" : "text-gray-900"
-            }`}
-          >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{ type: "spring", duration: 0.5 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-center space-x-3">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{question.title}</h2>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                question.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
+                question.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {question.difficulty}
+              </span>
+            </div>
+            <button
+              onClick={() => setShowQuickPreview(null)}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex flex-wrap gap-2">
+              {question.companies.map(company => (
+                <div
+                  key={company}
+                  className="flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm"
+                >
+                  {companyLogos[company] ? (
+                    <img
+                      src={companyLogos[company]}
+                      alt={`${company} logo`}
+                      width={16}
+                      height={16}
+                      className="mr-2 rounded-full"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder.svg?height=16&width=16";
+                      }}
+                    />
+                  ) : (
+                    <Briefcase className="mr-2 h-4 w-4" />
+                  )}
+                  {company}
+                </div>
+              ))}
+            </div>
+
+            <div className="prose dark:prose-invert max-w-none">
+              <p className="text-gray-600 dark:text-gray-300">{question.description}</p>
+            </div>
+
+            <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center">
+                <Clock className="mr-2 h-4 w-4" />
+                Time: {question.timeComplexity}
+              </div>
+              <div className="flex items-center">
+                <Award className="mr-2 h-4 w-4" />
+                Space: {question.spaceComplexity}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {question.tags.map(tag => (
+                <span
+                  key={tag}
+                  className="px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+              {question.dpLevel && (
+                <span className="px-3 py-1 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm">
+                  {question.dpLevel}
+                </span>
+              )}
+              {question.isBlind75 && (
+                <span className="px-3 py-1 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-sm">
+                  Blind 75
+                </span>
+              )}
+            </div>
+
+            {/* Notes Section */}
+            <div className="mt-6 border-t pt-6 dark:border-gray-700">
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Notes</h3>
+              <textarea
+                className={`w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg ${
+                  theme === "dark" ? "bg-gray-700 text-white" : "bg-white text-gray-900"
+                } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                rows={4}
+                placeholder="Add your notes here..."
+                value={localNote}
+                onChange={e => setLocalNote(e.target.value)}
+              ></textarea>
+              <div className="flex justify-end mt-3 space-x-3">
+                <button
+                  onClick={() => saveNote(question.id, localNote)}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <Save className="h-4 w-4" />
+                  <span>Save Note</span>
+                </button>
+                <button
+                  onClick={() => deleteNote(question.id)}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete Note</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4">
+              <button
+                onClick={() => toggleBookmark(question.id)}
+                className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 ${
+                  bookmarkedQuestions.includes(question.id)
+                    ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <BookmarkIcon className="h-4 w-4" />
+                <span>{bookmarkedQuestions.includes(question.id) ? 'Bookmarked' : 'Bookmark'}</span>
+              </button>
+              <a
+                href={question.leetCodeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center space-x-2"
+              >
+                <PlayCircle className="h-4 w-4" />
+                <span>Solve</span>
+              </a>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  };
+
+  // Modify QuestionCard to use Quick Preview
+  const QuestionCard = ({ question }: { question: Question }) => {
+    return (
+      <motion.div
+        key={question.id}
+        className={`bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 mb-4 transform hover:scale-[1.02] transition-all duration-300 w-full hover:shadow-xl`}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
             <Code className="mr-2 text-blue-500" />
             {question.title}
           </h2>
           <div className="flex items-center space-x-2">
-            <span
-              className={`${
-                difficultyColor[question.difficulty]
-              } text-xs font-semibold px-3 py-1 rounded-full`}
-            >
+            <span className={`${
+              question.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
+              question.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            } text-xs font-semibold px-3 py-1 rounded-full`}>
               {question.difficulty}
             </span>
             <button
               onClick={() => toggleBookmark(question.id)}
-              className={`p-1 rounded-full ${
+              className={`p-1.5 rounded-full transition-colors ${
                 bookmarkedQuestions.includes(question.id)
-                  ? "text-yellow-500"
-                  : "text-gray-400"
-              } hover:bg-gray-100`}
-              title={
-                bookmarkedQuestions.includes(question.id)
-                  ? "Remove bookmark"
-                  : "Bookmark question"
-              }
+                  ? 'text-yellow-500 hover:bg-yellow-50'
+                  : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
             >
               <BookmarkIcon className="h-4 w-4" />
             </button>
             <button
               onClick={() => shareQuestion(question)}
-              className="p-1 rounded-full text-gray-400 hover:bg-gray-100"
-              title="Share question"
+              className="p-1.5 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <Share2 className="h-4 w-4" />
             </button>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {question.companies.map((company) => (
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {question.companies.map(company => (
             <div
               key={company}
-              className="flex items-center bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+              className="flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded-full"
             >
               {companyLogos[company] ? (
                 <img
@@ -465,101 +634,41 @@ export default function Component() {
             </div>
           ))}
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {question.tags.map((tag) => (
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {question.tags.map(tag => (
             <span
               key={tag}
-              className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800"
+              className="text-xs px-2 py-1 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
             >
               {tag}
             </span>
           ))}
           {question.dpLevel && (
-            <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">
+            <span className="text-xs px-2 py-1 rounded-full bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
               {question.dpLevel}
             </span>
           )}
           {question.isBlind75 && (
-            <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 ml-2">
+            <span className="text-xs px-2 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300">
               Blind 75
             </span>
           )}
         </div>
-        <motion.div
-          initial={false}
-          animate={{ height: expandedQuestion === question.id ? "auto" : 0 }}
-          className="overflow-hidden mt-4"
-        >
-          <p className="text-gray-600 mb-2">{question.description}</p>
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
-            <div className="flex items-center">
-              <Clock className="mr-1 h-4 w-4" />
-              Time: {question.timeComplexity}
-            </div>
-            <div className="flex items-center">
-              <Award className="mr-1 h-4 w-4" />
-              Space: {question.spaceComplexity}
-            </div>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Notes</h3>
-            <textarea
-              className={`w-full p-2 border border-gray-300 rounded-md ${
-                theme === "dark" ? "text-gray-900" : "text-gray-900"
-              } `}
-              rows={3}
-              placeholder="Add your notes here..."
-              value={localNote}
-              onChange={handleNoteChange}
-            ></textarea>
-            <div className="flex justify-end mt-2 space-x-2">
-              <button
-                onClick={() => saveNote(question.id, localNote)}
-                className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
-              >
-                <Save className="h-4 w-4 inline mr-1" />
-                Save Note
-              </button>
-              <button
-                onClick={() => deleteNote(question.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-200"
-              >
-                <Trash2 className="h-4 w-4 inline mr-1" />
-                Delete Note
-              </button>
-            </div>
-          </div>
-        </motion.div>
+
         <div className="flex justify-center items-baseline gap-4">
           <button
-            onClick={() =>
-              setExpandedQuestion(
-                expandedQuestion === question.id ? null : question.id
-              )
-            }
-            className="mt-4 w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors duration-200 flex items-center justify-center"
+            onClick={() => setShowQuickPreview(question)}
+            className="mt-4 w-full py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center"
           >
-            {expandedQuestion === question.id ? (
-              <>
-                <ChevronUp className="mr-2 h-4 w-4" />
-                Hide Details
-              </>
-            ) : (
-              <>
-                <ChevronDown className="mr-2 h-4 w-4" />
-                Show Details
-              </>
-            )}
+            <Eye className="mr-2 h-4 w-4" />
+            Quick Preview
           </button>
           <a
             href={question.leetCodeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`py-2 px-4 rounded-md transition-all duration-200 flex items-center justify-center ${
-              theme === "dark"
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-            } shadow-md hover:shadow-lg transform hover:-translate-y-0.5`}
+            className="mt-4 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
             <PlayCircle className="mr-2 h-5 w-5" />
             Solve
@@ -680,11 +789,7 @@ export default function Component() {
 
   return (
     <div className="mx-auto pt-20">
-      <div
-        className={`min-h-screen ${
-          theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-black"
-        } transition-colors duration-300`}
-      >
+      <div className={`min-h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-50 text-black"} transition-colors duration-300`}>
         <div className="container mx-auto py-14 px-4 md:max-w-[calc(80%-20px)]">
           {user ? (
             <div className="flex items-center space-x-4">
@@ -1098,6 +1203,9 @@ export default function Component() {
               </nav>
             </div>
           )}
+          <AnimatePresence>
+            {showQuickPreview && <QuickPreviewModal question={showQuickPreview} />}
+          </AnimatePresence>
         </div>
         <button
           className="fixed mb-16 bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
