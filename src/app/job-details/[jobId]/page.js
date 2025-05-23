@@ -132,7 +132,7 @@ const JobDetails = () => {
             </div>
           </nav>
           {/* heading */}
-          <header className="flex justify-between items-start text-black">
+          <header className="flex justify-between items-start text-black mb-10 bg-gradient-to-r from-violet-50 to-blue-50 p-6 rounded-xl">
             <div className="flex flex-col gap-4">
               {job.image ? (
                 <div className="relative group">
