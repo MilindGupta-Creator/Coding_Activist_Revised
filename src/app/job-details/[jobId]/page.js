@@ -162,19 +162,30 @@ const JobDetails = () => {
          
           {/* basic details */}
           <section className="mt-10">
-            <p className="text-violet-600 mb-4">
-              Location: <span className="text-black"> {job?.address}</span>
-            </p>
-            <div className="text-violet-600 flex gap-2 items-center flex-wrap mb-4">
-              Skills Required:
-              {job.skills?.map((skill, index) => (
-                <span
-                  key={index}
-                  className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800"
-                >
-                  {skill}
-                </span>
-              ))}
+            <div className="grid md:grid-cols-2">
+              <div>
+                <p className="text-violet-600 font-semibold mb-4 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                  </svg>
+                  Location: <span className="text-gray-700"> {job?.address}</span>
+                </p>
+              </div>
+              <div>
+                <div className="text-violet-600 font-semibold mb-4">
+                  Skills Required:
+                  <div className="flex gap-2 items-center flex-wrap mt-3">
+                    {job.skills?.map((skill, index) => (
+                      <span
+                        key={index}
+                        className="rounded-full bg-gradient-to-r from-blue-50 to-violet-50 px-4 py-2 text-sm font-medium text-blue-800 hover:from-blue-100 hover:to-violet-100 transition-all duration-300 border border-blue-100"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="text-violet-600">
               Qualification:{" "}
