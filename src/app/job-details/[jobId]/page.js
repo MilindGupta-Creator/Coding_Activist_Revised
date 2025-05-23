@@ -177,7 +177,7 @@ const JobDetails = () => {
             </div>
             {/* share button */}
             <button
-              className="absolute top-4 right-2 sm:right-6 z-10 bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2 shadow-md"
+              className="absolute top-4 right-2 sm:right-6 bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2 shadow-md"
               onClick={shareJob}
               aria-label={`Share ${job.role} job at ${job.name}`}
               style={{maxWidth: '90vw'}}

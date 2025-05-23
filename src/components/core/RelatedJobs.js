@@ -69,7 +69,7 @@ const RelatedJobs = ({ currentJob, relatedJobs }) => {
           </div>
         </div>
         {/* Absolutely positioned chevron button */}
-        <div className="absolute top-1/2 right-4 -translate-y-1/2 flex-shrink-0 z-10">
+        <div className="absolute top-1/2 right-4 -translate-y-1/2 flex-shrink-0">
           <div className="p-1.5 rounded-lg bg-violet-50 text-violet-600 group-hover:bg-violet-100 transition-colors duration-300">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

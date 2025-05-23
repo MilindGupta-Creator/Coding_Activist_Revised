@@ -9,6 +9,7 @@ import EmailPopUp from "@/components/common/EmailPopUp";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
 import { AuthProvider } from "@/auth/AuthContext";
+import FeedbackWidget from "@/components/common/FeedbackWidget";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -90,6 +91,7 @@ export default function RootLayout({
           </main>
           <EmailPopUp />
           <Toaster />
+          <FeedbackWidget />
 
           <BottomBar className="fixed bottom-0 w-full z-20" />
 
