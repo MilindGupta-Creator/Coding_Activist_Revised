@@ -14,6 +14,7 @@ import { StatsCard } from "@/components/ui/stats-card";
 import TrendingSidebar from "@/components/ui/TrendingSidebar";
 import { Tabs } from "../../components/ui/tabs";
 import JobTrends from "@/components/common/JobTrends";
+import AdComponent from "@/components/common/AdComponent";
 
 interface JobData {
   type: string;
@@ -409,12 +410,7 @@ const Skeleton = () => {
 const Ad = () => {
   return (
     <div className="w-full p-4 bg-gray-800 rounded-lg my-4">
-      <div className="text-center text-gray-400">
-        <p className="text-sm">Advertisement</p>
-        <div className="h-32 flex items-center justify-center">
-          <p className="text-lg">Ad Space</p>
-        </div>
-      </div>
+      <AdComponent adSlot="5438523302" adFormat="in-feed" />
     </div>
   );
 };
