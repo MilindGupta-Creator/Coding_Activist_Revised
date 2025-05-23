@@ -4,6 +4,7 @@ import Head from "next/head";
 import Loading from "@/components/common/Loading";
 import HotUpdates from "@/components/core/HotUpdates";
 import SimilarJob from "@/components/core/SimilarJob";
+import RelatedJobs from "@/components/core/RelatedJobs";
 import { db } from "@/firebase/firebase";
 import { formatDate } from "@/utils";
 import { doc, getDoc } from "firebase/firestore";
@@ -18,6 +19,7 @@ import AdComponent from "@/components/common/AdComponent";
 
 const JobDetails = () => {
   const [job, setJob] = useState(null); // State for a single job
+  const [relatedJobs, setRelatedJobs] = useState([]);
   const { jobId } = useParams(); // Get jobId from URL parameters
 
   const fetchJob = async (id) => {
@@ -47,8 +49,26 @@ const JobDetails = () => {
   };
 
   useEffect(() => {
+    const fetchRelatedJobs = async () => {
+      try {
+        const snapshot = await db
+          .collection("jobsDataCollection")
+          .orderBy("createdAt", "desc")
+          .limit(20)
+          .get();
+        const jobsData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return { id: doc.id, ...data };
+        });
+        setRelatedJobs(jobsData);
+      } catch (error) {
+        console.error("Error fetching related jobs:", error);
+      }
+    };
+
     if (jobId) {
       fetchJob(jobId);
+      fetchRelatedJobs();
     }
   }, [jobId]);
 
@@ -132,7 +152,7 @@ const JobDetails = () => {
             </div>
           </nav>
           {/* heading */}
-          <header className="flex justify-between items-start text-black mb-10 bg-gradient-to-r from-violet-50 to-blue-50 p-6 rounded-xl">
+          <header className="relative flex justify-between items-start text-black mb-10 bg-gradient-to-r from-violet-50 to-blue-50 p-6 rounded-xl pr-12 sm:pr-20">
             <div className="flex flex-col gap-4">
               {job.image ? (
                 <div className="relative group">
@@ -157,9 +177,10 @@ const JobDetails = () => {
             </div>
             {/* share button */}
             <button
-              className="bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2"
+              className="absolute top-4 right-2 sm:right-6 z-10 bg-violet-500 text-[floralwhite] px-3 py-1 rounded-md flex items-center gap-x-2 shadow-md"
               onClick={shareJob}
               aria-label={`Share ${job.role} job at ${job.name}`}
+              style={{maxWidth: '90vw'}}
             >
               Share <FaShare />
             </button>
@@ -193,14 +214,24 @@ const JobDetails = () => {
               </div>
             </div>
             <div className="text-violet-600">
-              Qualification:{" "}
-              {job?.qualification?.map((item, index) => {
-                return (
-                  <ul className="list-disc pl-10 text-black" key={index}>
-                    <li>{item}</li>
-                  </ul>
-                );
-              })}{" "}
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <h3 className="text-xl font-semibold text-violet-600 mb-4 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  Qualifications
+                </h3>
+                <ul className="space-y-3">
+                  {job?.qualification?.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3 text-gray-700">
+                      <svg className="h-5 w-5 text-violet-500 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </section>
           {/* Bottom Ad - Before Responsibilities */}
@@ -208,16 +239,24 @@ const JobDetails = () => {
             <AdComponent adSlot="5438523302" adFormat="in-article" />
           </div>
           {/* salary box */}
-          <div className="mt-5">
-            <div className="text-violet-600">
-              Responsibilities:{" "}
-              {job?.responsibility?.map((item, index) => {
-                return (
-                  <ul className="pl-10 list-disc text-black" key={index}>
-                    <li>{item}</li>
-                  </ul>
-                );
-              })}
+          <div className="mt-8">
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+              <h3 className="text-xl font-semibold text-violet-600 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Responsibilities
+              </h3>
+              <ul className="space-y-3">
+                {job?.responsibility?.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3 text-gray-700">
+                    <svg className="h-5 w-5 text-violet-500 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
           <div className="flex justify-end w-full mt-5">
@@ -261,8 +300,8 @@ const JobDetails = () => {
         </div>
 
         {/* similar job section */}
-        <section className="w-4/5 mx-auto pb-20 pt-10 ">
-          <SimilarJob similarJob={similarJobs} />
+        <section className="w-4/5 mx-auto pb-20 pt-10">
+          {job && <RelatedJobs currentJob={job} relatedJobs={relatedJobs} />}
         </section>
       </main>
     </>
