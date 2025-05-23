@@ -133,22 +133,27 @@ const JobDetails = () => {
           </nav>
           {/* heading */}
           <header className="flex justify-between items-start text-black">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-4">
               {job.image ? (
-                <img
-                  src={job?.image}
-                  height={100}
-                  width={100}
-                  alt="company-logo"
-                  className="rounded-full w-20 h-20 bg-white object-contain shadow-2xl shadow-blue-500/20"
-                />
+                <div className="relative group">
+                  <img
+                    src={job?.image}
+                    height={100}
+                    width={100}
+                    alt="company-logo"
+                    className="rounded-full w-28 h-28 bg-white object-contain shadow-2xl shadow-blue-500/20 hover:scale-105 transition-transform duration-300 border-4 border-white"
+                  />
+                  <div className="absolute inset-0 rounded-full bg-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
               ) : (
-                <div className="bg-violet-600 rounded-full h-12 w-12 flex items-center justify-center">
-                  <FaBriefcase className="text-white text-2xl" />
+                <div className="bg-gradient-to-br from-violet-600 to-violet-700 rounded-full h-20 w-20 flex items-center justify-center hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <FaBriefcase className="text-white text-3xl" />
                 </div>
               )}
-              <p className="text-2xl">Role: {job?.role}</p>
-              <p className="text-xl">{job?.name}</p>
+              <div className="space-y-2">
+                <p className="text-3xl font-bold text-gray-800">{job?.role}</p>
+                <p className="text-2xl text-gray-600">{job?.name}</p>
+              </div>
             </div>
             {/* share button */}
             <button
