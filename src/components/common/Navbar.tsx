@@ -53,57 +53,59 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full rounded-lg bg-[#181818] bg-clip-padding backdrop-filter backdrop-blur-sm border-b border-gray-500">
-      <div className="flex justify-between items-center py-2 w-4/5 mx-auto ">
-        <Link href="/" className="flex items-center gap-x-2">
+    <div className="w-full bg-gradient-to-r from-[#181818] to-[#2d2d2d] bg-clip-padding backdrop-filter backdrop-blur-sm border-b border-gray-700 shadow-lg">
+      <div className="flex justify-between items-center py-3 w-4/5 mx-auto">
+        <Link href="/" className="flex items-center gap-x-3 group">
           <Image
             src={Logo}
             alt="logo"
             width="60"
             height="60"
-            className="bg-white rounded-full"
+            className="bg-white rounded-full transition-transform duration-300 group-hover:scale-110"
             loading="lazy"
           />
-          <p className={`font-bold  text-gray-400`}>Coding Activist</p>
+          <p className="font-bold text-gray-300 text-xl group-hover:text-white transition-colors duration-300">Coding Activist</p>
         </Link>
-        <div className="md:flex items-center gap-x-10 hidden relative">
+        <div className="md:flex items-center gap-x-8 hidden relative">
           <Link
             href="/"
-            className={`hover:scale-100 duration-500 ${
-              pathname === "/" ? "text-white" : " text-[#5E548E]"
-            }`}
+            className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
+              pathname === "/" ? "text-white" : "text-gray-400"
+            } after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100`}
           >
             Home
           </Link>
           <Link
             href="/questions"
-            className={`hover:scale-100 duration-500 ${
-              pathname === "/questions" ? "text-white" : " text-[#5E548E]"
-            }`}
+            className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
+              pathname === "/questions" ? "text-white" : "text-gray-400"
+            } after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100`}
           >
             Questions
           </Link>
           <Link
             href="/visualizing_paths"
-            className={`hover:scale-100 duration-500 ${
-              pathname === "/visualizing_paths" ? "text-white" : " text-[#5E548E]"
-            }`}
+            className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
+              pathname === "/visualizing_paths" ? "text-white" : "text-gray-400"
+            } after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100`}
           >
             Tech Roadmap
           </Link>
           <Link
             href="/jobs"
-            className={`hover:scale-100 duration-500 ${
-              pathname === "/jobs" ? "text-white" : " text-[#5E548E]"
-            }`}
+            className="relative inline-flex h-11 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
           >
-            Jobs
+            <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+            <span className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm" />
+            <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-900/90 px-6 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-all duration-300 hover:bg-slate-900/80">
+              Jobs
+            </span>
           </Link>
           {user ? (
             <button
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className={`bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ${
+              className={`bg-gradient-to-r from-red-500 to-red-600 text-white font-medium py-2 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30 ${
                 isSigningOut ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -146,23 +148,21 @@ const Navbar = () => {
         </div>
         {!showCloseMenu ? (
           <RiMenu3Fill
-            className="black md:hidden text-3xl"
+            className="text-gray-300 md:hidden text-3xl hover:text-white transition-colors duration-300"
             onClick={() => setShowCloseMenu((prev) => !prev)}
           />
         ) : (
           <RiCloseLargeLine
-            className="black md:hidden text-3xl"
+            className="text-gray-300 md:hidden text-3xl hover:text-white transition-colors duration-300"
             onClick={() => setShowCloseMenu((prev) => !prev)}
-          >
-            Close
-          </RiCloseLargeLine>
+          />
         )}
         {showCloseMenu && (
-          <div className="absolute top-20 bg-white rounded-lg text-lg flex flex-col gap-y-2 px-9 py-5 justify-center items-center right-10">
+          <div className="absolute top-20 bg-gradient-to-b from-[#181818] to-[#2d2d2d] rounded-xl text-lg flex flex-col gap-y-4 px-8 py-6 justify-center items-center right-10 shadow-xl border border-gray-700 animate-fadeIn">
             <Link
               href="/"
-              className={`hover:scale-100 duration-500 ${
-                pathname === "/" ? "text-[#5E548E]" : "text-black"
+              className={`text-lg font-medium transition-all duration-300 hover:text-white ${
+                pathname === "/" ? "text-white" : "text-gray-400"
               }`}
               onClick={() => setShowCloseMenu((prev) => !prev)}
             >
@@ -170,8 +170,8 @@ const Navbar = () => {
             </Link>
             <Link
               href="/visualizing_paths"
-              className={`hover:scale-100 duration-500 ${
-                pathname === "/visualizing_paths" ? "text-[#5E548E]" : "text-black"
+              className={`text-lg font-medium transition-all duration-300 hover:text-white ${
+                pathname === "/visualizing_paths" ? "text-white" : "text-gray-400"
               }`}
               onClick={() => setShowCloseMenu((prev) => !prev)}
             >
@@ -179,8 +179,8 @@ const Navbar = () => {
             </Link>
             <Link
               href="/questions"
-              className={`hover:scale-100 duration-500 ${
-                pathname === "/questions" ? "text-[#5E548E]" : "text-black"
+              className={`text-lg font-medium transition-all duration-300 hover:text-white ${
+                pathname === "/questions" ? "text-white" : "text-gray-400"
               }`}
               onClick={() => setShowCloseMenu((prev) => !prev)}
             >
@@ -188,12 +188,14 @@ const Navbar = () => {
             </Link>
             <Link
               href="/jobs"
-              className={`hover:scale-100 duration-500 ${
-                pathname === "/jobs" ? "text-[#5E548E]" : "text-black"
-              }`}
+              className="relative inline-flex h-11 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
               onClick={() => setShowCloseMenu((prev) => !prev)}
             >
-              Jobs
+              <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+              <span className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm" />
+              <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-900/90 px-6 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-all duration-300 hover:bg-slate-900/80">
+                Jobs
+              </span>
             </Link>
             {user ? (
               <button
@@ -202,7 +204,7 @@ const Navbar = () => {
                   setShowCloseMenu((prev) => !prev);
                 }}
                 disabled={isSigningOut}
-                className={`bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ${
+                className={`bg-gradient-to-r from-red-500 to-red-600 text-white font-medium py-2 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30 ${
                   isSigningOut ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >

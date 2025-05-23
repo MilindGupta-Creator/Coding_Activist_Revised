@@ -5,17 +5,23 @@ import { learningPaths } from './data/learningPaths';
 import { PathCard } from './components/PathCard';
 import { PathDetail } from './components/PathDetail';
 import { PathSwitcher } from './components/PathSwitcher';
-import { Compass } from 'lucide-react';
+import { Compass, Search } from 'lucide-react';
 
 function App() {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   
   const currentPath = learningPaths.find(path => path.id === selectedPath);
 
-  const filteredPaths = activeCategory === 'all' 
-    ? learningPaths
-    : learningPaths.filter(path => path.category === activeCategory);
+  const filteredPaths = learningPaths
+    .filter(path => activeCategory === 'all' || path.category === activeCategory)
+    .filter(path => 
+      searchQuery === '' || 
+      path.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      path.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (path.tools && path.tools.some(tool => tool.toLowerCase().includes(searchQuery.toLowerCase())))
+    );
 
   return (
     <div className="min-h-screen pt-12 bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50">
@@ -30,9 +36,23 @@ function App() {
             <h1 className="h-24 text-4xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900">
               Technology Learning Paths
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
               Choose your path and start your journey in technology. Each path is carefully curated with the best resources and a clear progression.
             </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-xl mx-auto mb-12">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search paths, technologies, or skills..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-6 py-4 pl-12 text-gray-700 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
+            </div>
           </div>
 
           <div className="relative mb-16">
