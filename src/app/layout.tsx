@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import Script from "next/script";
 import { AuthProvider } from "@/auth/AuthContext";
 import FeedbackWidget from "@/components/common/FeedbackWidget";
+import AdSection from "@/components/common/AdSection";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -69,25 +70,7 @@ export default function RootLayout({
           </section>
           <main className="pb-16">
             {children}
-            {/* AdSense Ad Container - Clearly separated from content */}
-            <div className="ad-container p-4 border border-gray-700 rounded-lg">
-              <div className="text-sm text-gray-400 mb-2">Advertisement</div>
-              <ins
-                className="adsbygoogle"
-                style={{
-                  display: 'block',
-                  textAlign: 'center',
-                  margin: '0 auto'
-                }}
-                data-ad-client="ca-pub-2570738441831963"
-                data-ad-slot="5438523302"
-                data-ad-format="auto"
-                data-full-width-responsive="true"
-              />
-              <Script id="adsense-init">
-                {`(adsbygoogle = window.adsbygoogle || []).push({});`}
-              </Script>
-            </div>
+            <AdSection />
           </main>
           <EmailPopUp />
           <Toaster />
