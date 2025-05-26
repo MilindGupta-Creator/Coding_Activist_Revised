@@ -2554,5 +2554,276 @@ export const learningPaths: LearningPath[] = [
       growthRate: "33% (Much faster than average)",
       topCompanies: ["Microsoft", "Cisco", "IBM", "Palo Alto Networks", "CrowdStrike", "Mandiant"]
     }
+  },
+  {
+    id: "data-analyst",
+    title: "Data Analysis",
+    description: "Master the art of transforming raw data into actionable insights using modern tools and techniques",
+    icon: Brain,
+    color: "bg-cyan-500",
+    category: "data",
+    totalDuration: "24 weeks",
+    careers: [
+      "Data Analyst",
+      "Business Intelligence Analyst",
+      "Data Visualization Specialist",
+      "Reporting Analyst",
+      "Business Analyst",
+      "Market Research Analyst"
+    ],
+    whatsNext: {
+      topics: [
+        "Advanced Statistical Analysis",
+        "Machine Learning for Analysts",
+        "Big Data Analytics",
+        "Data Engineering Fundamentals",
+        "Advanced SQL and Database Management",
+        "Business Intelligence Tools",
+        "Data Storytelling",
+        "Predictive Analytics"
+      ],
+      resources: [
+        {
+          name: "Advanced SQL for Data Analysis",
+          url: "https://www.coursera.org/learn/sql-for-data-science",
+          type: "course"
+        },
+        {
+          name: "Data Visualization Best Practices",
+          url: "https://www.tableau.com/learn/articles/data-visualization",
+          type: "article"
+        },
+        {
+          name: "Storytelling with Data",
+          url: "https://www.storytellingwithdata.com/",
+          type: "book"
+        }
+      ]
+    },
+    salary: {
+      min: "60,000",
+      max: "120,000",
+      currency: "USD"
+    },
+    steps: [
+      {
+        title: "Data Analysis Fundamentals",
+        description: "Learn the core concepts of data analysis, including data types, cleaning, and basic statistical methods",
+        resources: [
+          {
+            name: "Data Analysis with Python",
+            url: "https://www.coursera.org/learn/python-data-analysis",
+            type: "course"
+          },
+          {
+            name: "Introduction to Statistics",
+            url: "https://www.khanacademy.org/math/statistics-probability",
+            type: "course"
+          },
+          {
+            name: "Data Cleaning Best Practices",
+            url: "https://www.dataquest.io/blog/data-cleaning-guide/",
+            type: "article"
+          },
+          {
+            name: "Excel for Data Analysis",
+            url: "https://www.youtube.com/watch?v=opJgMj1II7g",
+            type: "video"
+          }
+        ],
+        timeEstimate: "6 weeks",
+        skillLevel: "beginner",
+        keyTakeaways: [
+          "Data types and structures",
+          "Basic statistical concepts",
+          "Data cleaning techniques",
+          "Excel for data analysis"
+        ],
+        projects: [
+          {
+            title: "Data Cleaning Project",
+            description: "Clean and prepare a messy dataset for analysis"
+          },
+          {
+            title: "Statistical Analysis Report",
+            description: "Conduct basic statistical analysis on a dataset and create a report"
+          }
+        ]
+      },
+      {
+        title: "SQL and Database Management",
+        description: "Master SQL for data querying and database management",
+        resources: [
+          {
+            name: "SQL for Data Analysis",
+            url: "https://www.udacity.com/course/sql-for-data-analysis--ud198",
+            type: "course"
+          },
+          {
+            name: "PostgreSQL Documentation",
+            url: "https://www.postgresql.org/docs/",
+            type: "article"
+          },
+          {
+            name: "SQL Cookbook",
+            url: "https://www.oreilly.com/library/view/sql-cookbook/0596009763/",
+            type: "book"
+          },
+          {
+            name: "Advanced SQL Queries",
+            url: "https://www.youtube.com/watch?v=7S_tz1z_5bA",
+            type: "video"
+          }
+        ],
+        timeEstimate: "6 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "SQL querying and optimization",
+          "Database design principles",
+          "Data modeling",
+          "Advanced SQL functions"
+        ],
+        prerequisites: [
+          "Basic understanding of databases",
+          "Familiarity with data structures"
+        ],
+        projects: [
+          {
+            title: "Database Design",
+            description: "Design and implement a database for a business case"
+          },
+          {
+            title: "Complex SQL Queries",
+            description: "Write and optimize complex SQL queries for data analysis"
+          }
+        ]
+      },
+      {
+        title: "Data Visualization",
+        description: "Learn to create compelling visualizations and dashboards using modern tools",
+        resources: [
+          {
+            name: "Tableau Training",
+            url: "https://www.tableau.com/learn/training",
+            type: "course"
+          },
+          {
+            name: "Power BI Documentation",
+            url: "https://docs.microsoft.com/en-us/power-bi/",
+            type: "article"
+          },
+          {
+            name: "Data Visualization with Python",
+            url: "https://www.datacamp.com/courses/data-visualization-with-python",
+            type: "course"
+          },
+          {
+            name: "Visualization Best Practices",
+            url: "https://www.youtube.com/watch?v=W9E-uI6zX98",
+            type: "video"
+          }
+        ],
+        timeEstimate: "6 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "Data visualization principles",
+          "Dashboard design",
+          "Interactive visualizations",
+          "Storytelling with data"
+        ],
+        prerequisites: [
+          "Basic data analysis skills",
+          "Understanding of data types"
+        ],
+        projects: [
+          {
+            title: "Interactive Dashboard",
+            description: "Create an interactive dashboard using Tableau or Power BI"
+          },
+          {
+            title: "Data Story",
+            description: "Develop a data-driven story with visualizations"
+          }
+        ]
+      },
+      {
+        title: "Business Intelligence and Reporting",
+        description: "Master business intelligence tools and create effective reports for stakeholders",
+        resources: [
+          {
+            name: "Business Intelligence Fundamentals",
+            url: "https://www.coursera.org/learn/business-intelligence",
+            type: "course"
+          },
+          {
+            name: "Power BI Advanced",
+            url: "https://www.microsoft.com/en-us/learning/course.aspx?cid=DA-100",
+            type: "course"
+          },
+          {
+            name: "Tableau Advanced",
+            url: "https://www.tableau.com/learn/training/20211",
+            type: "course"
+          },
+          {
+            name: "Report Writing Best Practices",
+            url: "https://www.youtube.com/watch?v=8VtGzhjVN1E",
+            type: "video"
+          }
+        ],
+        timeEstimate: "6 weeks",
+        skillLevel: "advanced",
+        keyTakeaways: [
+          "BI tool implementation",
+          "Report automation",
+          "KPI tracking",
+          "Stakeholder communication"
+        ],
+        prerequisites: [
+          "Data visualization experience",
+          "SQL knowledge",
+          "Basic business understanding"
+        ],
+        projects: [
+          {
+            title: "BI Implementation",
+            description: "Implement a business intelligence solution for a company"
+          },
+          {
+            title: "Automated Reporting System",
+            description: "Create an automated reporting system with scheduled updates"
+          }
+        ]
+      }
+    ],
+    prerequisites: [
+      "Basic mathematics and statistics",
+      "Familiarity with spreadsheets",
+      "Problem-solving skills",
+      "Basic programming knowledge (helpful but not required)"
+    ],
+    tools: [
+      "SQL (PostgreSQL, MySQL)",
+      "Python (pandas, numpy)",
+      "Tableau",
+      "Power BI",
+      "Excel/Google Sheets",
+      "Jupyter Notebooks",
+      "Git for version control"
+    ],
+    industryTrends: [
+      "Self-service analytics",
+      "Real-time data analysis",
+      "Data democratization",
+      "Augmented analytics",
+      "Natural language processing for data analysis",
+      "Cloud-based analytics platforms"
+    ],
+    shareableLink: "https://techpaths.com/share/data-analyst",
+    jobMarketData: {
+      openPositions: 85000,
+      growthRate: "25% (Much faster than average)",
+      topCompanies: ["Microsoft", "Google", "Amazon", "IBM", "Tableau", "Salesforce"]
+    }
   }
 ];
