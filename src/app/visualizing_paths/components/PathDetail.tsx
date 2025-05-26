@@ -15,6 +15,7 @@ import {
   Sparkles,
   PenToolIcon as Tool,
   TrendingUp,
+  Share2,
 } from "lucide-react";
 import { JobMarketData } from "./JobMarketData";
 import { useEffect, useState } from "react";
@@ -26,11 +27,32 @@ interface PathDetailProps {
 
 export function PathDetail({ path, onBack }: PathDetailProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const [showCopied, setShowCopied] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: path.title,
+      text: path.description,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        setShowCopied(true);
+        setTimeout(() => setShowCopied(false), 2000);
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
 
   const getResourceIcon = (type: string) => {
     switch (type) {
@@ -60,6 +82,16 @@ export function PathDetail({ path, onBack }: PathDetailProps) {
             <ArrowLeft className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors duration-300" />
           </div>
           <span className="font-medium">Back to Paths</span>
+        </button>
+
+        <button
+          onClick={handleShare}
+          className="flex items-center text-gray-600 hover:text-gray-900 group"
+        >
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-md group-hover:bg-blue-600 transition-colors duration-300 mr-3">
+            <Share2 className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors duration-300" />
+          </div>
+          <span className="font-medium">{showCopied ? 'Copied!' : 'Share Path'}</span>
         </button>
       </div>
 
