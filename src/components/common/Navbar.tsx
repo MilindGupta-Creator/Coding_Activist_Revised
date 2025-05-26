@@ -53,9 +53,9 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full bg-gradient-to-r from-[#181818] to-[#2d2d2d] bg-clip-padding backdrop-filter backdrop-blur-sm border-b border-gray-700 shadow-lg" suppressHydrationWarning>
-      <div className="flex justify-between items-center py-3 w-4/5 mx-auto" suppressHydrationWarning>
-        <Link href="/" className="flex items-center gap-x-3 group" suppressHydrationWarning>
+    <div className="w-full bg-gradient-to-r from-[#181818] to-[#2d2d2d] bg-clip-padding backdrop-filter backdrop-blur-sm border-b border-gray-700 shadow-lg">
+      <div className="flex justify-between items-center py-3 w-4/5 mx-auto">
+        <Link href="/" className="flex items-center gap-x-3 group">
           <Image
             src={Logo}
             alt="logo"
@@ -66,7 +66,7 @@ const Navbar = () => {
           />
           <p className="font-bold text-gray-300 text-xl group-hover:text-white transition-colors duration-300">Coding Activist</p>
         </Link>
-        <div className="md:flex items-center gap-x-8 hidden relative" suppressHydrationWarning>
+        <div className="md:flex items-center gap-x-8 hidden relative">
           <Link
             href="/"
             className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
@@ -158,7 +158,7 @@ const Navbar = () => {
           />
         )}
         {showCloseMenu && (
-          <div className="absolute top-20 bg-gradient-to-b from-[#181818] to-[#2d2d2d] rounded-xl text-lg flex flex-col gap-y-4 px-8 py-6 justify-center items-center right-10 shadow-xl border border-gray-700 animate-fadeIn" suppressHydrationWarning>
+          <div className="absolute top-20 bg-gradient-to-b from-[#181818] to-[#2d2d2d] rounded-xl text-lg flex flex-col gap-y-4 px-8 py-6 justify-center items-center right-10 shadow-xl border border-gray-700 animate-fadeIn">
             <Link
               href="/"
               className={`text-lg font-medium transition-all duration-300 hover:text-white ${
