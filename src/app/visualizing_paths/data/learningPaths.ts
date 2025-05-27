@@ -8,6 +8,9 @@ import {
   Brain,
   Box,
   Shield,
+  GamepadIcon,
+  CpuIcon,
+  CloudIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -2824,6 +2827,681 @@ export const learningPaths: LearningPath[] = [
       openPositions: 85000,
       growthRate: "25% (Much faster than average)",
       topCompanies: ["Microsoft", "Google", "Amazon", "IBM", "Tableau", "Salesforce"]
+    }
+  },
+  {
+    id: "game-development",
+    title: "Game Development",
+    description: "Master the art of creating engaging games using industry-standard engines and tools",
+    icon: GamepadIcon,
+    color: "bg-violet-500",
+    category: "development",
+    totalDuration: "36 weeks",
+    careers: [
+      "Game Developer",
+      "Game Designer",
+      "Game Programmer",
+      "Technical Artist",
+      "Game Engine Developer",
+      "VR/AR Game Developer"
+    ],
+    whatsNext: {
+      topics: [
+        "Advanced Game Physics",
+        "Multiplayer Game Development",
+        "Procedural Content Generation",
+        "Game AI and Pathfinding",
+        "Real-time Graphics Programming",
+        "Game Audio Engineering",
+        "Mobile Game Optimization",
+        "Game Monetization Strategies"
+      ],
+      resources: [
+        {
+          name: "Unity Advanced Game Development",
+          url: "https://learn.unity.com/",
+          type: "course"
+        },
+        {
+          name: "Unreal Engine Masterclass",
+          url: "https://www.unrealengine.com/en-US/onlinelearning-courses",
+          type: "course"
+        },
+        {
+          name: "Game Programming Patterns",
+          url: "https://gameprogrammingpatterns.com/",
+          type: "book"
+        }
+      ]
+    },
+    salary: {
+      min: "65,000",
+      max: "150,000",
+      currency: "USD"
+    },
+    steps: [
+      {
+        title: "Game Development Fundamentals",
+        description: "Learn the basics of game development, including game design principles and programming fundamentals",
+        resources: [
+          {
+            name: "Introduction to Game Development",
+            url: "https://www.coursera.org/learn/game-development",
+            type: "course"
+          },
+          {
+            name: "Game Design Fundamentals",
+            url: "https://www.gamedesigning.org/learn/game-design/",
+            type: "article"
+          },
+          {
+            name: "Unity Beginner Tutorial",
+            url: "https://learn.unity.com/project/creator-kit-beginner-code",
+            type: "course"
+          },
+          {
+            name: "Game Programming Basics",
+            url: "https://www.youtube.com/watch?v=on9nwbZngyw",
+            type: "video"
+          }
+        ],
+        timeEstimate: "8 weeks",
+        skillLevel: "beginner",
+        keyTakeaways: [
+          "Game design principles",
+          "Basic game programming concepts",
+          "Unity/Unreal Engine basics",
+          "Game development workflow"
+        ],
+        projects: [
+          {
+            title: "2D Platformer",
+            description: "Create a simple 2D platformer game with basic mechanics"
+          },
+          {
+            title: "Game Design Document",
+            description: "Develop a comprehensive game design document for a new game concept"
+          }
+        ]
+      },
+      {
+        title: "3D Game Development",
+        description: "Master 3D game development techniques and tools",
+        resources: [
+          {
+            name: "3D Game Development with Unity",
+            url: "https://learn.unity.com/course/3d-game-development",
+            type: "course"
+          },
+          {
+            name: "Unreal Engine 3D Game Development",
+            url: "https://www.unrealengine.com/marketplace/en-US/product/3d-game-development-starter-kit",
+            type: "course"
+          },
+          {
+            name: "3D Game Programming",
+            url: "https://www.amazon.com/3D-Game-Programming-All-One/dp/1598638432",
+            type: "book"
+          },
+          {
+            name: "3D Game Development Tutorial",
+            url: "https://www.youtube.com/watch?v=XtQMytORBmM",
+            type: "video"
+          }
+        ],
+        timeEstimate: "10 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "3D modeling and animation",
+          "Physics and collision detection",
+          "Lighting and materials",
+          "3D game optimization"
+        ],
+        prerequisites: [
+          "Basic game development knowledge",
+          "Understanding of 3D concepts",
+          "Familiarity with game engines"
+        ],
+        projects: [
+          {
+            title: "3D Adventure Game",
+            description: "Develop a 3D adventure game with basic mechanics and interactions"
+          },
+          {
+            title: "3D Environment Design",
+            description: "Create an immersive 3D game environment with proper lighting and materials"
+          }
+        ]
+      },
+      {
+        title: "Advanced Game Development",
+        description: "Learn advanced game development techniques and optimization",
+        resources: [
+          {
+            name: "Advanced Game Programming",
+            url: "https://www.coursera.org/learn/game-programming",
+            type: "course"
+          },
+          {
+            name: "Game Performance Optimization",
+            url: "https://docs.unity3d.com/Manual/PerformanceOptimization.html",
+            type: "article"
+          },
+          {
+            name: "Game AI Programming",
+            url: "https://www.amazon.com/Programming-Game-AI-Example-Mat/dp/1556220782",
+            type: "book"
+          },
+          {
+            name: "Advanced Game Development Techniques",
+            url: "https://www.youtube.com/watch?v=THnivyG0Mvo",
+            type: "video"
+          }
+        ],
+        timeEstimate: "12 weeks",
+        skillLevel: "advanced",
+        keyTakeaways: [
+          "Advanced game mechanics",
+          "Performance optimization",
+          "Game AI implementation",
+          "Multiplayer networking"
+        ],
+        prerequisites: [
+          "3D game development experience",
+          "Strong programming skills",
+          "Understanding of game architecture"
+        ],
+        projects: [
+          {
+            title: "Multiplayer Game",
+            description: "Create a multiplayer game with networking and synchronization"
+          },
+          {
+            title: "AI-driven Game",
+            description: "Develop a game with advanced AI behaviors and pathfinding"
+          }
+        ]
+      }
+    ],
+    prerequisites: [
+      "Basic programming knowledge",
+      "Understanding of mathematics and physics",
+      "Creative thinking and problem-solving skills",
+      "Familiarity with game design concepts"
+    ],
+    tools: [
+      "Unity",
+      "Unreal Engine",
+      "Blender for 3D modeling",
+      "Visual Studio/Visual Studio Code",
+      "Git for version control",
+      "Adobe Creative Suite",
+      "Audacity for audio"
+    ],
+    industryTrends: [
+      "VR/AR game development",
+      "Cloud gaming",
+      "Cross-platform development",
+      "Procedural content generation",
+      "AI in game development",
+      "Mobile gaming growth",
+      "Esports development"
+    ],
+    shareableLink: "https://techpaths.com/share/game-development",
+    jobMarketData: {
+      openPositions: 45000,
+      growthRate: "21% (Much faster than average)",
+      topCompanies: ["Epic Games", "Unity Technologies", "Electronic Arts", "Ubisoft", "Blizzard Entertainment"]
+    }
+  },
+  {
+    id: "ai-engineering",
+    title: "Artificial Intelligence Engineering",
+    description: "Master the practical implementation and deployment of AI systems in production environments",
+    icon: CpuIcon,
+    color: "bg-emerald-500",
+    category: "development",
+    totalDuration: "40 weeks",
+    careers: [
+      "AI Engineer",
+      "ML Engineer",
+      "AI Infrastructure Engineer",
+      "MLOps Engineer",
+      "AI Systems Architect",
+      "Deep Learning Engineer"
+    ],
+    whatsNext: {
+      topics: [
+        "Advanced MLOps",
+        "Distributed AI Systems",
+        "AI Hardware Optimization",
+        "Federated Learning",
+        "AI Security and Privacy",
+        "Quantum Machine Learning",
+        "Edge AI Deployment",
+        "AI Model Governance"
+      ],
+      resources: [
+        {
+          name: "Advanced MLOps",
+          url: "https://www.coursera.org/learn/mlops-fundamentals",
+          type: "course"
+        },
+        {
+          name: "Distributed AI Systems",
+          url: "https://www.oreilly.com/library/view/distributed-systems/9781491926534/",
+          type: "book"
+        },
+        {
+          name: "AI Infrastructure Design",
+          url: "https://www.udacity.com/course/ai-infrastructure--nd082",
+          type: "course"
+        }
+      ]
+    },
+    salary: {
+      min: "100,000",
+      max: "250,000",
+      currency: "USD"
+    },
+    steps: [
+      {
+        title: "AI Engineering Fundamentals",
+        description: "Learn the core concepts of AI engineering and infrastructure",
+        resources: [
+          {
+            name: "AI Engineering Fundamentals",
+            url: "https://www.coursera.org/learn/ai-engineering",
+            type: "course"
+          },
+          {
+            name: "MLOps Fundamentals",
+            url: "https://www.udacity.com/course/mlops-fundamentals--nd082",
+            type: "course"
+          },
+          {
+            name: "AI Infrastructure Best Practices",
+            url: "https://www.oreilly.com/library/view/ai-infrastructure/9781492079399/",
+            type: "book"
+          },
+          {
+            name: "Introduction to AI Engineering",
+            url: "https://www.youtube.com/watch?v=aircAruvnKk",
+            type: "video"
+          }
+        ],
+        timeEstimate: "10 weeks",
+        skillLevel: "beginner",
+        keyTakeaways: [
+          "AI system architecture",
+          "MLOps principles",
+          "AI infrastructure components",
+          "Model deployment basics"
+        ],
+        projects: [
+          {
+            title: "AI Pipeline Development",
+            description: "Build an end-to-end AI pipeline for model training and deployment"
+          },
+          {
+            title: "MLOps Implementation",
+            description: "Implement MLOps practices in a sample AI project"
+          }
+        ]
+      },
+      {
+        title: "Advanced AI Systems",
+        description: "Master advanced AI system design and implementation",
+        resources: [
+          {
+            name: "Advanced AI Systems",
+            url: "https://www.coursera.org/learn/advanced-ai-systems",
+            type: "course"
+          },
+          {
+            name: "Distributed AI Systems",
+            url: "https://www.udacity.com/course/distributed-ai-systems--nd082",
+            type: "course"
+          },
+          {
+            name: "AI System Design Patterns",
+            url: "https://www.oreilly.com/library/view/ai-system-design/9781492079399/",
+            type: "book"
+          },
+          {
+            name: "Advanced AI Engineering",
+            url: "https://www.youtube.com/watch?v=aircAruvnKk",
+            type: "video"
+          }
+        ],
+        timeEstimate: "12 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "Distributed AI systems",
+          "High-performance AI computing",
+          "AI system optimization",
+          "Advanced deployment strategies"
+        ],
+        prerequisites: [
+          "AI engineering fundamentals",
+          "Understanding of distributed systems",
+          "Experience with cloud platforms"
+        ],
+        projects: [
+          {
+            title: "Distributed AI System",
+            description: "Design and implement a distributed AI system"
+          },
+          {
+            title: "AI Performance Optimization",
+            description: "Optimize an AI system for maximum performance"
+          }
+        ]
+      },
+      {
+        title: "AI Production Systems",
+        description: "Learn to build and maintain production-grade AI systems",
+        resources: [
+          {
+            name: "AI Production Systems",
+            url: "https://www.coursera.org/learn/ai-production-systems",
+            type: "course"
+          },
+          {
+            name: "MLOps in Production",
+            url: "https://www.udacity.com/course/mlops-in-production--nd082",
+            type: "course"
+          },
+          {
+            name: "Production AI Systems",
+            url: "https://www.oreilly.com/library/view/production-ai-systems/9781492079399/",
+            type: "book"
+          },
+          {
+            name: "AI Production Best Practices",
+            url: "https://www.youtube.com/watch?v=aircAruvnKk",
+            type: "video"
+          }
+        ],
+        timeEstimate: "14 weeks",
+        skillLevel: "advanced",
+        keyTakeaways: [
+          "Production AI system design",
+          "AI system monitoring",
+          "Model versioning and management",
+          "AI system security"
+        ],
+        prerequisites: [
+          "Advanced AI systems knowledge",
+          "Experience with production systems",
+          "Understanding of security principles"
+        ],
+        projects: [
+          {
+            title: "Production AI System",
+            description: "Build a production-ready AI system with monitoring and security"
+          },
+          {
+            title: "AI System Migration",
+            description: "Migrate an existing AI system to a production environment"
+          }
+        ]
+      }
+    ],
+    prerequisites: [
+      "Strong programming skills",
+      "Understanding of machine learning",
+      "Knowledge of distributed systems",
+      "Experience with cloud platforms"
+    ],
+    tools: [
+      "TensorFlow/PyTorch",
+      "Kubernetes",
+      "Docker",
+      "MLflow",
+      "Airflow",
+      "Prometheus/Grafana",
+      "Git for version control"
+    ],
+    industryTrends: [
+      "Edge AI deployment",
+      "AI infrastructure as code",
+      "Automated ML operations",
+      "AI system security",
+      "Distributed AI systems",
+      "AI hardware optimization",
+      "Federated learning"
+    ],
+    shareableLink: "https://techpaths.com/share/ai-engineering",
+    jobMarketData: {
+      openPositions: 85000,
+      growthRate: "35% (Much faster than average)",
+      topCompanies: ["Google", "Microsoft", "Amazon", "IBM", "NVIDIA", "OpenAI"]
+    }
+  },
+  {
+    id: "cloud-architecture",
+    title: "Cloud Architecture",
+    description: "Master the design and implementation of scalable cloud solutions across major platforms",
+    icon: CloudIcon,
+    color: "bg-sky-500",
+    category: "infrastructure",
+    totalDuration: "32 weeks",
+    careers: [
+      "Cloud Architect",
+      "Cloud Engineer",
+      "Solutions Architect",
+      "Cloud Infrastructure Engineer",
+      "DevOps Architect",
+      "Cloud Security Architect"
+    ],
+    whatsNext: {
+      topics: [
+        "Multi-cloud Architecture",
+        "Cloud-native Security",
+        "Serverless Architecture",
+        "Cloud Cost Optimization",
+        "Edge Computing",
+        "Cloud Migration Strategies",
+        "Cloud Governance",
+        "Cloud Disaster Recovery"
+      ],
+      resources: [
+        {
+          name: "Advanced Cloud Architecture",
+          url: "https://aws.amazon.com/architecture/",
+          type: "course"
+        },
+        {
+          name: "Cloud-native Security",
+          url: "https://www.coursera.org/learn/cloud-security",
+          type: "course"
+        },
+        {
+          name: "Multi-cloud Strategies",
+          url: "https://www.oreilly.com/library/view/multi-cloud-strategies/9781492079399/",
+          type: "book"
+        }
+      ]
+    },
+    salary: {
+      min: "90,000",
+      max: "220,000",
+      currency: "USD"
+    },
+    steps: [
+      {
+        title: "Cloud Fundamentals",
+        description: "Learn the basics of cloud computing and major cloud platforms",
+        resources: [
+          {
+            name: "Cloud Computing Fundamentals",
+            url: "https://www.coursera.org/learn/cloud-computing",
+            type: "course"
+          },
+          {
+            name: "AWS Cloud Practitioner",
+            url: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+            type: "course"
+          },
+          {
+            name: "Azure Fundamentals",
+            url: "https://docs.microsoft.com/en-us/learn/certifications/azure-fundamentals/",
+            type: "course"
+          },
+          {
+            name: "Google Cloud Fundamentals",
+            url: "https://cloud.google.com/certification/cloud-digital-leader",
+            type: "course"
+          }
+        ],
+        timeEstimate: "8 weeks",
+        skillLevel: "beginner",
+        keyTakeaways: [
+          "Cloud computing concepts",
+          "Major cloud platforms",
+          "Basic cloud services",
+          "Cloud security fundamentals"
+        ],
+        projects: [
+          {
+            title: "Cloud Infrastructure Setup",
+            description: "Set up a basic cloud infrastructure using AWS/Azure/GCP"
+          },
+          {
+            title: "Cloud Service Implementation",
+            description: "Implement common cloud services for a sample application"
+          }
+        ]
+      },
+      {
+        title: "Cloud Architecture Design",
+        description: "Master the design of scalable and resilient cloud architectures",
+        resources: [
+          {
+            name: "Cloud Architecture Design",
+            url: "https://www.coursera.org/learn/cloud-architecture",
+            type: "course"
+          },
+          {
+            name: "AWS Solutions Architect",
+            url: "https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+            type: "course"
+          },
+          {
+            name: "Azure Solutions Architect",
+            url: "https://docs.microsoft.com/en-us/learn/certifications/azure-solutions-architect/",
+            type: "course"
+          },
+          {
+            name: "Cloud Architecture Patterns",
+            url: "https://www.youtube.com/watch?v=aircAruvnKk",
+            type: "video"
+          }
+        ],
+        timeEstimate: "10 weeks",
+        skillLevel: "intermediate",
+        keyTakeaways: [
+          "Cloud architecture patterns",
+          "Scalability and resilience",
+          "Cloud security design",
+          "Cost optimization"
+        ],
+        prerequisites: [
+          "Cloud fundamentals",
+          "Understanding of distributed systems",
+          "Basic security knowledge"
+        ],
+        projects: [
+          {
+            title: "Cloud Architecture Design",
+            description: "Design a scalable cloud architecture for a web application"
+          },
+          {
+            title: "Cloud Migration Plan",
+            description: "Create a cloud migration strategy for an existing application"
+          }
+        ]
+      },
+      {
+        title: "Advanced Cloud Solutions",
+        description: "Learn advanced cloud architecture patterns and implementation",
+        resources: [
+          {
+            name: "Advanced Cloud Architecture",
+            url: "https://www.coursera.org/learn/advanced-cloud-architecture",
+            type: "course"
+          },
+          {
+            name: "Cloud-native Architecture",
+            url: "https://www.udacity.com/course/cloud-native-architecture--nd082",
+            type: "course"
+          },
+          {
+            name: "Multi-cloud Architecture",
+            url: "https://www.oreilly.com/library/view/multi-cloud-architecture/9781492079399/",
+            type: "book"
+          },
+          {
+            name: "Advanced Cloud Patterns",
+            url: "https://www.youtube.com/watch?v=aircAruvnKk",
+            type: "video"
+          }
+        ],
+        timeEstimate: "12 weeks",
+        skillLevel: "advanced",
+        keyTakeaways: [
+          "Multi-cloud architecture",
+          "Cloud-native design",
+          "Advanced security patterns",
+          "Disaster recovery"
+        ],
+        prerequisites: [
+          "Cloud architecture experience",
+          "Understanding of microservices",
+          "Security expertise"
+        ],
+        projects: [
+          {
+            title: "Multi-cloud Solution",
+            description: "Design and implement a multi-cloud architecture"
+          },
+          {
+            title: "Cloud-native Application",
+            description: "Build a cloud-native application with advanced patterns"
+          }
+        ]
+      }
+    ],
+    prerequisites: [
+      "Understanding of distributed systems",
+      "Basic networking knowledge",
+      "Security fundamentals",
+      "Experience with cloud platforms"
+    ],
+    tools: [
+      "AWS/Azure/GCP",
+      "Terraform",
+      "Kubernetes",
+      "Docker",
+      "Ansible",
+      "CloudFormation",
+      "Git for version control"
+    ],
+    industryTrends: [
+      "Multi-cloud adoption",
+      "Serverless architecture",
+      "Edge computing",
+      "Cloud-native security",
+      "FinOps",
+      "Green cloud computing",
+      "AI/ML in cloud"
+    ],
+    shareableLink: "https://techpaths.com/share/cloud-architecture",
+    jobMarketData: {
+      openPositions: 95000,
+      growthRate: "28% (Much faster than average)",
+      topCompanies: ["Amazon", "Microsoft", "Google", "IBM", "Oracle", "Salesforce"]
     }
   }
 ];

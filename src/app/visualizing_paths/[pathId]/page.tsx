@@ -7,6 +7,23 @@ import { PathDetail } from '../components/PathDetail';
 export default function PathPage() {
   const params = useParams();
   const router = useRouter();
+  
+  if (!params) {
+    return (
+      <div className="min-h-screen pt-12 bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">Invalid path</h1>
+          <button
+            onClick={() => router.push('/visualizing_paths')}
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300"
+          >
+            Back to Paths
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const pathId = params.pathId as string;
   
   const currentPath = learningPaths.find(path => path.id === pathId);
