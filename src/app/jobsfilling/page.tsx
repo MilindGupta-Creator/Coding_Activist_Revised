@@ -257,6 +257,96 @@ const Home = () => {
     }
   };
 
+  const copyTodaysJobDetails = async () => {
+    if (!user) {
+      toast.error("You must be logged in to copy jobs.");
+      return;
+    }
+
+    try {
+      // Get today's start and end timestamps
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const startTimestamp = Timestamp.fromDate(today);
+      const endTimestamp = Timestamp.fromDate(tomorrow);
+
+      const jobsCollection = collection(db, "jobsDataCollection");
+      const q = query(
+        jobsCollection,
+        where("createdAt", ">=", startTimestamp),
+        where("createdAt", "<", endTimestamp)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        toast.error("No jobs found for today.");
+        return;
+      }
+
+      // Format jobs into numbered list with individual job URLs
+      const jobsList = querySnapshot.docs.map((doc, index) => {
+        const data = doc.data();
+        return `${index + 1}. ${data.role} at ${data.name} - https://codingactivist.com/job-details/${doc.id}`;
+      }).join('\n\n');
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(jobsList);
+      toast.success("Today's job details copied to clipboard!");
+    } catch (e) {
+      toast.error("Error copying jobs");
+      console.error("Error copying jobs: ", e);
+    }
+  };
+
+  const copyTodaysJobs = async () => {
+    if (!user) {
+      toast.error("You must be logged in to copy jobs.");
+      return;
+    }
+
+    try {
+      // Get today's start and end timestamps
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const startTimestamp = Timestamp.fromDate(today);
+      const endTimestamp = Timestamp.fromDate(tomorrow);
+
+      const jobsCollection = collection(db, "jobsDataCollection");
+      const q = query(
+        jobsCollection,
+        where("createdAt", ">=", startTimestamp),
+        where("createdAt", "<", endTimestamp)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        toast.error("No jobs found for today.");
+        return;
+      }
+
+      // Format jobs into numbered list with main jobs page URL
+      const jobsList = querySnapshot.docs.map((doc, index) => {
+        const data = doc.data();
+        return `${index + 1}. ${data.role} at ${data.name} - https://codingactivist.com/jobs`;
+      }).join('\n\n');
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(jobsList);
+      toast.success("Today's jobs copied to clipboard!");
+    } catch (e) {
+      toast.error("Error copying jobs");
+      console.error("Error copying jobs: ", e);
+    }
+  };
+
   return (
     <div className="pt-20 h-screen items-center justify-center space-y-4 flex md:flex-row flex-col gap-4">
       {!user ? (
@@ -320,6 +410,21 @@ const Home = () => {
               onClick={deleteJobsInTimeFrame}
             >
               Delete Jobs in Time Frame
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <button
+              className="border px-3 py-4 rounded-lg bg-green-500 text-white"
+              onClick={copyTodaysJobDetails}
+            >
+              Copy Today's Job Details
+            </button>
+            <button
+              className="border px-3 py-4 rounded-lg bg-blue-500 text-white"
+              onClick={copyTodaysJobs}
+            >
+              Copy Today's Jobs
             </button>
           </div>
 

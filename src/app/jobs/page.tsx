@@ -8,13 +8,16 @@ import { formatDate } from "@/utils/index";
 import _ from "lodash";
 import Loading from "@/components/common/Loading";
 import { VscSettings } from "react-icons/vsc";
-import { ArrowUp, Briefcase, MapPin, TrendingUp } from "lucide-react";
+import { ArrowUp, Briefcase, MapPin, TrendingUp, Copy, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import { StatsCard } from "@/components/ui/stats-card";
 import TrendingSidebar from "@/components/ui/TrendingSidebar";
 import { Tabs } from "../../components/ui/tabs";
 import JobTrends from "@/components/common/JobTrends";
 import AdComponent from "@/components/common/AdComponent";
+import toast from "react-hot-toast";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 
 interface JobData {
   type: string;
@@ -216,6 +219,86 @@ const Home: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  const copyTodaysJobDetails = async () => {
+    try {
+      // Get today's start and end timestamps
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const startTimestamp = Timestamp.fromDate(today);
+      const endTimestamp = Timestamp.fromDate(tomorrow);
+
+      const jobsCollection = collection(db, "jobsDataCollection");
+      const q = query(
+        jobsCollection,
+        where("createdAt", ">=", startTimestamp),
+        where("createdAt", "<", endTimestamp)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        toast.error("No jobs found for today.");
+        return;
+      }
+
+      // Format jobs into numbered list with individual job URLs
+      const jobsList = querySnapshot.docs.map((doc, index) => {
+        const data = doc.data();
+        return `${index + 1}. ${data.role} at ${data.name} - https://codingactivist.com/job-details/${doc.id}`;
+      }).join('\n\n');
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(jobsList);
+      toast.success("Today's job details copied to clipboard!");
+    } catch (e) {
+      toast.error("Error copying jobs");
+      console.error("Error copying jobs: ", e);
+    }
+  };
+
+  const copyTodaysJobs = async () => {
+    try {
+      // Get today's start and end timestamps
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const startTimestamp = Timestamp.fromDate(today);
+      const endTimestamp = Timestamp.fromDate(tomorrow);
+
+      const jobsCollection = collection(db, "jobsDataCollection");
+      const q = query(
+        jobsCollection,
+        where("createdAt", ">=", startTimestamp),
+        where("createdAt", "<", endTimestamp)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        toast.error("No jobs found for today.");
+        return;
+      }
+
+      // Format jobs into numbered list with main jobs page URL
+      const jobsList = querySnapshot.docs.map((doc, index) => {
+        const data = doc.data();
+        return `${index + 1}. ${data.role} at ${data.name} - https://codingactivist.com/jobs`;
+      }).join('\n\n');
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(jobsList);
+      toast.success("Today's jobs copied to clipboard!");
+    } catch (e) {
+      toast.error("Error copying jobs");
+      console.error("Error copying jobs: ", e);
+    }
+  };
+
   return (
     <div className="w-4/5 mx-auto pt-20">
       <motion.div
@@ -224,6 +307,22 @@ const Home: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="text-center mt-8"
       >
+        <div className="flex justify-center items-center gap-4 mb-4">
+          <button
+            onClick={copyTodaysJobDetails}
+            className="p-2 rounded-full bg-violet-500/10 hover:bg-violet-500/20 transition-colors"
+            title="Copy Today's Job Details"
+          >
+            <FileText className="w-5 h-5 text-violet-500" />
+          </button>
+          <button
+            onClick={copyTodaysJobs}
+            className="p-2 rounded-full bg-violet-500/10 hover:bg-violet-500/20 transition-colors"
+            title="Copy Today's Jobs"
+          >
+            <Copy className="w-5 h-5 text-violet-500" />
+          </button>
+        </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
           Find Your Dream <span className="text-violet-500">Tech Job</span>
         </h1>
