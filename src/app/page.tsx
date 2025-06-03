@@ -299,7 +299,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {careerTracks.map((track, index) => (
                 <Link href="/visualizing_paths" key={index} className="group">
-                  <div className="h-full p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                  <div className="z-0 h-full p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 cursor-pointer relative overflow-hidden">
                     {/* Background gradient effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-transparent to-purple-500/0 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
                     
