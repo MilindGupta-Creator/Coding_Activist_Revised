@@ -298,17 +298,44 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center mb-12">Specialized Career Tracks</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {careerTracks.map((track, index) => (
-                <Link href="/visualizing_paths" key={index}>
-                  <div className="p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                    <div className="mb-4">{track.icon}</div>
-                    <h3 className="text-xl font-semibold mb-2">{track.title}</h3>
-                    <p className="text-gray-400 mb-4">{track.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {track.skills.map((skill, skillIndex) => (
-                        <span key={skillIndex} className="px-3 py-1 rounded-full bg-white/10 text-sm">
-                          {skill}
+                <Link href="/visualizing_paths" key={index} className="group">
+                  <div className="h-full p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                    {/* Background gradient effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-transparent to-purple-500/0 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300 inline-block">
+                        <div className="p-3 rounded-lg bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
+                          {track.icon}
+                        </div>
+                      </div>
+                      <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">
+                        {track.title}
+                      </h3>
+                      <p className="text-gray-400 mb-6 line-clamp-2">
+                        {track.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-10">
+                        {track.skills.map((skill, skillIndex) => (
+                          <span 
+                            key={skillIndex} 
+                            className="px-3 py-1 rounded-full text-sm bg-white/5 border border-white/10 group-hover:border-blue-500/20 group-hover:bg-blue-500/5 transition-all duration-300"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Arrow button */}
+                    <div className="absolute bottom-8 right-8">
+                      <span className="flex items-center gap-2 text-sm font-medium">
+                        <span className="text-gray-400 group-hover:text-blue-400 transition-colors">Learn More</span>
+                        <span className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:translate-x-1 transition-all duration-300">
+                          <ArrowRight className="w-4 h-4 text-blue-500 group-hover:text-white transition-colors" />
                         </span>
-                      ))}
+                      </span>
                     </div>
                   </div>
                 </Link>
