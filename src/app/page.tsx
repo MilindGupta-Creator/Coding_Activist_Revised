@@ -166,7 +166,7 @@ export default function Home() {
   return (
     <div className="flex md:justify-center md:items-center items-start min-h-screen w-full">
       <div className="flex flex-col items-center justify-center pt-20 pb-4 w-full">
-        <Badge className="mt-12 mb-4 px-4 py-2 text-sm font-medium bg-blue-500/10 text-blue-500 border-blue-500/20">
+        <Badge className="mt-12 mb-4 px-4 py-2 text-sm font-medium bg-[#23214a]/80 text-white border border-[#3b376b] shadow-md backdrop-blur-md rounded-full">
           #1 Remote Job Platform for Tech Professionals
         </Badge>
 
@@ -302,7 +302,7 @@ export default function Home() {
                   <div className="z-0 h-full p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/50 transition-all duration-300 cursor-pointer relative overflow-hidden">
                     {/* Background gradient effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-transparent to-purple-500/0 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
-                    
+
                     {/* Content */}
                     <div className="relative z-10">
                       <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300 inline-block">
@@ -318,8 +318,8 @@ export default function Home() {
                       </p>
                       <div className="flex flex-wrap gap-2 mb-10">
                         {track.skills.map((skill, skillIndex) => (
-                          <span 
-                            key={skillIndex} 
+                          <span
+                            key={skillIndex}
                             className="px-3 py-1 rounded-full text-sm bg-white/5 border border-white/10 group-hover:border-blue-500/20 group-hover:bg-blue-500/5 transition-all duration-300"
                           >
                             {skill}
