@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className="min-h-screen pt-12 bg-gradient-to-br from-gray-50 via-gray-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-6">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-5 rounded-3xl shadow-lg transform hover:scale-105 transition-transform duration-300">
@@ -60,7 +60,7 @@ function App() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative max-w-5xl mx-auto">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-transparent blur-3xl -z-10" />
           {filteredPaths.map((path) => (
             <PathCard
