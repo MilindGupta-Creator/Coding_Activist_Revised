@@ -375,52 +375,51 @@ const Home: React.FC = () => {
               Remote
             </button>
 
-            {/* Filter button */}
-            {!showfilter && (
-              <button
-                className={`
-            border border-violet-500 mt-5 py-2 rounded-lg 
-            flex items-center px-4 tracking-wider
-            hover:bg-violet-700 
-            ${showfilter ? 'bg-violet-50' : ''}
-          `}
-                onClick={() => setShowFilter((prev) => !prev)}
-              >
-                <span className="mr-2">Filter</span>
-                <VscSettings className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-          {showfilter && (
-            <div className="md:w-[calc(80%-15px)] mt-1 bg-white p-4 rounded-lg shadow-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-semibold text-gray-900">Filter</h1>
+             {!showfilter && (
                 <button
-                  className="text-gray-800 bg-gray-100 border border-gray-300 hover:bg-gray-200 px-3 py-1 rounded-full transition duration-300"
-                  onClick={() => setShowFilter(false)}
+                  className={`
+                border border-violet-500 mt-5 py-2 rounded-lg 
+                flex items-center px-4 tracking-wider
+                hover:bg-violet-700 
+                ${showfilter ? 'bg-violet-50' : ''}
+              `}
+                  onClick={() => setShowFilter((prev) => !prev)}
                 >
-                  &times; Close
+                  <span className="mr-2">Filter</span>
+                  <VscSettings className="w-4 h-4" />
                 </button>
-              </div>
-              <hr className="border-gray-300" />
-              <div className="flex gap-x-5 mt-5">
-                <label className="block text-gray-800 text-sm font-medium">
-                  Job Type
-                  <select
-                    name="jobType"
-                    id=""
-                    className="block w-full mt-2 p-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition ease-in-out duration-200"
-                    onChange={handleChange}
-                    value={filters}
-                  >
-                    <option value="all">🔍 All </option>
-                    <option value="fulltime">💼 Full Time</option>
-                    <option value="internship">👩‍💻 Internship</option>
-                  </select>
-                </label>
-              </div>
+              )}
             </div>
-          )}
+            {showfilter && (
+              <div className="md:w-[calc(80%-15px)] mt-1 bg-white p-4 rounded-lg shadow-lg">
+                <div className="flex justify-between items-center mb-4">
+                  <h1 className="text-2xl font-semibold text-gray-900">Filter</h1>
+                  <button
+                    className="text-gray-800 bg-gray-100 border border-gray-300 hover:bg-gray-200 px-3 py-1 rounded-full transition duration-300"
+                    onClick={() => setShowFilter(false)}
+                  >
+                    &times; Close
+                  </button>
+                </div>
+                <hr className="border-gray-300" />
+                <div className="flex gap-x-5 mt-5">
+                  <label className="block text-gray-800 text-sm font-medium">
+                    Job Type
+                    <select
+                      name="jobType"
+                      id=""
+                      className="block w-full mt-2 p-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition ease-in-out duration-200"
+                      onChange={handleChange}
+                      value={filters}
+                    >
+                      <option value="all">🔍 All </option>
+                      <option value="fulltime">💼 Full Time</option>
+                      <option value="internship">👩‍💻 Internship</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            )} */}
 
           <div style={{ marginTop: "20px" }}>
             <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
