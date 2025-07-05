@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import RotatingText from '@/components/react-bits/RotatingText/RotatingText'
+
 import Image from "next/image";
 import Link from "next/link";
 import Marquee from "react-fast-marquee";
@@ -171,8 +174,24 @@ export default function Home() {
         </Badge>
 
         <h1 className="font-extrabold md:text-6xl mb-5 text-4xl text-center leading-tight mt-8">
-          Connect .Create. <span className="text-blue-500">Discover</span>
+          Connect .Create.{" "}
+          <span className=" inline-block">
+            <RotatingText
+              texts={['Discover', 'Explore', 'Build']}
+              mainClassName="px-2 sm:px-2 md:px-3 bg-sky-50 text-blue-600 overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg inline-block"
+              staggerFrom={"last"}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-120%" }}
+              staggerDuration={0.025}
+              splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+              rotationInterval={2000}
+            />
+          </span>
         </h1>
+
+
         <p className="text-center md:text-xl font-bold">
           This is a Community of Coders{" "}
           <span className="text-red-400"> who are passionate</span> in Computer
