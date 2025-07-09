@@ -147,9 +147,9 @@ const JobDetails = () => {
             <Link href="/jobs" className="back-link">
               <FaArrowLeft /> Back to Jobs
             </Link>
-            <div className="hidden lg:block">
+            {/* <div className="hidden lg:block">
               <HotUpdates />
-            </div>
+            </div> */}
           </nav>
           {/* heading */}
           <header className="relative flex justify-between items-start text-black mb-10 bg-gradient-to-r from-violet-50 to-blue-50 p-6 rounded-xl pr-12 sm:pr-20">
@@ -289,9 +289,9 @@ const JobDetails = () => {
           {/* <Link href="/jobs" className="back-link">
           <FaArrowLeft /> Back to Jobs
         </Link> */}
-          <div className="block md:hidden">
+          {/* <div className="block md:hidden">
             <HotUpdates />
-          </div>
+          </div> */}
         </section>
 
         {/* Ad before similar jobs */}
