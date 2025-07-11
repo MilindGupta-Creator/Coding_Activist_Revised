@@ -173,7 +173,7 @@ export default function Home() {
           #1 Remote Job Platform for Tech Professionals
         </Badge>
 
-        <h1 className="font-extrabold md:text-6xl mb-5 text-4xl text-center leading-tight mt-8">
+        <h1 className="font-medium md:text-6xl mb-5 text-4xl text-center leading-tight mt-8">
           Connect .Create.{" "}
           <span className=" inline-block">
             <RotatingText
@@ -192,7 +192,7 @@ export default function Home() {
         </h1>
 
 
-        <p className="text-center md:text-xl font-bold">
+        <p className="text-center md:text-xl font-medium">
           This is a Community of Coders{" "}
           <span className="text-red-400"> who are passionate</span> in Computer
           Science Field
@@ -271,8 +271,8 @@ export default function Home() {
             {stats.map((stat, index) => (
               <div key={index} className="text-center p-6 bg-white/5 rounded-lg backdrop-blur-sm">
                 <div className="mb-4 flex justify-center">{stat.icon}</div>
-                <div className="text-4xl font-bold mb-2">{stat.value}</div>
-                <h3 className="text-xl font-semibold mb-2">{stat.label}</h3>
+                <div className="text-4xl font-medium mb-2">{stat.value}</div>
+                <h3 className="text-xl font-medium mb-2">{stat.label}</h3>
                 <p className="text-gray-400">{stat.description}</p>
               </div>
             ))}
@@ -281,7 +281,7 @@ export default function Home() {
 
         <div className="mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-4xl md:text-5xl font-medium mb-4">
               Recently Added <span className="text-blue-500">Jobs</span>
             </h2>
           </div>
@@ -314,7 +314,7 @@ export default function Home() {
         {/* Career Tracks Section */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Specialized Career Tracks</h2>
+            <h2 className="text-3xl font-medium text-center mb-12">Specialized Career Tracks</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {careerTracks.map((track, index) => (
                 <Link href="/visualizing_paths" key={index} className="group">
@@ -329,7 +329,7 @@ export default function Home() {
                           {track.icon}
                         </div>
                       </div>
-                      <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-2xl font-medium mb-3 text-white group-hover:text-blue-400 transition-colors">
                         {track.title}
                       </h3>
                       <p className="text-gray-400 mb-6 line-clamp-2">
@@ -368,7 +368,7 @@ export default function Home() {
         <div className="pt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Why Remote Work?</h2>
+              <h2 className="text-3xl font-medium mb-4">Why Remote Work?</h2>
               <p className="text-gray-400">Embrace the future of work with these amazing benefits</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
@@ -385,7 +385,7 @@ export default function Home() {
         {/* Technologies Section */}
         <section className="pt-8">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Technologies We Cover</h2>
+            <h2 className="text-3xl font-medium text-center mb-12">Technologies We Cover</h2>
             <div className="flex flex-wrap justify-center gap-4">
               {technologies.map((tech, index) => (
                 <span key={index} className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
@@ -399,7 +399,7 @@ export default function Home() {
         {/* FAQ Section */}
         <section className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-medium mb-4">Frequently Asked Questions</h2>
             <p className="text-gray-400">Everything you need to know about our platform</p>
           </div>
           <Accordion type="single" collapsible className="w-full">
@@ -417,7 +417,7 @@ export default function Home() {
         {/* Industry Insights Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Industry Insights</h2>
+            <h2 className="text-3xl font-medium text-center mb-12">Industry Insights</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
                 <h3 className="text-2xl font-semibold mb-4">Remote Work Trends 2025</h3>
@@ -451,7 +451,7 @@ export default function Home() {
         {/* Professional Development Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Professional Development Resources</h2>
+            <h2 className="text-3xl font-medium text-center mb-12">Professional Development Resources</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
                 <h3 className="text-xl font-semibold mb-4">Technical Writing</h3>
@@ -496,7 +496,7 @@ export default function Home() {
         {/* Global Impact Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Global Impact & Sustainability</h2>
+            <h2 className="text-3xl font-medium text-center mb-12">Global Impact & Sustainability</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
                 <h3 className="text-2xl font-semibold mb-4">Environmental Impact</h3>
@@ -529,7 +529,7 @@ export default function Home() {
         {/* Research & Innovation Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Research & Innovation Hub</h2>
+            <h2 className="text-3xl font-medium text-center mb-12">Research & Innovation Hub</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
                 <h3 className="text-xl font-semibold mb-4">Latest Research Papers</h3>
