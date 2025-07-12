@@ -149,13 +149,23 @@ export default function Component() {
   }, []);
 
   useEffect(() => {
-    document.title = "Blind 75 Coding Questions - Improve Your DSA Skills";
-    document
-      .querySelector("meta[name='description']")
-      ?.setAttribute(
-        "content",
-        "Explore the Blind 75 coding questions collection to enhance your data structures and algorithms skills. Perfect for coding interviews!"
-      );
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const storedBookmarks = localStorage.getItem("bookmarkedQuestions");
+    if (storedBookmarks) {
+      setBookmarkedQuestions(JSON.parse(storedBookmarks));
+    }
+
+    const storedNotes = localStorage.getItem("questionNotes");
+    if (storedNotes) {
+      setNotes(JSON.parse(storedNotes));
+    }
   }, []);
 
   const fetchUserData = async (userId: string) => {
@@ -259,26 +269,6 @@ export default function Component() {
     activeTab,
     showBlind75Only,
   ]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const storedBookmarks = localStorage.getItem("bookmarkedQuestions");
-    if (storedBookmarks) {
-      setBookmarkedQuestions(JSON.parse(storedBookmarks));
-    }
-
-    const storedNotes = localStorage.getItem("questionNotes");
-    if (storedNotes) {
-      setNotes(JSON.parse(storedNotes));
-    }
-  }, []);
 
   const handlePageChange = (
     page: number,
