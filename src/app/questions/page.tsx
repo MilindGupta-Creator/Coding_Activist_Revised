@@ -24,6 +24,8 @@ import {
   Trash2,
   PlayCircle,
   Eye,
+  Crown,
+  Sparkles,
 } from "lucide-react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -566,8 +568,13 @@ export default function Component() {
     return (
       <motion.div
         key={question.id}
-        className={`bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 mb-4 transform hover:scale-[1.02] transition-all duration-300 w-full hover:shadow-xl`}
+        className={`relative bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 mb-4 transform hover:scale-[1.02] transition-all duration-300 w-full hover:shadow-xl`}
       >
+        <div className="absolute -right-3 -top-3 rotate-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-2.5 py-1 text-[10px] font-bold shadow">
+            <Crown className="h-3 w-3" /> Premium
+          </span>
+        </div>
         <div className="flex justify-between items-start mb-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
             <Code className="mr-2 text-blue-500" />
@@ -649,7 +656,7 @@ export default function Component() {
         <div className="flex justify-center items-baseline gap-4">
           <button
             onClick={() => setShowQuickPreview(question)}
-            className="mt-4 w-full py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center"
+            className="mt-4 w-full py-2 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center border border-transparent hover:border-yellow-400/40"
           >
             <Eye className="mr-2 h-4 w-4" />
             Quick Preview
@@ -658,7 +665,7 @@ export default function Component() {
             href={question.leetCodeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            className="mt-4 py-2 px-4 bg-gradient-to-r from-indigo-500 to-violet-600 text-white rounded-lg hover:from-indigo-600 hover:to-violet-700 transition-colors duration-200 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
             <PlayCircle className="mr-2 h-5 w-5" />
             Solve
@@ -792,22 +799,32 @@ export default function Component() {
             " "
           )}
           <div
-            className=" relative overflow-hidden mb-10 py-12 px-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg"
+            className=" relative overflow-hidden mb-10 py-12 px-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg ring-1 ring-white/20"
             style={{ zIndex: "1" }}
           >
             <div className="relative z-10">
+              <div className="flex justify-center mb-3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/15 text-white px-4 py-1 text-sm font-semibold backdrop-blur">
+                  <Crown className="h-4 w-4" /> Premium Unlocked
+                </span>
+              </div>
               <motion.h1
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-5xl font-bold mb-4 text-center text-white"
+                className="text-5xl font-bold mb-3 text-center text-white"
               >
-                Coding Challenges
+                LeetCode Premium — for Free
               </motion.h1>
-              <p className="text-xl text-center text-white opacity-90">
-                Unlock your coding potential with the ultimate DSA challenge
-                collection!
+              <p className="text-lg md:text-xl text-center text-white/95">
+                Curated premium-style problems with company tags, notes, and solution links. No paywall.
               </p>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+                <span className="px-3 py-1 rounded-full bg-white/15 text-white">{questions.length}+ problems</span>
+                <span className="px-3 py-1 rounded-full bg-white/15 text-white">Blind 75 included</span>
+                <span className="px-3 py-1 rounded-full bg-white/15 text-white">Company filters</span>
+                <span className="px-3 py-1 rounded-full bg-white/15 text-white">Bookmarks & Notes</span>
+              </div>
             </div>
             <div className="absolute inset-0 bg-white opacity-10">
               <svg
@@ -820,6 +837,21 @@ export default function Component() {
                 <path d="M0 0h32v32H0z" fill="currentColor" fillOpacity=".05" />
                 <path d="M0 0h32L0 32z" fill="currentColor" fillOpacity=".05" />
               </svg>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 blur-2xl"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+            <div className="flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 p-3 shadow-sm">
+              <Sparkles className="h-4 w-4 text-yellow-500" />
+              <span className="text-sm">Handpicked by difficulty and topic</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 p-3 shadow-sm">
+              <BookmarkIcon className="h-4 w-4 text-blue-500" />
+              <span className="text-sm">Sync bookmarks and notes</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 p-3 shadow-sm">
+              <PlayCircle className="h-4 w-4 text-purple-500" />
+              <span className="text-sm">One-click jump to solve</span>
             </div>
           </div>
           <div className="mb-8 flex justify-center items-center">
@@ -1201,7 +1233,8 @@ export default function Component() {
           className="fixed mb-16 bottom-4 right-4 p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200"
           onClick={scrollToTop}
         >
-          <ArrowUp className="h-6 w-6" />
+        <ArrowUp className="h-6 w-6" />
+        <span className="sr-only">Scroll to top</span>
         </button>
       </div>
     </div>
