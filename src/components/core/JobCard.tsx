@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FaLocationDot, FaBriefcase } from "react-icons/fa6";
+import { useState, useEffect, useRef } from "react";
 
 interface JobCardProps {
   job: any;
@@ -10,6 +11,26 @@ interface JobCardProps {
 }
 
 const JobCard = (jobs: JobCardProps) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+        setShowTooltip(false);
+      }
+    };
+
+    if (showTooltip) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showTooltip]);
+
   return (
     <div className="bg-[#000] rounded-lg p-5 sm:w-80 h-auto items-baseline  ">
       <div className="flex flex-col items-start">
@@ -38,9 +59,23 @@ const JobCard = (jobs: JobCardProps) => {
           <p className="w-24 bg-gray-700 px-3 py-2 rounded-lg text-xs flex items-center truncate justify-center ">
             <FaLocationDot className="mr-1" /> {jobs.job.address.split(" ")[0]}
           </p>
-          <p className="w-44 truncate bg-gray-700 px-3 py-2 rounded-lg text-xs">
-            {jobs.job.salary || "Salary N/A"}
-          </p>
+          <div 
+            ref={tooltipRef}
+            className="relative"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onClick={() => setShowTooltip(!showTooltip)}
+          >
+            <p className="w-44 truncate bg-gray-700 px-3 py-2 rounded-lg text-xs cursor-help select-none">
+              {jobs.job.salary || "Salary N/A"}
+            </p>
+            {showTooltip && jobs.job.salary && (
+              <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg border border-gray-700 z-10 max-w-xs break-words">
+                {jobs.job.salary}
+                <div className="absolute top-full left-4 w-2 h-2 rotate-45 bg-gray-900 border-r border-b border-gray-700"></div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="flex my-4 w-full flex-wrap gap-2 items-center">
           <p className="text-gray-200">Skills:</p>
