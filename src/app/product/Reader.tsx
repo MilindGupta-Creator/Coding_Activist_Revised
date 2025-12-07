@@ -7,6 +7,8 @@ import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
 import { db } from '@/firebase/firebase';
 import Logo from "../../../public/assets/main-logo.png";
+import ExamQuiz from './ExamQuiz';
+import FrequencyHeatmap from './FrequencyHeatmap';
 
 // Icons for study plans
 const CalendarIcon = ({ className }: { className?: string }) => (
@@ -51,6 +53,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
+  const [isExamMode, setIsExamMode] = useState(false);
+  const [showTopicHeatmap, setShowTopicHeatmap] = useState(false);
+  const [isTimedQuizActive, setIsTimedQuizActive] = useState(false);
+  const [quizDurationMinutes, setQuizDurationMinutes] = useState(15);
+  const [quizQuestionCount, setQuizQuestionCount] = useState(10);
+  const [quizTimeLeft, setQuizTimeLeft] = useState<number | null>(null);
+  const [quizQuestionIndices, setQuizQuestionIndices] = useState<number[]>([]);
 
   const contentRef = useRef<HTMLElement | null>(null);
 
@@ -63,6 +72,10 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   };
 
   const goToModule = (moduleId: string) => {
+    if (isTimedQuizActive) {
+      // Prevent switching modules during a timed quiz
+      return;
+    }
     setActiveModule(moduleId);
     setShowTodayPanel(false);
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -76,6 +89,44 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const formatQuizTime = (seconds: number | null) => {
+    if (seconds === null || seconds < 0) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    const mm = mins.toString().padStart(2, '0');
+    const ss = secs.toString().padStart(2, '0');
+    return `${mm}:${ss}`;
+  };
+
+  const startTimedQuiz = () => {
+    const module = ebookContent.find(c => c.id === activeModule);
+    if (!module || module.items.length === 0) return;
+
+    const indices = Array.from({ length: module.items.length }, (_, i) => i);
+    // Fisher–Yates shuffle to pick random questions
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+
+    const selected = indices.slice(0, Math.min(quizQuestionCount, indices.length));
+    if (selected.length === 0) return;
+
+    setQuizQuestionIndices(selected);
+    setQuizTimeLeft(quizDurationMinutes * 60);
+    setIsTimedQuizActive(true);
+    setIsQuizMode(true);
+    setRevealedAnswers({});
+    scrollToTop();
+  };
+
+  const endTimedQuiz = () => {
+    setIsTimedQuizActive(false);
+    setQuizTimeLeft(null);
+    setQuizQuestionIndices([]);
+    setIsQuizMode(false);
   };
 
   // ==================== STUDY PLAN STATE ====================
@@ -104,6 +155,28 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       // Ignore parse errors
     }
   }, []);
+
+  // Timed quiz countdown
+  useEffect(() => {
+    if (!isTimedQuizActive || quizTimeLeft === null) return;
+
+    const id = window.setInterval(() => {
+      setQuizTimeLeft(prev => {
+        if (prev === null) return prev;
+        if (prev <= 1) {
+          window.clearInterval(id);
+          setIsTimedQuizActive(false);
+          setIsQuizMode(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(id);
+    };
+  }, [isTimedQuizActive, quizTimeLeft]);
 
   // Save study plan progress to localStorage
   const savePlanProgress = useCallback((plan: StudyPlan | null, day: number, completed: Set<string>) => {
@@ -903,8 +976,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
            <div className="bg-slate-800/50 rounded-lg p-3 mb-4">
               <div className="text-[10px] text-slate-500 uppercase mb-1">License Holder</div>
               <div className="text-xs text-white font-mono">milindgupta578@gmail.com</div>
-              <div className="text-[10px] text-slate-500 mt-1">ID: 8X9-22-LOCKED</div>
-           </div>
+              </div>
            <button 
              onClick={handleLogout}
              className="w-full py-2 border border-slate-700 rounded-lg text-slate-400 text-sm hover:bg-slate-800 hover:text-white transition-colors"
@@ -928,20 +1000,68 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-slate-600">
                 Reading Mode
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap justify-end">
+                {!isExamMode && (
+                  <>
+                    {/* Practice quiz toggle (hide/show answers) */}
+                    <button
+                      onClick={() => setIsQuizMode(prev => !prev)}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                        isQuizMode
+                          ? 'border-amber-500/70 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20'
+                          : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-amber-500 hover:text-amber-300 hover:bg-slate-900'
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(245,158,11,0.8)] ${
+                          isQuizMode ? 'bg-amber-400' : 'bg-slate-500'
+                        }`}
+                      />
+                      {isQuizMode ? 'Quiz Mode: On' : 'Quiz Mode: Off'}
+                    </button>
+
+                    {/* Topic Heat Map toggle – only meaningful on first module */}
+                    {activeModule === ebookContent[0].id && (
+                      <button
+                        onClick={() => setShowTopicHeatmap(prev => !prev)}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                          showTopicHeatmap
+                            ? 'border-sky-500/70 bg-sky-500/10 text-sky-200 hover:bg-sky-500/20'
+                            : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-sky-500 hover:text-sky-300 hover:bg-slate-900'
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(56,189,248,0.8)] ${
+                            showTopicHeatmap ? 'bg-sky-400' : 'bg-slate-500'
+                          }`}
+                        />
+                        {showTopicHeatmap ? 'Topics Heatmap: On' : 'Topics Heatmap'}
+                      </button>
+                    )}
+                  </>
+                )}
+
+                {/* Exam Mode toggle */}
                 <button
-                  onClick={() => setIsQuizMode(prev => !prev)}
+                  onClick={() => {
+                    setShowTodayPanel(false);
+                    setIsExamMode(prev => !prev);
+                    setIsQuizMode(false);
+                  }}
                   className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
-                    isQuizMode
-                      ? 'border-amber-500/70 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20'
-                      : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-amber-500 hover:text-amber-300 hover:bg-slate-900'
+                    isExamMode
+                      ? 'border-emerald-500/70 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20'
+                      : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-emerald-500 hover:text-emerald-300 hover:bg-slate-900'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(245,158,11,0.8)] ${
-                    isQuizMode ? 'bg-amber-400' : 'bg-slate-500'
-                  }`} />
-                  {isQuizMode ? 'Quiz Mode: On' : 'Quiz Mode: Off'}
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.8)] ${
+                      isExamMode ? 'bg-emerald-400' : 'bg-slate-500'
+                    }`}
+                  />
+                  {isExamMode ? 'Exam Mode: On' : 'Exam Mode'}
                 </button>
+
                 <button
                   onClick={() => setIsFocusMode(prev => !prev)}
                   className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-[11px] font-medium text-slate-300 hover:border-brand-500 hover:text-brand-300 hover:bg-slate-900 transition-colors"
@@ -952,8 +1072,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               </div>
             </div>
             
-            {/* ==================== TODAY'S TASKS PANEL ==================== */}
-            {showTodayPanel && activePlan && todayPlan ? (
+            {/* ==================== TODAY'S TASKS PANEL / EXAM MODE ==================== */}
+            {isExamMode ? (
+              <ExamQuiz
+                activeModuleId={activeModule}
+                onExit={() => setIsExamMode(false)}
+              />
+            ) : showTodayPanel && activePlan && todayPlan ? (
               <div className="animate-fade-in">
                 {/* Header */}
                 <div className="mb-8 pb-6 border-b border-slate-800">
@@ -1141,11 +1266,26 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 <div className="mb-12 border-b border-slate-800 pb-8">
                    <span className="text-brand-500 font-mono text-sm tracking-widest uppercase mb-2 block">Current Module</span>
                    <h2 className="text-3xl md:text-5xl font-bold text-white">{activeContent?.title}</h2>
+
+                   {/* Frontend topic heat map – only for first module + when toggle is ON */}
+                   {activeContent &&
+                     activeContent.id === ebookContent[0].id &&
+                     showTopicHeatmap && (
+                       <FrequencyHeatmap />
+                   )}
                 </div>
 
             {/* Questions Loop */}
             <div className="space-y-12">
-               {activeContent?.items.map((item, idx) => {
+               {(activeContent
+                 ? (isTimedQuizActive && quizQuestionIndices.length > 0
+                     ? quizQuestionIndices
+                         .filter((idx) => idx >= 0 && idx < activeContent.items.length)
+                         .map((idx) => ({ item: activeContent.items[idx], idx }))
+                     : activeContent.items.map((item, idx) => ({ item, idx }))
+                   )
+                 : []
+               ).map(({ item, idx }) => {
                  // Remove "Q{number}." prefix from question text if it exists
                  const questionText = item.q.replace(/^Q\d+\.\s*/i, '');
                  const answerKey = `${activeModule}-${idx}`;
@@ -1187,51 +1327,66 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                          </button>
                        )}
 
-                       {(!isQuizMode || isRevealed) && (
-                         <>
-                           {/* Answer Block */}
-                           <div className="prose prose-invert prose-slate max-w-none text-slate-400 leading-relaxed whitespace-pre-line mb-6 select-none">
-                             {item.a}
-                           </div>
+                      {(!isQuizMode || isRevealed) && (
+                        <>
+                          {/* Code Snippet (if exists) - shown before the answer for better question context */}
+                          {item.code && (
+                            <div className="relative mt-4 mb-4 rounded-lg overflow-hidden border border-slate-800 bg-[#0c0e14] shadow-lg">
+                              <div className="flex items-center justify-between px-4 py-2 bg-[#1a1d24] border-b border-slate-800">
+                                <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
+                                  <TerminalIcon className="w-3 h-3" /> solution.js
+                                </span>
+                                <div className="flex gap-1">
+                                  <span className="w-2 h-2 rounded-full bg-red-500/20"></span>
+                                  <span className="w-2 h-2 rounded-full bg-yellow-500/20"></span>
+                                  <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
+                                </div>
+                              </div>
+                              <pre className="p-4 overflow-x-auto text-sm font-mono text-blue-300 select-none">
+                                <code>{item.code}</code>
+                              </pre>
+                              {/* Security Overlay for Code */}
+                              <div
+                                className="absolute inset-0 z-10 bg-transparent"
+                                onContextMenu={(e) => e.preventDefault()}
+                              />
+                            </div>
+                          )}
 
-                           {/* Follow-up Questions (if any) */}
-                           {item.followUps && item.followUps.length > 0 && (
-                             <div className="mb-6">
-                               <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
-                                 Follow-up prompts
-                               </div>
-                               <ul className="list-disc list-inside space-y-1 text-[13px] text-slate-400">
-                                 {item.followUps.map((fu, i) => (
-                                   <li key={i} className="select-none">
-                                     {fu}
-                                   </li>
-                                 ))}
-                               </ul>
-                             </div>
-                           )}
+                          {/* Optional visual diagram (ASCII) */}
+                          {item.diagram && (
+                            <div className="mt-4 mb-6 rounded-lg border border-slate-800 bg-slate-900/70 overflow-hidden">
+                              <div className="px-4 py-2 border-b border-slate-800 text-[11px] font-mono uppercase tracking-wider text-slate-400">
+                                Diagram
+                              </div>
+                              <pre className="p-4 text-xs font-mono text-slate-200 whitespace-pre select-none overflow-x-auto">
+                                {item.diagram}
+                              </pre>
+                            </div>
+                          )}
 
-                           {/* Code Snippet (If exists) */}
-                           {item.code && (
-                             <div className="relative mt-4 mb-8 rounded-lg overflow-hidden border border-slate-800 bg-[#0c0e14] shadow-lg">
-                               <div className="flex items-center justify-between px-4 py-2 bg-[#1a1d24] border-b border-slate-800">
-                                  <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
-                                    <TerminalIcon className="w-3 h-3" /> solution.js
-                                  </span>
-                                  <div className="flex gap-1">
-                                    <span className="w-2 h-2 rounded-full bg-red-500/20"></span>
-                                    <span className="w-2 h-2 rounded-full bg-yellow-500/20"></span>
-                                    <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
-                                  </div>
-                               </div>
-                               <pre className="p-4 overflow-x-auto text-sm font-mono text-blue-300 select-none">
-                                 <code>{item.code}</code>
-                               </pre>
-                               {/* Security Overlay for Code */}
-                               <div className="absolute inset-0 z-10 bg-transparent" onContextMenu={(e) => e.preventDefault()} />
-                             </div>
-                           )}
-                         </>
-                       )}
+                          {/* Answer Block */}
+                          <div className="prose prose-invert prose-slate max-w-none text-slate-400 leading-relaxed whitespace-pre-line mb-6 select-none">
+                            {item.a}
+                          </div>
+
+                          {/* Follow-up Questions (if any) */}
+                          {item.followUps && item.followUps.length > 0 && (
+                            <div className="mb-6">
+                              <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
+                                Follow-up prompts
+                              </div>
+                              <ul className="list-disc list-inside space-y-1 text-[13px] text-slate-400">
+                                {item.followUps.map((fu, i) => (
+                                  <li key={i} className="select-none">
+                                    {fu}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
                  </div>
                );

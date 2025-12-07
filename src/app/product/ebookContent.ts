@@ -5,6 +5,7 @@ export interface ChapterContent {
       q: string;
       a: string;
       code?: string; // Optional code snippet
+      diagram?: string; // Optional ASCII / visual diagram
       tags?: string[]; // Companies / topics chips (Google, Meta, Frontend, DSA, etc.)
       followUps?: string[]; // Extra prompts / follow-up interview questions
     }[];
@@ -372,6 +373,7 @@ export const studyPlans: StudyPlan[] = [
           q: "Q1. How setTimeout works / Event Loop?",
           a: "Imagine you're a chef in a busy restaurant kitchen. The setTimeout function is like setting a kitchen timer - it tells JavaScript 'wait for X milliseconds, then do this task'.\n\n**The Process:**\n1. Immediate tasks (Call Stack) get done first.\n2. setTimeout tasks wait in a separate waiting area (Web APIs) with their timer.\n3. The Event Loop checks every moment: 'Is the Stack empty?'.\n4. When a timer finishes, that task gets moved to the Queue, and then to the Stack when clear.\n\nKey: setTimeout doesn't pause your program. It schedules a task.",
           code: `console.log("Order taken"); // Runs immediately\n\nsetTimeout(() => {\n  console.log("Food ready"); // Runs after 2 seconds\n}, 2000);\n\nconsole.log("Taking next order"); // Runs immediately\n\n// Output:\n// Order taken\n// Taking next order\n// Food ready`,
+          diagram: `Call Stack            Web APIs              Callback Queue\n----------           --------              --------------\nconsole.log('Order taken')\nsetTimeout(cb, 2000)  --->  [ timer running ]\nconsole.log('Taking next order')\n\n// After ~2s when stack is empty:\n// [ timer done ]  --->  cb added to Queue  --->  pushed to Stack`,
           followUps: [
             "How would you explain the Event Loop vs Call Stack to a junior engineer using a real production bug you faced?",
             "What changes if we replace setTimeout with setInterval in a React component? Where can things go wrong?",
@@ -479,8 +481,13 @@ export const studyPlans: StudyPlan[] = [
         },
         {
           q: "Q24. What will be the color of the text?",
-          a: "Text color will be **GREEN**.\n\nSpecificity:\n1. `div#test span` = 1 ID + 2 elements (102 pts)\n2. `div span` = 2 elements (2 pts)\n3. `span` = 1 element (1 pt)\n\nHighest specificity wins.",
-          code: `<div id="test"><span>Text</span></div>\n\ndiv#test span { color: green; }\ndiv span { color: blue; }\nspan { color: red; }`
+          a: "Text color will be **GREEN**.\n\nSpecificity:\n1. `div#test span` = 1 ID + 2 elements (102 pts)\n2. `div span` = 2 elements (2 pts)\n3. `span` = 1 element (1 pt)\n\nIn CSS, **specificity beats source order**: even if `span { color: red }` is written later in the stylesheet, `div#test span` still wins because its selector is more specific.\n\nYou can think of the three selectors as scores:\n- `div#test span` → [0, 1, 0, 2]\n- `div span` → [0, 0, 0, 2]\n- `span` → [0, 0, 0, 1]\n\nInline styles (e.g. `style=\"color: orange\"`) and `!important` (e.g. `span { color: red !important; }`) would override these rules, but they are not used in this example.",
+          code: `<div id="test"><span>Text</span></div>\n\ndiv#test span { color: green; }\ndiv span { color: blue; }\nspan { color: red; }`,
+          followUps: [
+            "What happens if we change the last rule to `span { color: red !important; }`? Which color wins and why?",
+            "If we add an inline style `style=\"color: orange\"` to the `<span>`, which rule wins and how does its specificity compare?",
+            "How would you use browser DevTools to inspect which CSS rules applied to the `<span>` and why some were overridden?"
+          ]
         },
         {
           q: "Q27. Draw concentric circles using CSS",
@@ -490,6 +497,11 @@ export const studyPlans: StudyPlan[] = [
         {
           q: "Q41. Why CSS specificity matters?",
           a: "Specificity ensures the correct styles are applied when multiple rules target the same element. It prevents conflicts and allows overriding styles in a predictable way.\n\nPriority: Inline > ID > Class > Element."
+        },
+        {
+          q: "Q42. Visual: CSS Box Model & Stacking Context",
+          a: "The CSS box model describes how every element is built from content, padding, border, and margin. Stacking context explains how overlapping elements are layered using `z-index`.",
+          diagram: `CSS Box Model (outer to inner)\n\n[ margin ]   (transparent space outside the border)\n[ border ]   (line surrounding the box)\n[ padding ]  (space between border and content)\n[ content ]  (actual text / image)\n\nExample stacking context:\n\nz-index: 2   ─── Modal / Toast on top\nz-index: 1   ─── Header / Fixed Nav\nz-index: 0   ─── Main page content\nz-index: -1  ─── Background decoration`,
         }
       ]
     },
@@ -501,6 +513,8 @@ export const studyPlans: StudyPlan[] = [
           q: "Q6. Why React instead of Javascript? Q7. Explain Virtual DOM.",
           a: "Virtual DOM is a lightweight copy of the UI in memory.\n\n**Reconciliation**: React compares the new Virtual DOM with the old one (Diffing) and only updates the actual DOM nodes that changed. This is much faster than re-painting the whole page.",
           code: `// Virtual DOM change:\n// <div class="a"> -> <div class="b">\n// React only updates the className attribute.`
+          ,
+          diagram: `Component Tree (Virtual DOM)\n\n<App>\n ├─ <Header>\n │   └─ <Logo />\n └─ <Main>\n     ├─ <Sidebar />\n     └─ <Content>\n         ├─ <Article />\n         └─ <Comments />\n\nOnly the branch that changed is diffed and updated in the real DOM.`
         },
         {
           q: "Q14. What is a Pure Component?",
