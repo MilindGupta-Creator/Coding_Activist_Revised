@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { LockIcon, ServerIcon, XIcon, CheckIcon } from './Icons';
+import { productAuth } from './firebaseProduct';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -13,70 +15,71 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
   const [loading, setLoading] = useState(false);
   const [checkingDevice, setCheckingDevice] = useState(false);
 
-  // Hardcoded credentials as requested
-  const VALID_EMAIL = "milindgupta578@gmail.com";
-  const VALID_PASS = "milind1234@";
+  // Local session key used only for the product reader (watermark, expiry, etc.)
   const SESSION_KEY = "frontend_mastery_active_session";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const currentPassword = password;
+
     setLoading(true);
-    setCheckingDevice(false);
-
-    // Simulate network delay
-    await new Promise(r => setTimeout(r, 800));
-
-    if (email !== VALID_EMAIL || password !== VALID_PASS) {
-      setError("Invalid credentials. Please check your email or password.");
-      setLoading(false);
-      return;
-    }
-
     setCheckingDevice(true);
-    await new Promise(r => setTimeout(r, 1000)); // Simulate device handshake
 
-    // Privacy Check: Single Device Enforcement
-    const activeSession = localStorage.getItem(SESSION_KEY);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        productAuth,
+        normalizedEmail,
+        currentPassword
+      );
+      const user = userCredential.user;
 
-    // Check if session exists and is less than 24 hours old (to prevent permanent lockout from crashes)
-    let isSessionValid = false;
-    if (activeSession) {
-      try {
-        const sessionData = JSON.parse(activeSession);
-        const now = new Date().getTime();
-        if (now - sessionData.timestamp < 24 * 60 * 60 * 1000) {
-          isSessionValid = true;
-        }
-      } catch (e) {
-        // Invalid JSON, ignore
+      // Simple 24h session for the reader UI (used by Reader.tsx)
+      const newSession = {
+        user: user.email,
+        uid: user.uid,
+        timestamp: Date.now(),
+      };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(newSession));
       }
-    }
 
-    if (isSessionValid) {
-      setError("Security Alert: This account is currently active on another device. To protect your privacy, concurrent sessions are not allowed. Please logout from the other device first.");
       setLoading(false);
       setCheckingDevice(false);
-      return;
-    }
+      onLoginSuccess();
+    } catch (err: any) {
+      // Helpful logging during development (remove or comment out in production)
+      console.error("Firebase login error:", err?.code, err?.message);
 
-    // Success - Set Session
-    const newSession = {
-      user: email,
-      timestamp: new Date().getTime(),
-      deviceId: Math.random().toString(36).substring(7)
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(newSession));
-
-    setLoading(false);
-    onLoginSuccess();
-  };
-
-  // Emergency Reset for Demo purposes (in case user gets stuck)
-  const handleForceLogout = () => {
-    if (window.confirm("This will forcibly disconnect the other session. Are you sure?")) {
-      localStorage.removeItem(SESSION_KEY);
-      setError("Previous session cleared. You can now login.");
+      let message = "Login failed. Please check your email or password.";
+      switch (err?.code) {
+        case "auth/user-not-found":
+          message = "No member found with this email.";
+          break;
+        case "auth/wrong-password":
+          message = "Incorrect password. Please try again.";
+          break;
+        case "auth/invalid-credential":
+          message = "Invalid credentials. Please re-enter your email and password.";
+          break;
+        case "auth/invalid-email":
+          message = "This email address is not valid.";
+          break;
+        case "auth/user-disabled":
+          message = "This account has been disabled. Contact support.";
+          break;
+        case "auth/too-many-requests":
+          message = "Too many attempts. Please wait a moment and try again.";
+          break;
+        case "auth/network-request-failed":
+          message = "Network error. Check your connection and try again.";
+          break;
+      }
+      setError(message);
+      setLoading(false);
+      setCheckingDevice(false);
     }
   };
 
@@ -112,11 +115,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
                 <div className="shrink-0 mt-0.5 w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 font-bold">!</div>
                 <div>
                   {error}
-                  {error.includes("another device") && (
-                    <button type="button" onClick={handleForceLogout} className="block mt-2 text-xs underline hover:text-white">
-                      Force Logout Other Device (Demo Only)
-                    </button>
-                  )}
                 </div>
               </div>
             )}

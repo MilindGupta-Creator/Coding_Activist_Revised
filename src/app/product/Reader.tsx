@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from 'firebase/auth';
 import { ebookContent, studyPlans, StudyPlan, DayPlan } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
+import { productAuth } from './firebaseProduct';
 import Logo from "../../../public/assets/main-logo.png";
 
 // Icons for study plans
@@ -323,19 +325,6 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       }
     };
 
-    // Network monitoring - detect if content is being scraped
-    const monitorNetwork = () => {
-      const originalFetch = window.fetch;
-      window.fetch = function(...args) {
-        const url = args[0]?.toString() || '';
-        // Block suspicious fetch requests
-        if (url.includes('api') && !url.includes('your-trusted-domain')) {
-          return Promise.reject(new Error('Blocked'));
-        }
-        return originalFetch.apply(this, args);
-      };
-    };
-
     // Prevent common browser extensions that might extract content
     const detectExtensions = () => {
       // Check for common extension patterns
@@ -527,9 +516,8 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     // Start anti-debugging protection
     const antiDebugInterval = antiDebug();
     
-    // Enhanced protections
+    // Enhanced protections (keep lightweight to avoid breaking network/Firebase)
     detectIframe();
-    monitorNetwork();
     detectExtensions();
     const screenshotCleanupFn = detectScreenshots();
     const domObserver = monitorDOMChanges();
@@ -589,9 +577,17 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   }, []);
 
   const handleLogout = () => {
-    // Clear the active session token to allow login elsewhere/later
+    // Clear the active session token used by the reader UI
     localStorage.removeItem("frontend_mastery_active_session");
-    onLogout();
+
+    // Sign out from the product Firebase project
+    signOut(productAuth)
+      .catch(() => {
+        // Ignore sign-out errors – local session is already cleared
+      })
+      .finally(() => {
+        onLogout();
+      });
   };
 
   const activeContent = ebookContent.find(c => c.id === activeModule);
