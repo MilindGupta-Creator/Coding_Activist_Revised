@@ -33,8 +33,10 @@ export default function AdSection() {
     return () => clearInterval(interval);
   }, []);
 
-  // Hide ad on /jobs, /product routes, or when user is logged in
-  const showAd = pathname !== "/jobs" && pathname !== "/product" && !isLoggedIn;
+  // Hide ad on /jobs, /product routes (and sub-routes), or when user is logged in
+  const isProductPage = pathname === "/product" || pathname?.startsWith("/product/");
+  const isJobsPage = pathname === "/jobs" || pathname?.startsWith("/jobs/");
+  const showAd = !isJobsPage && !isProductPage && !isLoggedIn;
 
   if (!showAd) return null;
 
