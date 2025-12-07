@@ -29,16 +29,19 @@ try {
 
 const db = firebase.firestore();
 
-// Add persistence to cache data locally
-db.enablePersistence({ synchronizeTabs: true })
-  .catch((err) => {
-    if (err.code === 'failed-precondition') {
-      // Multiple tabs open, persistence can only be enabled in one tab at a time
-      console.log('Persistence failed: Multiple tabs open');
-    } else if (err.code === 'unimplemented') {
-      // The current browser does not support all required features
-      console.log('Persistence not supported by this browser');
-    }
-  });
+// Add persistence to cache data locally (only in browser environment)
+if (typeof window !== 'undefined') {
+  db.enablePersistence({ synchronizeTabs: true })
+    .catch((err) => {
+      if (err.code === 'failed-precondition') {
+        // Multiple tabs open, persistence can only be enabled in one tab at a time
+        console.log('Persistence failed: Multiple tabs open');
+      } else if (err.code === 'unimplemented') {
+        // The current browser does not support all required features
+        // This is expected in server-side rendering environments
+        // Silently fall back to memory cache
+      }
+    });
+}
 
 export { db, auth };
