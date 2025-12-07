@@ -198,6 +198,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   
   // Enhanced Anti-Screenshot / Copy Protection Logic (Global Listeners)
   useEffect(() => {
+    // On small/mobile screens, skip aggressive anti-debug/screenshot logic
+    // These heuristics can wrongly detect mobile browser UI as DevTools
+    // and cause constant reloads/logouts. Desktop still keeps full protection.
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return;
+    }
+
     // Prevent right-click context menu
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();
     
