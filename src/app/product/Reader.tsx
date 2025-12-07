@@ -5,6 +5,7 @@ import { signOut } from 'firebase/auth';
 import { ebookContent, studyPlans, StudyPlan, DayPlan } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
+import { db } from '@/firebase/firebase';
 import Logo from "../../../public/assets/main-logo.png";
 
 // Icons for study plans
@@ -46,6 +47,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [activeModule, setActiveModule] = useState(ebookContent[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [sessionExpiryMsg, setSessionExpiryMsg] = useState<string | null>(null);
+  const [logoutReason, setLogoutReason] = useState<string | null>(null);
 
   // ==================== STUDY PLAN STATE ====================
   const [activePlan, setActivePlan] = useState<StudyPlan | null>(null);
@@ -543,10 +545,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     };
   }, []);
 
-  // Check Session Expiry
+  // Check Session Expiry and Validate Session ID
   useEffect(() => {
+    const SESSION_KEY = "frontend_mastery_active_session";
+    
     const checkExpiry = () => {
-      const activeSession = localStorage.getItem("frontend_mastery_active_session");
+      const activeSession = localStorage.getItem(SESSION_KEY);
       if (activeSession) {
         try {
           const session = JSON.parse(activeSession);
@@ -571,10 +575,55 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       }
     };
 
+    // Validate session ID against Firestore (check for concurrent login)
+    const validateSession = async () => {
+      const activeSession = localStorage.getItem(SESSION_KEY);
+      if (!activeSession) return;
+
+      try {
+        const session = JSON.parse(activeSession);
+        if (!session.uid || !session.sessionId) return;
+
+        // Fetch user document from Firestore
+        const userDoc = await db.collection('premiumUsers').doc(session.uid).get();
+        if (!userDoc.exists) {
+          // User document doesn't exist, invalidate session
+          setLogoutReason('Your account is no longer valid. Please contact support.');
+          setTimeout(() => {
+            localStorage.removeItem(SESSION_KEY);
+            onLogout();
+          }, 3000);
+          return;
+        }
+
+        const userData = userDoc.data();
+        const firestoreSessionId = userData?.activeSessionId;
+
+        // If session IDs don't match, another device has logged in
+        if (firestoreSessionId && firestoreSessionId !== session.sessionId) {
+          setLogoutReason('You have been logged out because you logged in from another device. Only one device can be active at a time.');
+          setTimeout(() => {
+            localStorage.removeItem(SESSION_KEY);
+            onLogout();
+          }, 5000); // Give user 5 seconds to read the message
+          return;
+        }
+      } catch (error) {
+        // Network error or Firestore issue - don't log out, just log the error
+        console.error('Session validation error:', error);
+      }
+    };
+
     checkExpiry();
-    const interval = setInterval(checkExpiry, 60000); // Check every minute
-    return () => clearInterval(interval);
-  }, []);
+    validateSession(); // Check immediately on mount
+    const expiryInterval = setInterval(checkExpiry, 60000); // Check every minute
+    const validationInterval = setInterval(validateSession, 30000); // Check every 30 seconds
+
+    return () => {
+      clearInterval(expiryInterval);
+      clearInterval(validationInterval);
+    };
+  }, [onLogout]);
 
   const handleLogout = () => {
     // Clear the active session token used by the reader UI
@@ -649,6 +698,24 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 <XIcon className="w-4 h-4" />
               </button>
            </div>
+        </div>
+      )}
+
+      {/* Concurrent Login Warning Toast */}
+      {logoutReason && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-red-950/95 border-2 border-red-500/50 text-red-100 px-6 py-5 rounded-xl shadow-2xl backdrop-blur-md max-w-md w-full animate-fade-in">
+            <div className="flex items-start gap-4">
+              <div className="shrink-0 w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)] mt-1"></div>
+              <div className="flex-1">
+                <div className="text-sm font-bold text-red-400 uppercase tracking-wider mb-2">Session Terminated</div>
+                <p className="text-sm leading-relaxed mb-4">{logoutReason}</p>
+                <div className="text-xs text-red-300/80 bg-red-900/30 px-3 py-2 rounded border border-red-800/50">
+                  <strong>Security Notice:</strong> For your account security, only one device can access premium content at a time.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

@@ -17,6 +17,21 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
   // Local session key used only for the product reader (watermark, expiry, etc.)
   const SESSION_KEY = "frontend_mastery_active_session";
 
+  // Generate a unique session ID (device fingerprint)
+  const generateSessionId = (): string => {
+    const userAgent = typeof window !== 'undefined' ? window.navigator.userAgent : '';
+    const screenInfo = typeof window !== 'undefined' 
+      ? `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}` 
+      : '';
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 15);
+    // Create a hash-like string from device info
+    const deviceFingerprint = btoa(`${userAgent}-${screenInfo}-${timestamp}-${random}`)
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .substring(0, 32);
+    return `${timestamp}-${deviceFingerprint}`;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -62,10 +77,37 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
         throw new Error('PREMIUM_EXPIRED');
       }
 
-      // Simple 24h session for the reader UI (used by Reader.tsx)
+      // Generate unique session ID for this device
+      const newSessionId = generateSessionId();
+      
+      // Check if there's an active session on another device
+      const existingSessionId = data?.activeSessionId;
+      const lastLoginTimestamp = data?.lastLoginTimestamp;
+      
+      // If there's an existing session and it's recent (within last 24 hours), it means another device is logged in
+      if (existingSessionId && lastLoginTimestamp) {
+        const lastLogin = lastLoginTimestamp.toDate ? lastLoginTimestamp.toDate() : new Date(lastLoginTimestamp);
+        const timeSinceLastLogin = Date.now() - lastLogin.getTime();
+        const hours24 = 24 * 60 * 60 * 1000;
+        
+        // If last login was recent (within 24h), invalidate the old session
+        if (timeSinceLastLogin < hours24) {
+          // This will log out the other device when it checks its session
+          // We proceed to create a new session for this device
+        }
+      }
+
+      // Update Firestore with new active session
+      await doc.ref.update({
+        activeSessionId: newSessionId,
+        lastLoginTimestamp: new Date(),
+      });
+
+      // Create local session with session ID
       const newSession = {
         user: normalizedEmail,
         uid: doc.id,
+        sessionId: newSessionId,
         timestamp: Date.now(),
       };
       if (typeof window !== 'undefined') {

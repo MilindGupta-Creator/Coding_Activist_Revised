@@ -10,6 +10,7 @@ import Footer from './Footer';
 import Reader from './Reader';
 import Login from './Login';
 import { CheckIcon } from './Icons';
+import { db } from '@/firebase/firebase';
 
 type ViewState = 'landing' | 'login' | 'reader';
 
@@ -18,20 +19,45 @@ const App: React.FC = () => {
 
   // Check for active session on load to persist login across refresh
   useEffect(() => {
-    const activeSession = localStorage.getItem("frontend_mastery_active_session");
-    if (activeSession) {
-      try {
-        const sessionData = JSON.parse(activeSession);
-        // Basic expiry check (24h)
-        if (new Date().getTime() - sessionData.timestamp < 24 * 60 * 60 * 1000) {
-           setCurrentView('reader');
+    const checkSession = async () => {
+      const activeSession = localStorage.getItem("frontend_mastery_active_session");
+      if (activeSession) {
+        try {
+          const sessionData = JSON.parse(activeSession);
+          // Basic expiry check (24h)
+          const isExpired = new Date().getTime() - sessionData.timestamp >= 24 * 60 * 60 * 1000;
+          
+          if (!isExpired && sessionData.uid && sessionData.sessionId) {
+            // Validate session ID against Firestore
+            try {
+              const userDoc = await db.collection('premiumUsers').doc(sessionData.uid).get();
+              if (userDoc.exists) {
+                const userData = userDoc.data();
+                const firestoreSessionId = userData?.activeSessionId;
+                // Only allow if session IDs match
+                if (firestoreSessionId === sessionData.sessionId) {
+                  setCurrentView('reader');
+                  return;
+                }
+              }
+            } catch (error) {
+              // Firestore error - don't auto-login, user will need to login again
+              console.error('Session validation error:', error);
+            }
+          }
+          
+          // If session is invalid or expired, clear it
+          localStorage.removeItem("frontend_mastery_active_session");
+        } catch (e) {
+          // Invalid session data
+          localStorage.removeItem("frontend_mastery_active_session");
         }
-      } catch (e) {
-        // Invalid session
       }
-    }
-    // Ensure page scrolls to top on initial load
-    window.scrollTo(0, 0);
+      // Ensure page scrolls to top on initial load
+      window.scrollTo(0, 0);
+    };
+
+    checkSession();
   }, []);
 
   const handlePurchaseClick = () => {
