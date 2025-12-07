@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from 'firebase/auth';
@@ -48,6 +48,35 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [sessionExpiryMsg, setSessionExpiryMsg] = useState<string | null>(null);
   const [logoutReason, setLogoutReason] = useState<string | null>(null);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [isQuizMode, setIsQuizMode] = useState(false);
+  const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
+
+  const contentRef = useRef<HTMLElement | null>(null);
+
+  const scrollToTop = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const goToModule = (moduleId: string) => {
+    setActiveModule(moduleId);
+    setShowTodayPanel(false);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+    scrollToTop();
+  };
+
+  const toggleAnswerReveal = (key: string) => {
+    setRevealedAnswers(prev => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   // ==================== STUDY PLAN STATE ====================
   const [activePlan, setActivePlan] = useState<StudyPlan | null>(null);
@@ -647,6 +676,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   };
 
   const activeContent = ebookContent.find(c => c.id === activeModule);
+  const activeModuleIndex = ebookContent.findIndex(c => c.id === activeModule);
+  const prevModule = activeModuleIndex > 0 ? ebookContent[activeModuleIndex - 1] : null;
+  const nextModule =
+    activeModuleIndex >= 0 && activeModuleIndex < ebookContent.length - 1
+      ? ebookContent[activeModuleIndex + 1]
+      : null;
 
   return (
     <div 
@@ -727,14 +762,17 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       )}
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center z-40">
-        <span className="font-bold text-brand-400">FrontendMastery Reader</span>
-        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-slate-400">
-           {isSidebarOpen ? 'Close Menu' : 'Menu'}
-        </button>
-      </div>
+      {!isFocusMode && (
+        <div className="md:hidden bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center z-40">
+          <span className="font-bold text-brand-400">FrontendMastery Reader</span>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-slate-400">
+            {isSidebarOpen ? 'Close Menu' : 'Menu'}
+          </button>
+        </div>
+      )}
 
       {/* Sidebar Navigation */}
+      {!isFocusMode && (
       <aside className={`
         fixed md:relative z-30 w-full md:w-80 h-[calc(100%-60px)] md:h-full bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -849,11 +887,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
           {ebookContent.map((chapter) => (
             <button
               key={chapter.id}
-              onClick={() => {
-                setActiveModule(chapter.id);
-                setShowTodayPanel(false);
-                if (window.innerWidth < 768) setIsSidebarOpen(false);
-              }}
+              onClick={() => goToModule(chapter.id)}
               className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border border-transparent ${
                 activeModule === chapter.id && !showTodayPanel
                   ? 'bg-brand-500/10 text-brand-400 border-brand-500/20'
@@ -879,10 +913,44 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
            </button>
         </div>
       </aside>
+      )}
 
       {/* Main Content Area */}
-      <main className="flex-1 h-full overflow-y-auto bg-slate-950 relative scroll-smooth">
-         <div className="max-w-4xl mx-auto px-6 py-12 md:py-20">
+      <main ref={contentRef} className="flex-1 h-full overflow-y-auto bg-slate-950 relative scroll-smooth">
+         <div
+           className={`mx-auto px-6 py-12 md:py-20 transition-all duration-300 ${
+             isFocusMode ? 'max-w-2xl md:px-0' : 'max-w-4xl'
+           }`}
+         >
+
+            {/* Top toolbar */}
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-slate-600">
+                Reading Mode
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsQuizMode(prev => !prev)}
+                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                    isQuizMode
+                      ? 'border-amber-500/70 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20'
+                      : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-amber-500 hover:text-amber-300 hover:bg-slate-900'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(245,158,11,0.8)] ${
+                    isQuizMode ? 'bg-amber-400' : 'bg-slate-500'
+                  }`} />
+                  {isQuizMode ? 'Quiz Mode: On' : 'Quiz Mode: Off'}
+                </button>
+                <button
+                  onClick={() => setIsFocusMode(prev => !prev)}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-[11px] font-medium text-slate-300 hover:border-brand-500 hover:text-brand-300 hover:bg-slate-900 transition-colors"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+                  {isFocusMode ? 'Exit Focus Mode' : 'Enter Focus Mode'}
+                </button>
+              </div>
+            </div>
             
             {/* ==================== TODAY'S TASKS PANEL ==================== */}
             {showTodayPanel && activePlan && todayPlan ? (
@@ -1080,6 +1148,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                {activeContent?.items.map((item, idx) => {
                  // Remove "Q{number}." prefix from question text if it exists
                  const questionText = item.q.replace(/^Q\d+\.\s*/i, '');
+                 const answerKey = `${activeModule}-${idx}`;
+                 const isRevealed = !isQuizMode || revealedAnswers[answerKey];
+
                  return (
                  <div key={idx} id={`question-${idx}`} className="group scroll-mt-20">
                     <div className="flex gap-4 items-start mb-2">
@@ -1106,46 +1177,60 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                     </div>
 
                     <div className="pl-12 mt-2">
-                       {/* Answer Block */}
-                       <div className="prose prose-invert prose-slate max-w-none text-slate-400 leading-relaxed whitespace-pre-line mb-6 select-none">
-                         {item.a}
-                       </div>
-
-                       {/* Follow-up Questions (if any) */}
-                       {item.followUps && item.followUps.length > 0 && (
-                         <div className="mb-6">
-                           <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
-                             Follow-up prompts
-                           </div>
-                           <ul className="list-disc list-inside space-y-1 text-[13px] text-slate-400">
-                             {item.followUps.map((fu, i) => (
-                               <li key={i} className="select-none">
-                                 {fu}
-                               </li>
-                             ))}
-                           </ul>
-                         </div>
+                       {isQuizMode && (
+                         <button
+                           type="button"
+                           onClick={() => toggleAnswerReveal(answerKey)}
+                           className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1 text-[11px] font-medium text-slate-200 hover:border-amber-500 hover:text-amber-300 hover:bg-slate-900 transition-colors"
+                         >
+                           {isRevealed ? 'Hide answer' : 'Show answer'}
+                         </button>
                        )}
 
-                       {/* Code Snippet (If exists) */}
-                       {item.code && (
-                         <div className="relative mt-4 mb-8 rounded-lg overflow-hidden border border-slate-800 bg-[#0c0e14] shadow-lg">
-                           <div className="flex items-center justify-between px-4 py-2 bg-[#1a1d24] border-b border-slate-800">
-                              <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
-                                <TerminalIcon className="w-3 h-3" /> solution.js
-                              </span>
-                              <div className="flex gap-1">
-                                <span className="w-2 h-2 rounded-full bg-red-500/20"></span>
-                                <span className="w-2 h-2 rounded-full bg-yellow-500/20"></span>
-                                <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
-                              </div>
+                       {(!isQuizMode || isRevealed) && (
+                         <>
+                           {/* Answer Block */}
+                           <div className="prose prose-invert prose-slate max-w-none text-slate-400 leading-relaxed whitespace-pre-line mb-6 select-none">
+                             {item.a}
                            </div>
-                           <pre className="p-4 overflow-x-auto text-sm font-mono text-blue-300 select-none">
-                             <code>{item.code}</code>
-                           </pre>
-                           {/* Security Overlay for Code */}
-                           <div className="absolute inset-0 z-10 bg-transparent" onContextMenu={(e) => e.preventDefault()} />
-                         </div>
+
+                           {/* Follow-up Questions (if any) */}
+                           {item.followUps && item.followUps.length > 0 && (
+                             <div className="mb-6">
+                               <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
+                                 Follow-up prompts
+                               </div>
+                               <ul className="list-disc list-inside space-y-1 text-[13px] text-slate-400">
+                                 {item.followUps.map((fu, i) => (
+                                   <li key={i} className="select-none">
+                                     {fu}
+                                   </li>
+                                 ))}
+                               </ul>
+                             </div>
+                           )}
+
+                           {/* Code Snippet (If exists) */}
+                           {item.code && (
+                             <div className="relative mt-4 mb-8 rounded-lg overflow-hidden border border-slate-800 bg-[#0c0e14] shadow-lg">
+                               <div className="flex items-center justify-between px-4 py-2 bg-[#1a1d24] border-b border-slate-800">
+                                  <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
+                                    <TerminalIcon className="w-3 h-3" /> solution.js
+                                  </span>
+                                  <div className="flex gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-red-500/20"></span>
+                                    <span className="w-2 h-2 rounded-full bg-yellow-500/20"></span>
+                                    <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
+                                  </div>
+                               </div>
+                               <pre className="p-4 overflow-x-auto text-sm font-mono text-blue-300 select-none">
+                                 <code>{item.code}</code>
+                               </pre>
+                               {/* Security Overlay for Code */}
+                               <div className="absolute inset-0 z-10 bg-transparent" onContextMenu={(e) => e.preventDefault()} />
+                             </div>
+                           )}
+                         </>
                        )}
                     </div>
                  </div>
@@ -1159,6 +1244,30 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                    <h4 className="text-slate-400 font-medium">End of Module</h4>
                    <p className="text-slate-600 text-sm mt-2">Content is watermarked and monitored. Do not distribute.</p>
                 </div>
+
+                {(prevModule || nextModule) && (
+                  <div className="mt-8 flex flex-col gap-3 border-t border-slate-800 pt-6 md:flex-row md:items-center md:justify-between">
+                    {prevModule ? (
+                      <button
+                        onClick={() => goToModule(prevModule.id)}
+                        className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-200 hover:border-brand-500 hover:text-brand-300 hover:bg-slate-900 transition-colors"
+                      >
+                        ← Previous: <span className="font-medium line-clamp-1">{prevModule.title}</span>
+                      </button>
+                    ) : (
+                      <span className="text-xs text-slate-500">This is the first module.</span>
+                    )}
+
+                    {nextModule && (
+                      <button
+                        onClick={() => goToModule(nextModule.id)}
+                        className="inline-flex items-center gap-2 rounded-lg border border-brand-500/40 bg-brand-500/10 px-4 py-2 text-sm text-brand-300 hover:bg-brand-500/20 transition-colors"
+                      >
+                        Next: <span className="font-semibold line-clamp-1">{nextModule.title}</span> →
+                      </button>
+                    )}
+                  </div>
+                )}
               </>
             )}
          </div>

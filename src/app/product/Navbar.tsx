@@ -115,7 +115,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPurchase, onLogin }) => {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           ></div>
-          <div className={`absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-gradient-to-b from-[#0a0a0a] via-[#181818] to-[#0a0a0a] border-l border-white/10 shadow-2xl transform transition-transform duration-300 ${
+          <div className={`absolute top-0 right-0 w-80 max-w-[85vw] bg-gradient-to-b from-[#0a0a0a] via-[#181818] to-[#0a0a0a] border-l border-white/10 shadow-2xl transform transition-transform duration-300 ${
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}>
             <div className="flex flex-col h-full pt-20 px-6 pb-8 overflow-y-auto">
