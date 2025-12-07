@@ -19,7 +19,7 @@ import export3 from "../../public/assets/export-3.svg";
 import export4 from "../../public/assets/export-4.svg";
 import export5 from "../../public/assets/export-5.svg";
 import { ButtonHoverEffect } from "@/components/ui/button-hover-effect";
-import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer, Blocks, Brain, Cpu, Database, Users, Building2, Gem, Rocket, BarChart, GraduationCap } from 'lucide-react';
+import { ArrowRight, Briefcase, Code, Code2, GitFork, Globe2, Laptop2, Timer, Blocks, Brain, Cpu, Database, Users, Building2, Gem, Rocket, BarChart, GraduationCap, Check } from 'lucide-react';
 import { formatDate } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
+import dynamic from "next/dynamic";
+
+const TechStackOrbit = dynamic(
+  () => import("@/components/three/TechStackOrbit").then((m) => m.TechStackOrbit),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[260px] md:h-[320px] rounded-2xl border border-slate-700/60 bg-slate-900/60 flex items-center justify-center text-xs md:text-sm text-gray-400">
+        Loading 3D tech preview...
+      </div>
+    ),
+  }
+);
 
 interface Job {
   id: string;
@@ -243,6 +256,68 @@ export default function Home() {
           )}
         </div>
         <div className="md:w-2/3 w-full h-0.5 bg-white opacity-10 mt-3 mb-6" />
+
+           {/* Premium Product Feature Section */}
+           <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-12 scroll-mt-20">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800/90 via-slate-900/90 to-slate-800/90 border border-blue-500/30 shadow-2xl">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div className="relative z-10 p-8 md:p-12">
+              <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                {/* Left Content */}
+                <div className="flex-1 text-center md:text-left">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-sm font-medium mb-4">
+                    <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                    NEW PREMIUM PRODUCT
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                    Level Up Your Frontend Skills
+                  </h2>
+                  <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                    Master <strong className="text-blue-400">Advanced React & Server Components</strong>, 
+                    <strong className="text-purple-400"> Frontend Architecture</strong>, and 
+                    <strong className="text-green-400"> System Design</strong>. Transform from a component builder to a Staff Engineer.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                    <Link href="/product">
+                      <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white">
+                        Explore Premium Content
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </Link>
+                    <Link href="/product">
+                      <Button variant="outline" size="lg" className="w-full sm:w-auto border-blue-500/50 text-blue-300 hover:bg-blue-500/10">
+                        View Pricing
+                      </Button>
+                    </Link>
+                  </div>
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-400">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span>Next.js 14 & Server Components</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span>Machine Coding & System Design</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span>Lifetime Updates</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Three.js Tech Orbit */}
+                <div className="flex-1 w-full md:w-auto">
+                  <TechStackOrbit />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
 
         <section className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
           <Button asChild size="lg" className="w-full bg-black sm:w-auto">

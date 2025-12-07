@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LockIcon, ServerIcon, XIcon, CheckIcon } from './Icons';
+import { LockIcon, ServerIcon, XIcon, CheckIcon, BookIcon, CodeIcon, StarIcon } from './Icons';
 import { db } from '@/firebase/firebase';
 
 interface LoginProps {
@@ -134,98 +134,169 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Ambience */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Educational Background Ambience */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px]"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <button
-          onClick={onBack}
-          className="absolute -top-12 left-0 text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors"
-        >
-          <XIcon className="w-4 h-4" /> Cancel
-        </button>
+      {/* Floating Code Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-20 left-10 text-blue-400/20 font-mono text-sm rotate-12">{"<code>"}</div>
+        <div className="absolute top-40 right-20 text-purple-400/20 font-mono text-sm -rotate-12">{"function()"}</div>
+        <div className="absolute bottom-32 left-20 text-brand-400/20 font-mono text-sm rotate-6">{"const learn"}</div>
+        <div className="absolute bottom-20 right-10 text-blue-400/20 font-mono text-sm -rotate-6">{"= true"}</div>
+      </div>
 
-        <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-slate-900/50 p-6 border-b border-slate-700 text-center relative">
-            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-700 shadow-inner">
-              <LockIcon className="w-8 h-8 text-brand-400" />
+      <div className="w-full max-w-md relative z-10">
+        <div className="bg-gradient-to-br from-slate-800/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden">
+          {/* Header with Educational Theme */}
+          <div className="bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-blue-600/10 p-8 border-b border-slate-700/50 text-center relative">
+            <button
+              onClick={onBack}
+              className="absolute top-4 left-4 text-slate-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-all hover:bg-slate-700/50 px-3 py-1.5 rounded-lg z-10"
+            >
+              <XIcon className="w-4 h-4" /> Cancel
+            </button>
+            
+            {/* Educational Icon with Animation */}
+            <div className="relative inline-block mb-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-transform duration-300">
+                <BookIcon className="w-10 h-10 text-white" />
+              </div>
+              {/* Decorative Stars */}
+              <div className="absolute -top-2 -right-2">
+                <StarIcon className="w-5 h-5 text-yellow-400 animate-pulse" />
+              </div>
+              <div className="absolute -bottom-1 -left-2">
+                <CodeIcon className="w-4 h-4 text-blue-400" />
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-white">Member Access</h2>
-            <p className="text-slate-400 text-sm mt-1">Secure login for Ebook owners</p>
+            
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-2 bg-[length:200%_auto] animate-gradient">
+              Welcome Back, Learner!
+            </h2>
+            <p className="text-slate-300 text-sm mt-1">Access your premium learning content</p>
+            
+            {/* Badge */}
+            <div className="mt-4 inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1.5">
+              <StarIcon className="w-4 h-4 text-yellow-400" />
+              <span className="text-xs font-medium text-blue-300">Premium Member</span>
+            </div>
           </div>
 
-          <form onSubmit={handleLogin} className="p-6 md:p-8 space-y-6">
+          <form onSubmit={handleLogin} className="p-6 md:p-8 space-y-6 bg-slate-900/30">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-200 text-sm p-4 rounded-lg flex gap-3 items-start">
-                <div className="shrink-0 mt-0.5 w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 font-bold">!</div>
-                <div>
-                  {error}
+              <div className="bg-red-500/10 border border-red-500/50 text-red-200 text-sm p-4 rounded-xl flex gap-3 items-start backdrop-blur-sm">
+                <div className="shrink-0 mt-0.5 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 font-bold text-xs">!</div>
+                <div className="flex-1">
+                  <p className="font-medium mb-1">Oops! Something went wrong</p>
+                  <p className="text-red-300/80">{error}</p>
                 </div>
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-xs font-mono text-slate-400 uppercase tracking-wider ml-1">Email ID</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600"
-                placeholder="name@example.com"
-              />
+            <div className="space-y-3">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                Email Address
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3.5 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none transition-all placeholder:text-slate-500 hover:border-slate-600"
+                  placeholder="your.email@example.com"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-mono text-slate-400 uppercase tracking-wider ml-1">Premium Key</label>
-              <input
-                type="text"
-                required
-                value={premiumKey}
-                onChange={(e) => setPremiumKey(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600"
-                placeholder="ABCD-1234-EFGH"
-              />
+            <div className="space-y-3">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                <div className="w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+                Premium Access Key
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  required
+                  value={premiumKey}
+                  onChange={(e) => setPremiumKey(e.target.value)}
+                  className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3.5 text-white focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 outline-none transition-all placeholder:text-slate-500 hover:border-slate-600 font-mono tracking-wider"
+                  placeholder="ABCD-1234-EFGH"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                  <LockIcon className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-500 flex items-center gap-1.5">
+                <LockIcon className="w-3 h-3" />
+                Your key is encrypted and secure
+              </p>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={loading || checkingDevice}
-                className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2 group"
+                className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 hover:from-blue-500 hover:via-purple-500 hover:to-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 flex items-center justify-center gap-2 group transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   checkingDevice ? (
                     <>
                       <ServerIcon className="w-5 h-5 animate-pulse" />
-                      Verifying Device Fingerprint...
+                      <span>Verifying your device...</span>
                     </>
                   ) : (
-                    <span className="animate-pulse">Authenticating...</span>
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Authenticating...</span>
+                    </>
                   )
                 ) : (
                   <>
-                    Access Content <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    <BookIcon className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                    <span>Continue Learning</span>
+                    <span className="group-hover:translate-x-1 transition-transform text-xl">→</span>
                   </>
                 )}
               </button>
             </div>
 
-
+            {/* Help Text */}
+            <div className="text-center pt-2">
+              <p className="text-xs text-slate-500">
+                Need help? <span className="text-blue-400 hover:text-blue-300 cursor-pointer underline">Contact support</span>
+              </p>
+            </div>
           </form>
 
-          <div className="px-6 py-4 bg-slate-950 border-t border-slate-800 flex justify-between items-center text-[10px] text-slate-500 font-mono">
-            <span className="flex items-center gap-1">
-              <LockIcon className="w-3 h-3" /> 256-BIT ENCRYPTION
-            </span>
-            <span className="flex items-center gap-1">
-              <CheckIcon className="w-3 h-3 text-green-500" /> SINGLE SESSION SECURE
-            </span>
+          {/* Security Footer with Educational Touch */}
+          <div className="px-6 py-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-t border-slate-800/50">
+            <div className="flex flex-wrap justify-center gap-4 items-center text-[10px] text-slate-500">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                <LockIcon className="w-3.5 h-3.5 text-blue-400" /> 
+                <span className="font-medium">256-BIT ENCRYPTION</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                <CheckIcon className="w-3.5 h-3.5 text-green-400" /> 
+                <span className="font-medium">SECURE SESSION</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                <StarIcon className="w-3.5 h-3.5 text-yellow-400" /> 
+                <span className="font-medium">PREMIUM ACCESS</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import { ProductNavLink } from "../three/ProductNavLink";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -62,10 +63,8 @@ const Navbar = () => {
 
   return (
     <div className={`w-full transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50' 
-        : 'bg-gradient-to-r from-[#181818]/90 to-[#2d2d2d]/90 backdrop-blur-md border-b border-gray-700/50'
-    }`}>
+        'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50' 
+         }`}>
       <div className="flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-x-3 group relative z-50">
           <div className="relative">
@@ -112,6 +111,7 @@ const Navbar = () => {
           >
             Tech Roadmap
           </Link>
+          <ProductNavLink href="/product" />
           <div className="w-px h-6 bg-gray-700/50 mx-2"></div>
           <Link
             href="/jobs"
@@ -231,6 +231,11 @@ const Navbar = () => {
                 >
                   Tech Roadmap
                 </Link>
+                <ProductNavLink 
+                  href="/product" 
+                  mobile={true}
+                  onClick={() => setShowCloseMenu(false)}
+                />
                 
                 <div className="h-px bg-gray-700/50 my-4"></div>
                 

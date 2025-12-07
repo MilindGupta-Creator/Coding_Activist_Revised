@@ -9,10 +9,11 @@ import Pricing from './Pricing';
 import Footer from './Footer';
 import Reader from './Reader';
 import Login from './Login';
+import UnderConstruction from './UnderConstruction';
 import { CheckIcon } from './Icons';
 import { db } from '@/firebase/firebase';
 
-type ViewState = 'landing' | 'login' | 'reader';
+type ViewState = 'landing' | 'login' | 'reader' | 'underConstruction';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
@@ -61,10 +62,9 @@ const App: React.FC = () => {
   }, []);
 
   const handlePurchaseClick = () => {
-    // In a real app, this would go to Stripe. 
-    // For demo, we send them to login or simulate a "post-purchase" flow
-    // Let's assume they bought it and now need to login
-    setCurrentView('login');
+    // Navigate to under construction page
+    setCurrentView('underConstruction');
+    window.scrollTo(0, 0);
   };
 
   const handleLoginClick = () => {
@@ -91,6 +91,10 @@ const App: React.FC = () => {
 
   if (currentView === 'login') {
     return <Login onLoginSuccess={handleLoginSuccess} onBack={handleBackToLanding} />;
+  }
+
+  if (currentView === 'underConstruction') {
+    return <UnderConstruction onBack={handleBackToLanding} />;
   }
 
   return (

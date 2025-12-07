@@ -12,7 +12,7 @@ const ConditionalNavbar = () => {
   }
   
   return (
-    <section className="fixed top-0 w-full z-10">
+    <section className="fixed top-0 w-full z-50">
       <Navbar />
     </section>
   );
