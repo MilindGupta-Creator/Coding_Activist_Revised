@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { LockIcon, ServerIcon, XIcon, CheckIcon } from './Icons';
-import { productAuth } from './firebaseProduct';
+import { db } from '@/firebase/firebase';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -10,7 +9,7 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [premiumKey, setPremiumKey] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingDevice, setCheckingDevice] = useState(false);
@@ -23,23 +22,50 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
     setError(null);
 
     const normalizedEmail = email.trim().toLowerCase();
-    const currentPassword = password;
+    const normalizedPremiumKey = premiumKey.trim().toUpperCase();
 
     setLoading(true);
     setCheckingDevice(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        productAuth,
-        normalizedEmail,
-        currentPassword
-      );
-      const user = userCredential.user;
+      // Check Firestore premiumUsers collection for matching email + premiumKey
+      const snapshot = await db
+        .collection('premiumUsers')
+        .where('email', '==', normalizedEmail)
+        .where('premiumKey', '==', normalizedPremiumKey)
+        .limit(1)
+        .get();
+
+      if (snapshot.empty) {
+        throw new Error('INVALID_PREMIUM_KEY');
+      }
+
+      const doc = snapshot.docs[0];
+      const data: any = doc.data();
+
+      // Optional: verify expiryDate if present
+      let isExpired = false;
+      try {
+        const expiry = data?.expiryDate;
+        const expiryDate =
+          expiry && typeof expiry.toDate === 'function'
+            ? expiry.toDate()
+            : null;
+        if (expiryDate && expiryDate.getTime() < Date.now()) {
+          isExpired = true;
+        }
+      } catch {
+        // If expiry parsing fails, treat as non-expired to avoid locking valid users
+      }
+
+      if (isExpired) {
+        throw new Error('PREMIUM_EXPIRED');
+      }
 
       // Simple 24h session for the reader UI (used by Reader.tsx)
       const newSession = {
-        user: user.email,
-        uid: user.uid,
+        user: normalizedEmail,
+        uid: doc.id,
         timestamp: Date.now(),
       };
       if (typeof window !== 'undefined') {
@@ -51,31 +77,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
       onLoginSuccess();
     } catch (err: any) {
       // Helpful logging during development (remove or comment out in production)
-      console.error("Firebase login error:", err?.code, err?.message);
+      console.error("Premium login error:", err);
 
-      let message = "Login failed. Please check your email or password.";
-      switch (err?.code) {
-        case "auth/user-not-found":
-          message = "No member found with this email.";
-          break;
-        case "auth/wrong-password":
-          message = "Incorrect password. Please try again.";
-          break;
-        case "auth/invalid-credential":
-          message = "Invalid credentials. Please re-enter your email and password.";
-          break;
-        case "auth/invalid-email":
-          message = "This email address is not valid.";
-          break;
-        case "auth/user-disabled":
-          message = "This account has been disabled. Contact support.";
-          break;
-        case "auth/too-many-requests":
-          message = "Too many attempts. Please wait a moment and try again.";
-          break;
-        case "auth/network-request-failed":
-          message = "Network error. Check your connection and try again.";
-          break;
+      let message = "Login failed. Please check your email or premium key.";
+      if (err?.message === 'INVALID_PREMIUM_KEY') {
+        message = "Invalid email or premium key. Please double-check and try again.";
+      } else if (err?.message === 'PREMIUM_EXPIRED') {
+        message = "Your premium access has expired. Please renew to continue.";
       }
       setError(message);
       setLoading(false);
@@ -132,14 +140,14 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onBack }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono text-slate-400 uppercase tracking-wider ml-1">Password</label>
+              <label className="text-xs font-mono text-slate-400 uppercase tracking-wider ml-1">Premium Key</label>
               <input
-                type="password"
+                type="text"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={premiumKey}
+                onChange={(e) => setPremiumKey(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all placeholder:text-slate-600"
-                placeholder="••••••••"
+                placeholder="ABCD-1234-EFGH"
               />
             </div>
 
