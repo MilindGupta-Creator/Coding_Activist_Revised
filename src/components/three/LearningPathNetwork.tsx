@@ -422,7 +422,7 @@ export function LearningPathNetwork({ technologies = [], onTechClick }: Learning
         </div>
       )}
       <div className="absolute bottom-4 left-4 text-xs text-gray-400">
-        <div>Click on mouse to rotate the network and click on the technology to explore connections</div>
+        <div>Click on mouse to rotate the network and click on the technology to explore its connections</div>
       </div>
     </div>
   );
