@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Logo from "../../../public/assets/main-logo.png";
 import Link from "next/link";
-import { RiMenu3Fill, RiCloseLargeLine } from "react-icons/ri";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import firebase from "firebase/compat/app";
@@ -29,6 +28,7 @@ const Navbar = () => {
   const [showCloseMenu, setShowCloseMenu] = useState(false);
   const [user, setUser] = useState<firebase.User | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const pathname = usePathname();
 
@@ -38,6 +38,14 @@ const Navbar = () => {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleSignOut = async () => {
@@ -53,47 +61,61 @@ const Navbar = () => {
   };
 
   return (
-    <div className="w-full bg-gradient-to-r from-[#181818] to-[#2d2d2d] bg-clip-padding backdrop-filter backdrop-blur-sm border-b border-gray-700 shadow-lg">
-      <div className="flex justify-between items-center py-3 w-4/5 mx-auto">
-        <Link href="/" className="flex items-center gap-x-3 group">
-          <Image
-            src={Logo}
-            alt="logo"
-            width="60"
-            height="60"
-            className="bg-white rounded-full transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-          />
-          <p className="font-bold text-gray-300 text-xl group-hover:text-white transition-colors duration-300">Coding Activist</p>
+    <div className={`w-full transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50' 
+        : 'bg-gradient-to-r from-[#181818]/90 to-[#2d2d2d]/90 backdrop-blur-md border-b border-gray-700/50'
+    }`}>
+      <div className="flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <Link href="/" className="flex items-center gap-x-3 group relative z-50">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Image
+              src={Logo}
+              alt="logo"
+              width="50"
+              height="50"
+              className="relative bg-white rounded-full transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-blue-500/50"
+              loading="lazy"
+            />
+          </div>
+          <p className="font-bold text-gray-200 text-xl group-hover:text-white transition-all duration-300 group-hover:drop-shadow-lg">Coding Activist</p>
         </Link>
-        <div className="md:flex items-center gap-x-8 hidden relative">
+        <div className="md:flex items-center gap-x-6 lg:gap-x-8 hidden relative">
           <Link
             href="/"
-            className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
-              pathname === "/" ? "text-white" : "text-gray-400"
-            } after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100`}
+            className={`relative text-sm lg:text-base font-medium transition-all duration-300 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 ${
+              pathname === "/" ? "text-white" : "text-gray-300"
+            } after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:bg-gradient-to-r after:from-blue-400 after:to-purple-400 after:transition-all after:duration-300 ${
+              pathname === "/" ? "after:w-3/4" : "hover:after:w-3/4"
+            }`}
           >
             Home
           </Link>
           <Link
             href="/questions"
-            className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
-              pathname === "/questions" ? "text-white" : "text-gray-400"
-            } after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100`}
+            className={`relative text-sm lg:text-base font-medium transition-all duration-300 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 ${
+              pathname === "/questions" ? "text-white" : "text-gray-300"
+            } after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:bg-gradient-to-r after:from-blue-400 after:to-purple-400 after:transition-all after:duration-300 ${
+              pathname === "/questions" ? "after:w-3/4" : "hover:after:w-3/4"
+            }`}
           >
             Questions
           </Link>
           <Link
             href="/visualizing_paths"
-            className={`relative text-lg font-medium transition-all duration-300 hover:text-white ${
-              pathname === "/visualizing_paths" ? "text-white" : "text-gray-400"
-            } after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100`}
+            className={`relative text-sm lg:text-base font-medium transition-all duration-300 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 ${
+              pathname === "/visualizing_paths" ? "text-white" : "text-gray-300"
+            } after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:bg-gradient-to-r after:from-blue-400 after:to-purple-400 after:transition-all after:duration-300 ${
+              pathname === "/visualizing_paths" ? "after:w-3/4" : "hover:after:w-3/4"
+            }`}
           >
             Tech Roadmap
           </Link>
+          <div className="w-px h-6 bg-gray-700/50 mx-2"></div>
           <Link
             href="/jobs"
-            className="relative inline-flex h-11 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
+            className="relative inline-flex h-11 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-300 hover:scale-105"
           >
             <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
             <span className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm" />
@@ -105,12 +127,12 @@ const Navbar = () => {
             <button
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className={`bg-gradient-to-r from-red-500 to-red-600 text-white font-medium py-2 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30 ${
+              className={`relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold py-2.5 px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-500/50 active:scale-95 ${
                 isSigningOut ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {isSigningOut ? (
-                <span className="flex items-center">
+                <span className="flex items-center relative z-10">
                   <svg
                     className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -134,119 +156,150 @@ const Navbar = () => {
                   Signing Out...
                 </span>
               ) : (
-                "Sign Out"
+                <span className="relative z-10">Sign Out</span>
               )}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
             </button>
           ) : (
             <Link
               href="/signin"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+              className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-2.5 px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 active:scale-95"
             >
-              Sign In
+              <span className="relative z-10">Sign In</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           )}
         </div>
-        {!showCloseMenu ? (
-          <RiMenu3Fill
-            className="text-gray-300 md:hidden text-3xl hover:text-white transition-colors duration-300"
-            onClick={() => setShowCloseMenu((prev) => !prev)}
-          />
-        ) : (
-          <RiCloseLargeLine
-            className="text-gray-300 md:hidden text-3xl hover:text-white transition-colors duration-300"
-            onClick={() => setShowCloseMenu((prev) => !prev)}
-          />
-        )}
-        {showCloseMenu && (
-          <div className="absolute top-20 bg-gradient-to-b from-[#181818] to-[#2d2d2d] rounded-xl text-lg flex flex-col gap-y-4 px-8 py-6 justify-center items-center right-10 shadow-xl border border-gray-700 animate-fadeIn">
-            <Link
-              href="/"
-              className={`text-lg font-medium transition-all duration-300 hover:text-white ${
-                pathname === "/" ? "text-white" : "text-gray-400"
-              }`}
-              onClick={() => setShowCloseMenu((prev) => !prev)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/visualizing_paths"
-              className={`text-lg font-medium transition-all duration-300 hover:text-white ${
-                pathname === "/visualizing_paths" ? "text-white" : "text-gray-400"
-              }`}
-              onClick={() => setShowCloseMenu((prev) => !prev)}
-            >
-              Tech Roadmap
-            </Link>
-            <Link
-              href="/questions"
-              className={`text-lg font-medium transition-all duration-300 hover:text-white ${
-                pathname === "/questions" ? "text-white" : "text-gray-400"
-              }`}
-              onClick={() => setShowCloseMenu((prev) => !prev)}
-            >
-              Questions
-            </Link>
-            <Link
-              href="/jobs"
-              className="relative inline-flex h-11 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-slate-900"
-              onClick={() => setShowCloseMenu((prev) => !prev)}
-            >
-              <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-              <span className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm" />
-              <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-900/90 px-6 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-all duration-300 hover:bg-slate-900/80">
-                Jobs
-              </span>
-            </Link>
-            {user ? (
-              <button
-                onClick={() => {
-                  handleSignOut();
-                  setShowCloseMenu((prev) => !prev);
-                }}
-                disabled={isSigningOut}
-                className={`bg-gradient-to-r from-red-500 to-red-600 text-white font-medium py-2 px-6 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30 ${
-                  isSigningOut ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {isSigningOut ? (
-                  <span className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Signing Out...
-                  </span>
-                ) : (
-                  "Sign Out"
-                )}
-              </button>
-            ) : (
-              <Link
-                href="/signin"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                onClick={() => setShowCloseMenu((prev) => !prev)}
-              >
-                Sign In
-              </Link>
-            )}
+        {/* Mobile Menu Toggle */}
+        <button 
+          className="md:hidden relative z-50 p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+          onClick={() => setShowCloseMenu(!showCloseMenu)}
+          aria-label="Toggle menu"
+        >
+          <div className="relative w-6 h-6">
+            <span className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-0.5 bg-gray-300 transition-all duration-300 ${
+              showCloseMenu ? 'rotate-45' : '-translate-y-1.5'
+            }`}></span>
+            <span className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-0.5 bg-gray-300 transition-all duration-300 ${
+              showCloseMenu ? 'opacity-0' : 'opacity-100'
+            }`}></span>
+            <span className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-0.5 bg-gray-300 transition-all duration-300 ${
+              showCloseMenu ? '-rotate-45' : 'translate-y-1.5'
+            }`}></span>
           </div>
-        )}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        <div className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
+          showCloseMenu 
+            ? 'opacity-100 pointer-events-auto' 
+            : 'opacity-0 pointer-events-none'
+        }`}>
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowCloseMenu(false)}
+          ></div>
+          <div className={`absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-gradient-to-b from-[#0a0a0a] via-[#181818] to-[#0a0a0a] border-l border-white/10 shadow-2xl transform transition-transform duration-300 ${
+            showCloseMenu ? 'translate-x-0' : 'translate-x-full'
+          }`}>
+            <div className="flex flex-col h-full pt-20 px-6 pb-8 overflow-y-auto">
+              <div className="flex flex-col gap-y-2">
+                <Link
+                  href="/"
+                  className={`text-left text-lg font-medium transition-all duration-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/5 border-l-2 ${
+                    pathname === "/" ? "text-white border-blue-500" : "text-gray-300 border-transparent hover:border-blue-500"
+                  }`}
+                  onClick={() => setShowCloseMenu(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/questions"
+                  className={`text-left text-lg font-medium transition-all duration-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/5 border-l-2 ${
+                    pathname === "/questions" ? "text-white border-blue-500" : "text-gray-300 border-transparent hover:border-blue-500"
+                  }`}
+                  onClick={() => setShowCloseMenu(false)}
+                >
+                  Questions
+                </Link>
+                <Link
+                  href="/visualizing_paths"
+                  className={`text-left text-lg font-medium transition-all duration-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/5 border-l-2 ${
+                    pathname === "/visualizing_paths" ? "text-white border-blue-500" : "text-gray-300 border-transparent hover:border-blue-500"
+                  }`}
+                  onClick={() => setShowCloseMenu(false)}
+                >
+                  Tech Roadmap
+                </Link>
+                
+                <div className="h-px bg-gray-700/50 my-4"></div>
+                
+                <Link
+                  href="/jobs"
+                  className="relative inline-flex h-11 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-300 hover:scale-105"
+                  onClick={() => setShowCloseMenu(false)}
+                >
+                  <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                  <span className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm" />
+                  <span className="relative inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-900/90 px-6 py-1 text-sm font-medium text-white backdrop-blur-3xl transition-all duration-300 hover:bg-slate-900/80">
+                    Jobs
+                  </span>
+                </Link>
+                
+                {user ? (
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setShowCloseMenu(false);
+                    }}
+                    disabled={isSigningOut}
+                    className={`mt-4 relative overflow-hidden bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-500/50 active:scale-95 ${
+                      isSigningOut ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {isSigningOut ? (
+                      <span className="flex items-center justify-center relative z-10">
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Signing Out...
+                      </span>
+                    ) : (
+                      <span className="relative z-10">Sign Out</span>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                  </button>
+                ) : (
+                  <Link
+                    href="/signin"
+                    className="mt-4 relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 active:scale-95"
+                    onClick={() => setShowCloseMenu(false)}
+                  >
+                    <span className="relative z-10">Sign In</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

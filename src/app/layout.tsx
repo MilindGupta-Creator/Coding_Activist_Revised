@@ -1,6 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/common/Navbar";
+import ConditionalNavbar from "@/components/common/ConditionalNavbar";
 import BottomBar from "@/components/common/BottomBar";
 import Blur from "../../public/assets/blur-23.png";
 import Image from "next/image";
@@ -65,9 +65,7 @@ export default function RootLayout({
         className={`${inter.className} relative bg-[#2C2B2B] bg-hero text-white bg-contain bg-no-repeat`}
       >
         <AuthProvider>
-          <section className="fixed top-0 w-full z-10">
-            <Navbar />
-          </section>
+          <ConditionalNavbar />
           <main className="pb-16">
             {children}
             <AdSection />

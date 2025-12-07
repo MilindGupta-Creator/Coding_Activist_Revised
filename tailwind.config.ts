@@ -32,6 +32,22 @@ const config: Config = {
           '900': '#00357a',
           '950': '#000814',
         },
+        'brand': {
+          '50': '#f0f9ff',
+          '100': '#e0f2fe',
+          '200': '#bae6fd',
+          '300': '#7dd3fc',
+          '400': '#38bdf8',
+          '500': '#0ea5e9',
+          '600': '#0284c7',
+          '700': '#0369a1',
+          '800': '#075985',
+          '900': '#0c4a6e',
+        },
+        'accent': {
+          '500': '#6366f1', // Indigo
+          '600': '#4f46e5',
+        },
       },
       transitionProperty: {
         'height': 'height',
@@ -114,6 +130,9 @@ const config: Config = {
         inputWidthOTP: "2.5rem",
         marginRightOTP: "1rem",
       },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       fontSize: {
         xxs: ["0.625rem", { lineHeight: "1rem" }],
         xs: ["0.75rem", { lineHeight: "1rem" }],
@@ -136,6 +155,20 @@ const config: Config = {
         "body-copy": ["0.75rem", { lineHeight: "1.25rem" }],
         "body-copy-sm": ["0.625rem", { lineHeight: "1.125rem" }],
         "dialog-header": ["1.625rem", { lineHeight: "2.5rem" }],
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
     },
   },

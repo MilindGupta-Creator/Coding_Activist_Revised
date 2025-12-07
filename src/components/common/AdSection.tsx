@@ -2,10 +2,39 @@
 
 import { usePathname } from "next/navigation";
 import Script from "next/script";
+import { useEffect, useState } from "react";
 
 export default function AdSection() {
   const pathname = usePathname();
-  const showAd = pathname !== "/jobs";
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in (has active session)
+  useEffect(() => {
+    const checkSession = () => {
+      const activeSession = localStorage.getItem("frontend_mastery_active_session");
+      if (activeSession) {
+        try {
+          const sessionData = JSON.parse(activeSession);
+          // Check if session is valid (less than 24 hours old)
+          if (new Date().getTime() - sessionData.timestamp < 24 * 60 * 60 * 1000) {
+            setIsLoggedIn(true);
+            return;
+          }
+        } catch (e) {
+          // Invalid session
+        }
+      }
+      setIsLoggedIn(false);
+    };
+
+    checkSession();
+    // Check periodically in case user logs in/out
+    const interval = setInterval(checkSession, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Hide ad on /jobs, /product routes, or when user is logged in
+  const showAd = pathname !== "/jobs" && pathname !== "/product" && !isLoggedIn;
 
   if (!showAd) return null;
 
