@@ -1,4 +1,12 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
+import dynamic from "next/dynamic";
+
+const FloatingShapes = dynamic(
+  () => import("@/components/three/FloatingShapes").then((m) => ({ default: m.FloatingShapes })),
+  { ssr: false }
+);
 
 const CodeLine = ({ text, delay, color = "text-slate-300", indent = 0 }: { text: string, delay: number, color?: string, indent?: number }) => {
   const [displayed, setDisplayed] = useState('');
@@ -135,6 +143,10 @@ const Hero: React.FC = () => {
 
   return (
     <div className="relative pt-32 pb-20 lg:pt-24 lg:pb-28 overflow-hidden">
+      {/* 3D Floating Shapes Background */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+        <FloatingShapes shapeCount={10} colors={["#3b82f6", "#8b5cf6", "#ec4899", "#10b981"]} />
+      </div>
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-brand-500/20 rounded-full blur-[100px]" />

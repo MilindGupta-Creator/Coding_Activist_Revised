@@ -6,6 +6,12 @@ import { PathCard } from './components/PathCard';
 import { PathSwitcher } from './components/PathSwitcher';
 import { Compass, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import dynamic from "next/dynamic";
+
+const LearningPathNetwork = dynamic(
+  () => import("@/components/three/LearningPathNetwork").then((m) => ({ default: m.LearningPathNetwork })),
+  { ssr: false, loading: () => <div className="w-full h-[400px] rounded-2xl border border-slate-700/60 bg-slate-900/60 flex items-center justify-center text-gray-400">Loading network...</div> }
+);
 
 function App() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -58,6 +64,96 @@ function App() {
             activeCategory={activeCategory} 
             onCategoryChange={setActiveCategory}
           />
+        </div>
+
+        {/* Technology Network Visualization */}
+        <div className="mb-12">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
+              Technology <span className="text-blue-600">Ecosystem</span>
+            </h2>
+            <p className="text-base text-gray-600 max-w-2xl mx-auto">
+              Explore how technologies connect and relate to each other. Click on any technology to see its connections.
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl p-4 border-2 border-blue-500/20 overflow-hidden">
+            <LearningPathNetwork 
+              technologies={[
+                {
+                  id: "react",
+                  name: "React",
+                  category: "Frontend",
+                  color: "#61dafb",
+                  connections: ["nextjs", "typescript", "nodejs"],
+                },
+                {
+                  id: "nextjs",
+                  name: "Next.js",
+                  category: "Frontend",
+                  color: "#ffffff",
+                  connections: ["react", "typescript", "nodejs"],
+                },
+                {
+                  id: "typescript",
+                  name: "TypeScript",
+                  category: "Language",
+                  color: "#3178c6",
+                  connections: ["react", "nextjs", "nodejs"],
+                },
+                {
+                  id: "nodejs",
+                  name: "Node.js",
+                  category: "Backend",
+                  color: "#339933",
+                  connections: ["react", "nextjs", "typescript", "mongodb", "postgresql"],
+                },
+                {
+                  id: "mongodb",
+                  name: "MongoDB",
+                  category: "Database",
+                  color: "#47a248",
+                  connections: ["nodejs", "postgresql"],
+                },
+                {
+                  id: "postgresql",
+                  name: "PostgreSQL",
+                  category: "Database",
+                  color: "#336791",
+                  connections: ["nodejs", "mongodb"],
+                },
+                {
+                  id: "docker",
+                  name: "Docker",
+                  category: "DevOps",
+                  color: "#2496ed",
+                  connections: ["kubernetes", "aws"],
+                },
+                {
+                  id: "kubernetes",
+                  name: "Kubernetes",
+                  category: "DevOps",
+                  color: "#326ce5",
+                  connections: ["docker", "aws"],
+                },
+                {
+                  id: "aws",
+                  name: "AWS",
+                  category: "Cloud",
+                  color: "#ff9900",
+                  connections: ["docker", "kubernetes"],
+                },
+              ]}
+              onTechClick={(tech) => {
+                // Navigate to a path that includes this technology
+                const relatedPath = learningPaths.find(path => 
+                  path.tools?.some(tool => tool.toLowerCase().includes(tech.name.toLowerCase()))
+                );
+                if (relatedPath) {
+                  router.push(`/visualizing_paths/${relatedPath.id}`);
+                }
+              }}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative max-w-5xl mx-auto">
