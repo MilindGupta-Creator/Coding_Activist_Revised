@@ -9,6 +9,7 @@ import { db } from '@/firebase/firebase';
 import Logo from "../../../public/assets/main-logo.png";
 import ExamQuiz from './ExamQuiz';
 import FrequencyHeatmap from './FrequencyHeatmap';
+import EventLoopSimulator from './EventLoopSimulator';
 
 // Icons for study plans
 const CalendarIcon = ({ className }: { className?: string }) => (
@@ -55,6 +56,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
   const [isExamMode, setIsExamMode] = useState(false);
   const [showTopicHeatmap, setShowTopicHeatmap] = useState(false);
+  const [showEventLoopLab, setShowEventLoopLab] = useState(false);
   const [isTimedQuizActive, setIsTimedQuizActive] = useState(false);
   const [quizDurationMinutes, setQuizDurationMinutes] = useState(15);
   const [quizQuestionCount, setQuizQuestionCount] = useState(10);
@@ -756,6 +758,20 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       ? ebookContent[activeModuleIndex + 1]
       : null;
 
+  // Get user email from session
+  const userEmail = (() => {
+    try {
+      const session = localStorage.getItem("frontend_mastery_active_session");
+      if (session) {
+        const sessionData = JSON.parse(session);
+        return sessionData.user || "milindgupta578@gmail.com";
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return "milindgupta578@gmail.com";
+  })();
+
   return (
     <div 
       className="fixed inset-0 bg-slate-950 flex flex-col md:flex-row overflow-hidden select-none print:hidden"
@@ -767,34 +783,20 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       
       {/* Dynamic Watermark Overlay (Repeated) with User Info - Enhanced Visibility */}
       <div className="pointer-events-none fixed inset-0 z-50 flex flex-wrap content-start items-start justify-center overflow-hidden">
-        {(() => {
-          // Get user email from session for watermarking
-          let userEmail = "milindgupta578@gmail.com";
-          try {
-            const session = localStorage.getItem("frontend_mastery_active_session");
-            if (session) {
-              const sessionData = JSON.parse(session);
-              userEmail = sessionData.user || userEmail;
-            }
-          } catch (e) {
-            // Use default
-          }
-          
-          return Array.from({ length: 30 }).map((_, i) => (
-            <div 
-              key={i} 
-              data-watermark="true"
-              className="w-96 h-96 flex items-center justify-center transform -rotate-45"
-              style={{ opacity: 0.06 }}
-            >
-              <span className="text-xl font-extrabold text-red-400 whitespace-nowrap text-center drop-shadow-[0_0_8px_rgba(255,0,0,0.5)]">
-                ⚠️ LICENSED TO: {userEmail}<br/>
-                🔒 ID: 8X9-22-LOCKED<br/>
-                📧 {userEmail}
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div 
+            key={i} 
+            data-watermark="true"
+            className="w-96 h-96 flex items-center justify-center transform -rotate-45"
+            style={{ opacity: 0.06 }}
+          >
+            <span className="text-xl font-extrabold text-red-400 whitespace-nowrap text-center drop-shadow-[0_0_8px_rgba(255,0,0,0.5)]">
+              ⚠️ LICENSED TO: {userEmail}<br/>
+              🔒 ID: 8X9-22-LOCKED<br/>
+              📧 {userEmail}
             </span>
           </div>
-          ));
-        })()}
+        ))}
       </div>
 
       {/* Session Expiry Warning Toast */}
@@ -975,7 +977,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
         <div className="p-4 border-t border-slate-800">
            <div className="bg-slate-800/50 rounded-lg p-3 mb-4">
               <div className="text-[10px] text-slate-500 uppercase mb-1">License Holder</div>
-              <div className="text-xs text-white font-mono">milindgupta578@gmail.com</div>
+              <div className="text-xs text-white font-mono">{userEmail}</div>
               </div>
            <button 
              onClick={handleLogout}
@@ -1038,6 +1040,22 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         {showTopicHeatmap ? 'Topics Heatmap: On' : 'Topics Heatmap'}
                       </button>
                     )}
+
+                    <button
+                      onClick={() => setShowEventLoopLab(prev => !prev)}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                        showEventLoopLab
+                          ? 'border-emerald-500/70 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20'
+                          : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-emerald-500 hover:text-emerald-300 hover:bg-slate-900'
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(52,211,153,0.8)] ${
+                          showEventLoopLab ? 'bg-emerald-400' : 'bg-slate-500'
+                        }`}
+                      />
+                      {showEventLoopLab ? 'Event Loop Lab: On' : 'Event Loop Lab'}
+                    </button>
                   </>
                 )}
 
@@ -1272,6 +1290,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                      activeContent.id === ebookContent[0].id &&
                      showTopicHeatmap && (
                        <FrequencyHeatmap />
+                   )}
+
+                   {/* Event Loop simulator for async topics */}
+                   {activeContent &&
+                     showEventLoopLab && (
+                       <EventLoopSimulator  />
                    )}
                 </div>
 

@@ -442,6 +442,81 @@ export const studyPlans: StudyPlan[] = [
           q: "Q39. How is the behavior of 'this' in arrow vs regular functions?",
           a: "**Regular functions** have their own `this` (dynamic, depends on call site).\n**Arrow functions** inherit `this` from their surrounding context (lexical binding).",
           code: `const obj = {\n  name: "Alice",\n  regular: function() { console.log(this.name); },\n  arrow: () => { console.log(this.name); }\n};\n\nobj.regular(); // "Alice"\nobj.arrow(); // undefined (window/global)`
+        },
+        {
+          q: "Q43. Explain Promise.all vs Promise.allSettled vs Promise.race",
+          a: "- **Promise.all**: Waits for all promises. Rejects if ANY promise rejects (fail-fast).\n- **Promise.allSettled**: Waits for all promises. Returns results for both fulfilled and rejected.\n- **Promise.race**: Returns the first promise that settles (fulfills OR rejects).",
+          code: `Promise.all([p1, p2, p3]).then(console.log); // [val1, val2, val3] or rejects\nPromise.allSettled([p1, p2, p3]).then(console.log); // [{status: 'fulfilled', value: ...}, ...]\nPromise.race([p1, p2, p3]).then(console.log); // First to settle`,
+          tags: ["Google", "Meta", "Core JS"],
+          followUps: [
+            "When would you use Promise.allSettled instead of Promise.all in a real application?",
+            "How would you implement a timeout wrapper using Promise.race?",
+            "What happens if you pass an empty array to Promise.all vs Promise.race?"
+          ]
+        },
+        {
+          q: "Q44. What is the difference between var, let, and const?",
+          a: "- **var**: Function-scoped, hoisted (initialized as undefined), can be redeclared.\n- **let**: Block-scoped, hoisted but in TDZ (Temporal Dead Zone), cannot be redeclared.\n- **const**: Block-scoped, must be initialized, cannot be reassigned (but object properties can change).",
+          code: `// var\nif (true) { var x = 1; }\nconsole.log(x); // 1 (accessible)\n\n// let\nif (true) { let y = 1; }\nconsole.log(y); // ReferenceError\n\n// const\nconst obj = { a: 1 };\nobj.a = 2; // OK\nobj = {}; // TypeError`,
+          tags: ["Core JS", "Interview"],
+        },
+        {
+          q: "Q45. Explain Closures with a practical example",
+          a: "A closure gives you access to an outer function's scope from an inner function. Common use cases: data privacy, function factories, event handlers, debounce/throttle.",
+          code: `function createCounter() {\n  let count = 0; // Private variable\n  return function() {\n    return ++count;\n  };\n}\n\nconst counter = createCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2`,
+          tags: ["Google", "Meta", "Core JS"],
+          followUps: [
+            "How would you use closures to implement a debounce function?",
+            "What is a memory leak related to closures and how do you prevent it?",
+            "Explain how closures are used in React hooks like useState."
+          ]
+        },
+        {
+          q: "Q46. What are Symbols and when to use them?",
+          a: "Symbols are unique, immutable primitive values. Use them for:\n- Creating unique object keys (avoid name collisions)\n- Implementing private properties\n- Well-known symbols (Symbol.iterator, Symbol.toPrimitive)",
+          code: `const sym1 = Symbol('id');\nconst sym2 = Symbol('id');\nconsole.log(sym1 === sym2); // false (unique!)\n\nconst obj = { [sym1]: 'value' };\nconsole.log(obj[sym1]); // 'value'`,
+          tags: ["Advanced JS"],
+        },
+        {
+          q: "Q47. Explain WeakMap and WeakSet vs Map and Set",
+          a: "- **WeakMap/WeakSet**: Keys must be objects, weakly referenced (garbage collected if no other references), not iterable.\n- **Map/Set**: Any keys, strongly referenced, iterable.\n\nUse WeakMap for metadata that shouldn't prevent garbage collection.",
+          code: `const wm = new WeakMap();\nconst obj = {};\nwm.set(obj, 'metadata');\n// If obj is garbage collected, entry is removed automatically`,
+          tags: ["Advanced JS", "Memory"],
+        },
+        {
+          q: "Q48. What is the output and why? (Hoisting + TDZ)",
+          a: "Output: ReferenceError: Cannot access 'a' before initialization.\n\nEven though `var a` is hoisted, the `let a = 2` creates a Temporal Dead Zone (TDZ) for the entire block. The `console.log(a)` tries to access `a` before it's initialized.",
+          code: `console.log(a); // ReferenceError\nlet a = 2;`,
+          tags: ["Core JS", "Interview"],
+        },
+        {
+          q: "Q49. Implement debounce and throttle functions",
+          a: "**Debounce**: Execute function after delay, reset timer on each call.\n**Throttle**: Execute function at most once per interval.",
+          code: `function debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\nfunction throttle(fn, limit) {\n  let inThrottle;\n  return function(...args) {\n    if (!inThrottle) {\n      fn.apply(this, args);\n      inThrottle = true;\n      setTimeout(() => inThrottle = false, limit);\n    }\n  };\n}`,
+          tags: ["Google", "Meta", "Core JS", "Performance"],
+          followUps: [
+            "When would you use debounce vs throttle for a search input?",
+            "How would you implement a leading-edge throttle (execute immediately, then throttle)?",
+            "What are the memory implications if you don't clear timers properly?"
+          ]
+        },
+        {
+          q: "Q50. Explain Generator Functions and yield",
+          a: "Generators are functions that can be paused and resumed. They return an iterator object. Use `yield` to pause execution and return a value.",
+          code: `function* countUp() {\n  yield 1;\n  yield 2;\n  yield 3;\n}\n\nconst gen = countUp();\nconsole.log(gen.next().value); // 1\nconsole.log(gen.next().value); // 2`,
+          tags: ["Advanced JS"],
+        },
+        {
+          q: "Q51. What is the difference between == and ===?",
+          a: "- **== (loose equality)**: Performs type coercion before comparison.\n- **=== (strict equality)**: No type coercion, compares type and value.\n\nAlways use === unless you specifically need coercion.",
+          code: `console.log(5 == "5"); // true (coercion)\nconsole.log(5 === "5"); // false (different types)\nconsole.log(null == undefined); // true\nconsole.log(null === undefined); // false`,
+          tags: ["Core JS", "Interview"],
+        },
+        {
+          q: "Q52. Explain the difference between null, undefined, and undeclared",
+          a: "- **null**: Intentional absence of value (assigned by developer).\n- **undefined**: Variable declared but not assigned, or missing property.\n- **undeclared**: Variable never declared (ReferenceError if accessed).",
+          code: `let a = null; // Explicitly set to null\nlet b; // undefined\nconsole.log(c); // ReferenceError (undeclared)`,
+          tags: ["Core JS"],
         }
       ]
     },
@@ -502,6 +577,59 @@ export const studyPlans: StudyPlan[] = [
           q: "Q42. Visual: CSS Box Model & Stacking Context",
           a: "The CSS box model describes how every element is built from content, padding, border, and margin. Stacking context explains how overlapping elements are layered using `z-index`.",
           diagram: `CSS Box Model (outer to inner)\n\n[ margin ]   (transparent space outside the border)\n[ border ]   (line surrounding the box)\n[ padding ]  (space between border and content)\n[ content ]  (actual text / image)\n\nExample stacking context:\n\nz-index: 2   ─── Modal / Toast on top\nz-index: 1   ─── Header / Fixed Nav\nz-index: 0   ─── Main page content\nz-index: -1  ─── Background decoration`,
+        },
+        {
+          q: "Q43. Explain Flexbox vs CSS Grid - when to use each?",
+          a: "- **Flexbox**: 1D layout (row OR column). Perfect for navigation bars, centering content, distributing space.\n- **Grid**: 2D layout (rows AND columns). Perfect for page layouts, card grids, complex designs.\n\nUse Flexbox for components, Grid for layouts.",
+          code: `/* Flexbox - horizontal nav */\n.nav { display: flex; justify-content: space-between; }\n\n/* Grid - card layout */\n.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }`,
+          tags: ["HTML & CSS", "Layout"],
+          followUps: [
+            "Can you use Flexbox and Grid together? Give an example.",
+            "What's the difference between `justify-content` and `align-items` in Flexbox?",
+            "How would you create a responsive grid that switches from 3 columns to 1 column on mobile?"
+          ]
+        },
+        {
+          q: "Q44. What are CSS Custom Properties (CSS Variables)?",
+          a: "CSS variables allow you to store values that can be reused throughout your stylesheet. They're scoped and can be changed dynamically via JavaScript.",
+          code: `:root {\n  --primary-color: #3b82f6;\n  --spacing: 1rem;\n}\n\n.button {\n  background: var(--primary-color);\n  padding: var(--spacing);\n}\n\n/* Change dynamically */\ndocument.documentElement.style.setProperty('--primary-color', '#ef4444');`,
+          tags: ["HTML & CSS", "Modern CSS"],
+        },
+        {
+          q: "Q45. Explain CSS BEM Methodology",
+          a: "BEM (Block Element Modifier) is a naming convention:\n- **Block**: Standalone component (`button`, `card`)\n- **Element**: Part of block (`button__icon`, `card__title`)\n- **Modifier**: Variation (`button--primary`, `card--featured`)",
+          code: `/* Block */\n.card { }\n\n/* Element */\n.card__title { }\n.card__body { }\n\n/* Modifier */\n.card--featured { }\n.card__title--large { }`,
+          tags: ["HTML & CSS", "Architecture"],
+        },
+        {
+          q: "Q46. What is the difference between display: none, visibility: hidden, and opacity: 0?",
+          a: "- **display: none**: Removes element from layout (no space taken, not accessible).\n- **visibility: hidden**: Element takes space but invisible (not accessible).\n- **opacity: 0**: Element fully transparent but takes space and remains accessible/interactive.",
+          code: `/* Removed from layout */\n.hidden { display: none; }\n\n/* Invisible but takes space */\n.invisible { visibility: hidden; }\n\n/* Transparent but interactive */\n.transparent { opacity: 0; }`,
+          tags: ["HTML & CSS", "Interview"],
+        },
+        {
+          q: "Q47. How do you center a div horizontally and vertically?",
+          a: "Multiple methods:\n1. **Flexbox** (modern, recommended)\n2. **Grid** (modern)\n3. **Absolute + Transform** (legacy)\n4. **Margin auto** (horizontal only)",
+          code: `/* Method 1: Flexbox */\n.parent {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n/* Method 2: Grid */\n.parent {\n  display: grid;\n  place-items: center;\n}\n\n/* Method 3: Absolute */\n.child {\n  position: absolute;\n  top: 50%; left: 50%;\n  transform: translate(-50%, -50%);\n}`,
+          tags: ["HTML & CSS", "Interview"],
+        },
+        {
+          q: "Q48. Explain CSS Animations vs Transitions",
+          a: "- **Transitions**: Simple property changes over time (hover effects, state changes). Need a trigger.\n- **Animations**: Complex, multi-step animations. Can loop, reverse, pause. Defined with @keyframes.",
+          code: `/* Transition */\n.button {\n  transition: background 0.3s ease;\n}\n.button:hover { background: blue; }\n\n/* Animation */\n@keyframes slide {\n  from { transform: translateX(0); }\n  to { transform: translateX(100px); }\n}\n.box { animation: slide 1s infinite; }`,
+          tags: ["HTML & CSS"],
+        },
+        {
+          q: "Q49. What is the difference between rem, em, and px?",
+          a: "- **px**: Absolute unit (1px = 1/96 inch). Fixed size.\n- **em**: Relative to parent's font-size. Can compound.\n- **rem**: Relative to root (`<html>`) font-size. Consistent across the page.",
+          code: `html { font-size: 16px; }\n.parent { font-size: 20px; }\n\n.child-px { font-size: 16px; } /* Always 16px */\n.child-em { font-size: 1.5em; } /* 30px (20px * 1.5) */\n.child-rem { font-size: 1.5rem; } /* 24px (16px * 1.5) */`,
+          tags: ["HTML & CSS", "Typography"],
+        },
+        {
+          q: "Q50. How do you make a responsive image that scales with its container?",
+          a: "Use `max-width: 100%` and `height: auto`. This ensures the image scales down but never exceeds its container width.",
+          code: `img {\n  max-width: 100%;\n  height: auto;\n  display: block;\n}\n\n/* For background images */\n.bg {\n  background-size: cover; /* or contain */\n  background-position: center;\n}`,
+          tags: ["HTML & CSS", "Responsive"],
         }
       ]
     },
@@ -573,6 +701,76 @@ export const studyPlans: StudyPlan[] = [
           q: "Q40. React Batching mechanism?",
           a: "React groups multiple state updates into a single re-render.\nReact 18 introduces **Automatic Batching** which batches updates inside promises, timeouts, and event handlers automatically.",
           code: `// React 18\nsetTimeout(() => {\n  setCount(c => c + 1);\n  setFlag(f => !f);\n  // Triggers only 1 re-render\n}, 1000);`
+        },
+        {
+          q: "Q41. What are Error Boundaries in React?",
+          a: "Error Boundaries catch JavaScript errors anywhere in the component tree and display a fallback UI instead of crashing the app. They catch errors in:\n- Rendering\n- Lifecycle methods\n- Constructors\n\nThey do NOT catch errors in event handlers, async code, or SSR.",
+          code: `class ErrorBoundary extends React.Component {\n  state = { hasError: false };\n  static getDerivedStateFromError(error) {\n    return { hasError: true };\n  }\n  componentDidCatch(error, info) {\n    console.error(error, info);\n  }\n  render() {\n    if (this.state.hasError) {\n      return <h1>Something went wrong.</h1>;\n    }\n    return this.props.children;\n  }\n}`,
+          tags: ["React", "Error Handling"],
+          followUps: [
+            "Why can't Error Boundaries catch errors in event handlers?",
+            "How would you implement an Error Boundary with React Hooks?",
+            "What's the difference between getDerivedStateFromError and componentDidCatch?"
+          ]
+        },
+        {
+          q: "Q42. Explain useMemo vs useCallback",
+          a: "- **useMemo**: Memoizes a computed VALUE. Returns the cached value until dependencies change.\n- **useCallback**: Memoizes a FUNCTION. Returns the cached function reference until dependencies change.\n\nBoth prevent unnecessary recalculations/recreations.",
+          code: `// useMemo - memoize value\nconst expensiveValue = useMemo(() => {\n  return computeExpensiveValue(a, b);\n}, [a, b]);\n\n// useCallback - memoize function\nconst memoizedCallback = useCallback(() => {\n  doSomething(a, b);\n}, [a, b]);`,
+          tags: ["React", "Performance"],
+        },
+        {
+          q: "Q43. What is React Suspense and how does it work?",
+          a: "Suspense lets components 'wait' for something (data loading, code splitting) before rendering. It shows a fallback UI while waiting.\n\nReact 18 Suspense works with:\n- React.lazy (code splitting)\n- Data fetching libraries (React Query, SWR)\n- Concurrent features",
+          code: `const LazyComponent = React.lazy(() => import('./Component'));\n\nfunction App() {\n  return (\n    <Suspense fallback={<div>Loading...</div>}>\n      <LazyComponent />\n    </Suspense>\n  );\n}`,
+          tags: ["React", "Next.js"],
+        },
+        {
+          q: "Q44. What are React Portals?",
+          a: "Portals render children into a DOM node outside the parent component hierarchy. Useful for modals, tooltips, dropdowns that need to escape parent overflow/stacking contexts.",
+          code: `import { createPortal } from 'react-dom';\n\nfunction Modal({ children }) {\n  return createPortal(\n    <div className="modal">{children}</div>,\n    document.body\n  );\n}`,
+          tags: ["React", "DOM"],
+        },
+        {
+          q: "Q45. Explain React Context API and when to use it",
+          a: "Context provides a way to pass data through the component tree without prop drilling.\n\nUse when:\n- Theme, language, auth state (global data)\n- Data needed by many components at different levels\n\nAvoid for:\n- Frequently changing data (causes re-renders)\n- Local component state",
+          code: `const ThemeContext = createContext('light');\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value="dark">\n      <Toolbar />\n    </ThemeContext.Provider>\n  );\n}\n\nfunction Button() {\n  const theme = useContext(ThemeContext);\n  return <button className={theme}>Click</button>;\n}`,
+          tags: ["React", "State Management"],
+          followUps: [
+            "How does Context cause performance issues and how do you optimize it?",
+            "When would you choose Context over Redux or Zustand?",
+            "How do you prevent unnecessary re-renders when using Context?"
+          ]
+        },
+        {
+          q: "Q46. What is the difference between controlled and uncontrolled components?",
+          a: "- **Controlled**: Form data is handled by React state. Input value is controlled by `value` prop.\n- **Uncontrolled**: Form data is handled by the DOM. Use `ref` to access values.\n\nControlled is preferred for React apps.",
+          code: `// Controlled\nconst [value, setValue] = useState('');\n<input value={value} onChange={(e) => setValue(e.target.value)} />\n\n// Uncontrolled\nconst inputRef = useRef();\n<input ref={inputRef} />\n// Access: inputRef.current.value`,
+          tags: ["React", "Forms"],
+        },
+        {
+          q: "Q47. Explain React Server Components (RSC) in Next.js 13+",
+          a: "Server Components render on the server and send minimal JS to the client. Benefits:\n- Zero client bundle size\n- Direct database/API access\n- Better security (API keys stay on server)\n- Faster initial load\n\nUse 'use client' directive for interactive components.",
+          code: `// Server Component (default)\nasync function ServerComponent() {\n  const data = await fetch('...');\n  return <div>{data}</div>;\n}\n\n// Client Component\n'use client';\nfunction ClientComponent() {\n  const [state, setState] = useState();\n  return <button onClick={...}>Click</button>;\n}`,
+          tags: ["React", "Next.js", "SSR"],
+        },
+        {
+          q: "Q48. What are React Keys and why are they important?",
+          a: "Keys help React identify which items changed, were added, or removed. They should be stable, unique, and predictable.\n\nWithout keys, React may incorrectly reuse DOM nodes, causing bugs and performance issues.",
+          code: `// Good: Stable, unique keys\n{items.map(item => (\n  <Item key={item.id} data={item} />\n))}\n\n// Bad: Using index (only if list is static)\n{items.map((item, index) => (\n  <Item key={index} data={item} />\n))}`,
+          tags: ["React", "Performance"],
+        },
+        {
+          q: "Q49. How does React handle forms and form validation?",
+          a: "React handles forms through controlled components. Validation can be:\n- Built-in HTML5 validation (`required`, `pattern`)\n- Custom validation in `onChange` handlers\n- Libraries like Formik, React Hook Form\n\nAlways validate on both client and server.",
+          code: `const [email, setEmail] = useState('');\nconst [error, setError] = useState('');\n\nconst validate = (value) => {\n  if (!value.includes('@')) {\n    setError('Invalid email');\n  } else {\n    setError('');\n  }\n};\n\n<input\n  value={email}\n  onChange={(e) => {\n    setEmail(e.target.value);\n    validate(e.target.value);\n  }}\n/>`,
+          tags: ["React", "Forms"],
+        },
+        {
+          q: "Q50. Explain React's Concurrent Features (React 18)",
+          a: "Concurrent rendering allows React to interrupt rendering work. Features:\n- **startTransition**: Mark non-urgent updates\n- **useTransition**: Track transition state\n- **useDeferredValue**: Defer value updates\n- **Suspense**: Better loading states\n\nImproves perceived performance and responsiveness.",
+          code: `import { startTransition } from 'react';\n\nfunction App() {\n  const [isPending, startTransition] = useTransition();\n  \n  const handleChange = (e) => {\n    setInput(e.target.value); // Urgent\n    startTransition(() => {\n      setResults(filter(e.target.value)); // Non-urgent\n    });\n  };\n}`,
+          tags: ["React", "Performance", "React 18"],
         }
       ]
     },
@@ -664,6 +862,57 @@ export const studyPlans: StudyPlan[] = [
             "How do you keep the UI responsive if validation and sanitization logic is expensive?",
             "What server-side checks would you still perform even though you already validated on the client?"
           ]
+        },
+        {
+          q: "DSA H: Two Sum / Three Sum",
+          a: "**Two Sum**: Find two numbers that add up to target. Use HashMap for O(n) solution.\n**Three Sum**: Find three numbers that add up to zero. Sort array, fix one number, use two pointers for the rest.",
+          code: `// Two Sum\nfunction twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n}\n\n// Three Sum\nfunction threeSum(nums) {\n  nums.sort((a, b) => a - b);\n  const res = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i - 1]) continue;\n    let left = i + 1, right = nums.length - 1;\n    while (left < right) {\n      const sum = nums[i] + nums[left] + nums[right];\n      if (sum === 0) {\n        res.push([nums[i], nums[left], nums[right]]);\n        while (left < right && nums[left] === nums[left + 1]) left++;\n        while (left < right && nums[right] === nums[right - 1]) right--;\n        left++; right--;\n      } else if (sum < 0) left++;\n      else right--;\n    }\n  }\n  return res;\n}`,
+          tags: ["Google", "Meta", "Amazon", "DSA", "Arrays"],
+        },
+        {
+          q: "DSA I: Valid Parentheses",
+          a: "Given a string containing parentheses, determine if they're valid. Use a stack to track opening brackets.",
+          code: `function isValid(s) {\n  const stack = [];\n  const pairs = { '(': ')', '[': ']', '{': '}' };\n  \n  for (const char of s) {\n    if (pairs[char]) {\n      stack.push(char);\n    } else {\n      if (stack.length === 0 || pairs[stack.pop()] !== char) {\n        return false;\n      }\n    }\n  }\n  return stack.length === 0;\n}`,
+          tags: ["Google", "Microsoft", "DSA", "Stack"],
+        },
+        {
+          q: "DSA J: Reverse Linked List",
+          a: "Reverse a singly linked list iteratively or recursively. Classic problem asked at FAANG.",
+          code: `// Iterative\nfunction reverseList(head) {\n  let prev = null;\n  let curr = head;\n  \n  while (curr) {\n    const next = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = next;\n  }\n  return prev;\n}\n\n// Recursive\nfunction reverseList(head) {\n  if (!head || !head.next) return head;\n  const newHead = reverseList(head.next);\n  head.next.next = head;\n  head.next = null;\n  return newHead;\n}`,
+          tags: ["Google", "Meta", "DSA", "Linked List"],
+        },
+        {
+          q: "Machine Coding E: Todo List with LocalStorage",
+          a: "Build a Todo app with:\n1. Add/Delete/Edit todos\n2. Mark as complete\n3. Filter (All/Active/Completed)\n4. Persist to localStorage\n5. Clear completed\n\nFocus on clean component structure and state management.",
+          tags: ["Frontend", "Machine Coding", "State Management"],
+          followUps: [
+            "How would you add undo/redo functionality?",
+            "How would you sync todos across multiple browser tabs?",
+            "What if todos need to sync with a backend API?"
+          ]
+        },
+        {
+          q: "Machine Coding F: Infinite Scroll / Pagination",
+          a: "Implement infinite scroll:\n1. Detect when user scrolls near bottom\n2. Fetch next page of data\n3. Append to existing list\n4. Show loading indicator\n5. Handle end of data\n\nUse IntersectionObserver API for efficient scroll detection.",
+          code: `const observer = new IntersectionObserver((entries) => {\n  if (entries[0].isIntersecting && hasMore) {\n    loadMore();\n  }\n});\nobserver.observe(sentinelRef.current);`,
+          tags: ["Google", "Meta", "Frontend", "Machine Coding"],
+        },
+        {
+          q: "Machine Coding G: Drag and Drop List",
+          a: "Build a sortable list with drag-and-drop:\n1. Drag items to reorder\n2. Visual feedback during drag\n3. Persist new order\n4. Smooth animations\n\nUse HTML5 Drag API or libraries like react-beautiful-dnd.",
+          tags: ["Microsoft", "Frontend", "Machine Coding", "UI"],
+        },
+        {
+          q: "DSA K: Binary Search",
+          a: "Search for a target in a sorted array in O(log n) time. Classic algorithm with many variations:\n- Find exact match\n- Find insertion point\n- Search in rotated array",
+          code: `function binarySearch(nums, target) {\n  let left = 0, right = nums.length - 1;\n  \n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}`,
+          tags: ["Google", "Microsoft", "DSA", "Binary Search"],
+        },
+        {
+          q: "DSA L: Maximum Subarray (Kadane's Algorithm)",
+          a: "Find the contiguous subarray with the largest sum. O(n) solution using dynamic programming.",
+          code: `function maxSubArray(nums) {\n  let maxSum = nums[0];\n  let currentSum = nums[0];\n  \n  for (let i = 1; i < nums.length; i++) {\n    currentSum = Math.max(nums[i], currentSum + nums[i]);\n    maxSum = Math.max(maxSum, currentSum);\n  }\n  return maxSum;\n}`,
+          tags: ["Amazon", "Microsoft", "DSA", "Dynamic Programming"],
         }
       ]
     },
@@ -714,6 +963,50 @@ export const studyPlans: StudyPlan[] = [
         {
           q: "[System Design] Google Calendar",
           a: "- **Grid**: CSS Grid for layout.\n- **Events**: Positioning using absolute (top = start time, height = duration).\n- **Virtualization**: Essential for month view."
+        },
+        {
+          q: "[System Design] Twitter/X Feed",
+          a: "- **Infinite Scroll**: Load tweets as user scrolls.\n- **Real-time Updates**: WebSocket/SSE for new tweets.\n- **Caching**: Cache user timeline, trending topics.\n- **Optimistic UI**: Show tweet immediately, sync later.\n- **Virtualization**: Render only visible tweets (react-window)."
+        },
+        {
+          q: "[System Design] E-commerce Product Page",
+          a: "- **Image Gallery**: Lazy loading, zoom, carousel.\n- **Add to Cart**: Optimistic UI, sync across tabs.\n- **Reviews**: Pagination, filtering, sorting.\n- **Related Products**: Recommendation algorithm.\n- **SEO**: Server-side rendering for product pages."
+        },
+        {
+          q: "[System Design] Video Streaming Player (YouTube/Netflix)",
+          a: "- **Adaptive Streaming**: HLS/DASH for quality switching.\n- **Buffering**: Preload next segments.\n- **Subtitles**: WebVTT format, multiple languages.\n- **Playback Controls**: Custom controls overlay.\n- **Analytics**: Track watch time, engagement."
+        },
+        {
+          q: "[Google] Design a Search Autocomplete",
+          a: "- **Debouncing**: Wait 300ms after user stops typing.\n- **Caching**: Cache popular queries in memory.\n- **Ranking**: Sort by relevance, popularity, recency.\n- **Keyboard Navigation**: Arrow keys, Enter to select.\n- **Accessibility**: ARIA labels, screen reader support."
+        },
+        {
+          q: "[Meta] Design a Comments System",
+          a: "- **Nested Comments**: Recursive component structure.\n- **Real-time Updates**: WebSocket for new comments.\n- **Pagination**: Load more comments on scroll.\n- **Rich Text**: Support mentions, links, emojis.\n- **Moderation**: Filter inappropriate content."
+        },
+        {
+          q: "[Amazon] Design a Product Comparison Feature",
+          a: "- **Side-by-side Layout**: CSS Grid for comparison table.\n- **Highlight Differences**: Visual indicators for different specs.\n- **Add/Remove Products**: Max 3-4 products at once.\n- **Persist Selection**: Save comparison in localStorage.\n- **Mobile**: Stack vertically on small screens."
+        },
+        {
+          q: "[Microsoft] Design a Collaborative Document Editor",
+          a: "- **Real-time Sync**: Operational Transform (OT) or CRDTs.\n- **Cursor Positions**: Show other users' cursors.\n- **Conflict Resolution**: Handle simultaneous edits.\n- **Version History**: Track changes, allow undo/redo.\n- **WebSocket**: Bi-directional communication."
+        },
+        {
+          q: "[Netflix] Design a Movie/Show Carousel",
+          a: "- **Horizontal Scroll**: CSS scroll-snap for smooth scrolling.\n- **Lazy Loading**: Load images as they enter viewport.\n- **Infinite Loop**: Seamless wrap-around effect.\n- **Keyboard Navigation**: Arrow keys, mouse drag.\n- **Responsive**: Adapt to screen size (show 3-7 items)."
+        },
+        {
+          q: "[Uber/Ola] Design a Live Tracking Feature",
+          a: "- **Map Integration**: Google Maps/Mapbox SDK.\n- **Real-time Updates**: WebSocket for driver location.\n- **Marker Animation**: Smooth movement of driver marker.\n- **ETA Calculation**: Distance/time estimation.\n- **Route Display**: Show driver's route to destination."
+        },
+        {
+          q: "[System Design] Notification System",
+          a: "- **Real-time**: WebSocket/SSE for instant notifications.\n- **Types**: In-app, push, email, SMS.\n- **Preferences**: User can enable/disable notification types.\n- **Grouping**: Group similar notifications.\n- **Read/Unread**: Track notification state."
+        },
+        {
+          q: "[System Design] File Upload with Progress",
+          a: "- **Chunked Upload**: Split large files into chunks.\n- **Progress Bar**: Track upload percentage.\n- **Resume**: Resume interrupted uploads.\n- **Preview**: Show image/video preview before upload.\n- **Validation**: Check file type, size on client and server."
         }
       ]
     },
@@ -732,6 +1025,34 @@ export const studyPlans: StudyPlan[] = [
         {
           q: "General Tips",
           a: "- Interact calmly. Everyone is nervous.\n- Don't leave out DSA, even for frontend roles.\n- Ask clarifying questions before coding.\n- If you can't solve it, discuss your thought process."
+        },
+        {
+          q: "Tell me about yourself / Walk me through your resume",
+          a: "Structure: Current role → Key achievements → Why this role/company → What you bring.\n\nExample: 'I'm a Frontend Engineer with 3 years building React apps. I recently optimized our bundle size by 40% using code splitting. I'm excited about [Company] because [specific reason]. I bring expertise in [relevant tech] and a track record of [achievement].'"
+        },
+        {
+          q: "Why do you want to work here?",
+          a: "Show you've researched the company:\n- Mention specific products/features you admire\n- Reference company values/mission\n- Discuss growth opportunities\n- Connect your skills to their needs\n\nAvoid generic answers like 'it's a great company'."
+        },
+        {
+          q: "What's your biggest weakness?",
+          a: "Choose a real weakness that you're actively improving:\n1. Name the weakness\n2. Explain how you're addressing it\n3. Show progress/results\n\nExample: 'I used to struggle with time estimation. I've started tracking my tasks and comparing estimates vs actuals. My accuracy has improved by 30% over the past 6 months.'"
+        },
+        {
+          q: "Where do you see yourself in 5 years?",
+          a: "Show ambition aligned with company growth:\n- Technical growth: Senior/Staff Engineer, Tech Lead\n- Impact: Leading larger projects, mentoring\n- Domain expertise: Deepening in specific area\n- Leadership: Optional, if interested\n\nKeep it realistic and show you'll grow with the company."
+        },
+        {
+          q: "Tell me about a time you disagreed with your manager/team",
+          a: "Use STAR method. Show:\n- Professional disagreement (not personal)\n- How you communicated respectfully\n- Focus on solution, not blame\n- Positive outcome or learning\n\nExample: 'We disagreed on using a new framework. I presented data on migration costs and team learning curve. We compromised by prototyping first. The prototype validated my concerns, and we chose a better solution.'"
+        },
+        {
+          q: "How do you handle tight deadlines?",
+          a: "Show prioritization and communication:\n- Break down tasks, identify critical path\n- Communicate early if deadline is at risk\n- Ask for help when needed\n- Focus on MVP, iterate later\n- Learn from the experience\n\nExample: 'I prioritize tasks by impact, communicate blockers early, and focus on delivering core features first. I also document what we deferred for post-launch.'"
+        },
+        {
+          q: "Do you have any questions for us?",
+          a: "Ask thoughtful questions:\n- Team structure and collaboration\n- Technical challenges they're solving\n- Growth opportunities\n- Company culture\n- What success looks like in this role\n\nAvoid: Salary, benefits, vacation (ask HR later)."
         }
       ]
     }
