@@ -51,11 +51,11 @@ const SampleGenerator: React.FC = () => {
   };
 
   return (
-    <section id="preview" className="py-24 bg-slate-900 relative overflow-hidden">
+    <section id="preview" className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
        {/* Background Grid & Glow */}
-       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
-       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+       <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f012_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/50 to-transparent"></div>
+       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-400/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -63,24 +63,24 @@ const SampleGenerator: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
           <div>
              <div className="flex items-center gap-2 mb-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
-                <span className="text-brand-400 font-mono text-xs tracking-widest uppercase">Live Preview v2.1</span>
+                <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                <span className="text-brand-600 font-mono text-xs tracking-widest uppercase bg-brand-100 px-2 py-1 rounded-full">Live Preview v2.1</span>
              </div>
-             <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">Can You Solve This?</span>
+             <h2 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">
+               <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-brand-600 to-accent-600">Can You Solve This?</span>
              </h2>
           </div>
-          <p className="text-slate-400 max-w-sm text-sm md:text-right">
+          <p className="text-slate-600 max-w-sm text-sm md:text-right">
             Test your readiness. These aren't your typical "to-do list" tutorials. 
             This is what Top Tier companies ask.
           </p>
         </div>
 
         {/* Terminal Window Container */}
-        <div className="rounded-xl overflow-hidden border border-slate-700/50 bg-[#0c0e14] shadow-2xl shadow-brand-900/20 backdrop-blur-sm relative group">
+        <div className="rounded-xl overflow-hidden border-2 border-slate-200 bg-[#0c0e14] shadow-2xl shadow-brand-500/10 backdrop-blur-sm relative group">
           
           {/* Glowing Border Effect */}
-          <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-xl"></div>
+          <div className="absolute inset-0 pointer-events-none border-2 border-brand-200/50 rounded-xl"></div>
           
           {/* Terminal Title Bar */}
           <div className="bg-[#1a1d24] px-4 py-3 flex items-center justify-between border-b border-slate-800">
@@ -191,18 +191,18 @@ const SampleGenerator: React.FC = () => {
 
                    {/* Locked Solution CTA */}
                    <div className="mt-4 relative group cursor-pointer" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
-                      <div className="absolute inset-0 bg-brand-500/5 blur-xl group-hover:bg-brand-500/10 transition-colors"></div>
-                      <div className="relative border border-slate-700/50 bg-slate-800/30 rounded p-4 flex items-center justify-between hover:border-brand-500/50 transition-colors">
+                      <div className="absolute inset-0 bg-brand-500/10 blur-xl group-hover:bg-brand-500/20 transition-colors"></div>
+                      <div className="relative border-2 border-brand-200 bg-white rounded-lg p-4 flex items-center justify-between hover:border-brand-400 hover:shadow-lg transition-all">
                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-400">
+                            <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 border-2 border-brand-200">
                                <LockIcon className="w-4 h-4" />
                             </div>
                             <div className="text-left">
-                               <div className="text-slate-300 font-bold text-xs uppercase tracking-wider">Full Solution Locked</div>
-                               <div className="text-slate-500 text-xs">Unlock detailed implementation & optimization strategies</div>
+                               <div className="text-slate-900 font-bold text-xs uppercase tracking-wider">Full Solution Locked</div>
+                               <div className="text-slate-600 text-xs">Unlock detailed implementation & optimization strategies</div>
                             </div>
                          </div>
-                         <span className="text-brand-400 text-xs hover:underline flex items-center gap-1">
+                         <span className="text-brand-600 text-xs hover:underline flex items-center gap-1 font-semibold">
                             [ VIEW FULL SOLUTION ] <span className="text-lg leading-none">&rarr;</span>
                          </span>
                       </div>

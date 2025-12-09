@@ -81,30 +81,30 @@ const Testimonials: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-slate-950 relative overflow-hidden border-t border-slate-900">
+    <section ref={sectionRef} className="py-24 bg-gradient-to-b from-white via-blue-50/30 to-white relative overflow-hidden border-t border-slate-200">
       {/* Dynamic Background Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-r from-brand-900/20 via-purple-900/20 to-slate-900/20 blur-[120px] animate-[pulse_8s_ease-in-out_infinite]" />
-        <div className="absolute top-[40%] -right-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-l from-accent-900/20 via-blue-900/20 to-slate-900/20 blur-[100px] animate-[pulse_10s_ease-in-out_infinite_reverse]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-6xl bg-gradient-to-tr from-transparent via-brand-500/5 to-transparent opacity-30 rotate-12 animate-[spin_20s_linear_infinite]" />
+        <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-r from-brand-200/30 via-purple-200/30 to-blue-200/30 blur-[120px] animate-[pulse_8s_ease-in-out_infinite]" />
+        <div className="absolute top-[40%] -right-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-l from-accent-200/30 via-blue-200/30 to-brand-200/30 blur-[100px] animate-[pulse_10s_ease-in-out_infinite_reverse]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-6xl bg-gradient-to-tr from-transparent via-brand-200/20 to-transparent opacity-30 rotate-12 animate-[spin_20s_linear_infinite]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
-                Join <span className="text-brand-400">12,000+</span> Engineers
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+                Join <span className="text-brand-600">12,000+</span> Engineers
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
+            <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
                 From startups to Fortune 500s, frontend developers are using this playbook to accelerate their careers.
             </p>
         </div>
 
         {/* Company Logos Strip */}
-        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 mb-24 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 mb-24 opacity-60 hover:opacity-100 transition-all duration-700">
             {['Google', 'Meta', 'Netflix', 'Airbnb', 'Stripe', 'Uber', 'Vercel'].map((company) => (
-                <span key={company} className="text-2xl md:text-3xl font-bold text-slate-400 hover:text-white transition-colors cursor-default select-none tracking-tight">
+                <span key={company} className="text-2xl md:text-3xl font-bold text-slate-700 hover:text-brand-600 transition-colors cursor-default select-none tracking-tight">
                     {company}
                 </span>
             ))}
@@ -119,11 +119,11 @@ const Testimonials: React.FC = () => {
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
                     <div 
-                        className="relative h-full bg-slate-900/60 backdrop-blur-md border border-slate-800 p-8 rounded-2xl hover:bg-slate-800/80 hover:border-brand-500/30 transition-all duration-300 shadow-xl group animate-float"
+                        className="relative h-full bg-white backdrop-blur-md border-2 border-slate-200 p-8 rounded-2xl hover:bg-gradient-to-br hover:from-white hover:to-brand-50/30 hover:border-brand-400 transition-all duration-300 shadow-lg hover:shadow-xl group animate-float"
                         style={{ animationDelay: `${i * 0.2}s`, animationDuration: `${5 + (i % 4)}s` }}
                     >
                         {/* Hover Glow */}
-                        <div className="absolute -inset-px bg-gradient-to-r from-brand-500/0 via-brand-500/10 to-accent-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
+                        <div className="absolute -inset-px bg-gradient-to-r from-brand-400/0 via-brand-400/20 to-accent-400/0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
                         
                         {/* Stars */}
                         <div className="flex gap-1 mb-5 relative z-10">
@@ -134,22 +134,22 @@ const Testimonials: React.FC = () => {
                             ))}
                         </div>
 
-                        <p className="text-slate-300 text-[15px] leading-relaxed mb-8 relative z-10">
+                        <p className="text-slate-700 text-[15px] leading-relaxed mb-8 relative z-10">
                             "{t.text}"
                         </p>
 
-                        <div className="flex items-center gap-4 pt-6 border-t border-slate-700/50 mt-auto relative z-10">
-                            <div className={`w-10 h-10 rounded-full ${t.avatarColor} flex items-center justify-center text-white font-bold text-sm shadow-inner ring-2 ring-slate-800`}>
+                        <div className="flex items-center gap-4 pt-6 border-t border-slate-200 mt-auto relative z-10">
+                            <div className={`w-10 h-10 rounded-full ${t.avatarColor} flex items-center justify-center text-white font-bold text-sm shadow-md ring-2 ring-white`}>
                                 {t.initials}
                             </div>
                             <div>
-                                <div className="text-white font-semibold text-sm flex items-center gap-1.5">
+                                <div className="text-slate-900 font-semibold text-sm flex items-center gap-1.5">
                                     {t.author}
-                                    <svg className="w-3.5 h-3.5 text-blue-400 fill-current" viewBox="0 0 20 20">
+                                    <svg className="w-3.5 h-3.5 text-blue-500 fill-current" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                     </svg>
                                 </div>
-                                <div className="text-slate-500 text-xs font-medium">{t.role}</div>
+                                <div className="text-slate-600 text-xs font-medium">{t.role}</div>
                             </div>
                         </div>
                     </div>

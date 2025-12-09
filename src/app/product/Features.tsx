@@ -27,10 +27,10 @@ const features: Feature[] = [
 
 const Features: React.FC = () => {
   return (
-    <section id="features" className="py-24 bg-slate-950 relative overflow-hidden">
+    <section id="features" className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="relative border-2 border-dashed border-brand-500/30 rounded-[2.5rem] p-8 md:p-16 bg-slate-900/20">
+        <div className="relative border-2 border-dashed border-brand-300 rounded-[2.5rem] p-8 md:p-16 bg-gradient-to-br from-white to-brand-50/30 shadow-lg">
             {/* Decorative Corner Accents */}
             <div className="absolute -top-0.5 -left-0.5 w-8 h-8 border-t-2 border-l-2 border-brand-500 rounded-tl-2xl"></div>
             <div className="absolute -top-0.5 -right-0.5 w-8 h-8 border-t-2 border-r-2 border-brand-500 rounded-tr-2xl"></div>
@@ -38,52 +38,52 @@ const Features: React.FC = () => {
             <div className="absolute -bottom-0.5 -right-0.5 w-8 h-8 border-b-2 border-r-2 border-brand-500 rounded-br-2xl"></div>
 
             <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Don't Just Code. <span className="text-brand-400">Engineer.</span></h2>
-                <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
-                    Most courses teach syntax. We teach <span className="text-white font-medium">architecture</span>. The exact skills required to break the $200k barrier.
+                <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">Don't Just Code. <span className="text-brand-600">Engineer.</span></h2>
+                <p className="text-slate-600 max-w-2xl mx-auto text-lg leading-relaxed">
+                    Most courses teach syntax. We teach <span className="text-slate-900 font-semibold">architecture</span>. The exact skills required to break the $200k barrier.
                 </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
                 {features.map((feature, idx) => (
-                    <div key={idx} className="group bg-slate-950/50 border border-slate-800 p-8 rounded-2xl hover:border-brand-500/40 transition-all duration-300 hover:bg-slate-900/80 hover:shadow-2xl hover:shadow-brand-900/20">
-                        <div className="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center mb-6 border border-slate-800 group-hover:border-brand-500/50 group-hover:text-brand-400 text-slate-500 transition-colors">
+                    <div key={idx} className="group bg-white border-2 border-slate-200 p-8 rounded-2xl hover:border-brand-400 transition-all duration-300 hover:shadow-2xl hover:shadow-brand-500/10 hover:-translate-y-1">
+                        <div className="w-12 h-12 bg-gradient-to-br from-brand-100 to-brand-50 rounded-lg flex items-center justify-center mb-6 border-2 border-brand-200 group-hover:border-brand-400 group-hover:bg-gradient-to-br group-hover:from-brand-200 group-hover:to-brand-100 text-brand-600 transition-all shadow-sm">
                             {feature.iconPath === 'js' && <CodeIcon className="w-5 h-5" />}
                             {feature.iconPath === 'react' && <CpuIcon className="w-5 h-5" />}
                             {feature.iconPath === 'system' && <ServerIcon className="w-5 h-5" />}
                             {feature.iconPath === 'perf' && <CheckIcon className="w-5 h-5" />}
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-brand-100 transition-colors">{feature.title}</h3>
-                        <p className="text-slate-400 leading-relaxed font-medium text-sm md:text-base opacity-90">{feature.description}</p>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-brand-600 transition-colors">{feature.title}</h3>
+                        <p className="text-slate-600 leading-relaxed font-medium text-sm md:text-base">{feature.description}</p>
                     </div>
                 ))}
 
                 {/* FAANG Stats Card */}
-                <div className="md:col-span-2 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:border-brand-500/50 transition-colors">
+                <div className="md:col-span-2 bg-gradient-to-r from-brand-500 via-brand-400 to-accent-500 border-2 border-brand-300 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:shadow-2xl hover:shadow-brand-500/30 transition-all">
                     {/* Background decoration */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
                     <div className="relative z-10 text-center md:text-left">
                         <h3 className="text-2xl font-bold text-white mb-2">The ROI is Massive</h3>
-                        <p className="text-slate-400 max-w-md">
+                        <p className="text-white/90 max-w-md">
                             Our readers don't just pass interviews—they dictate terms. Join the elite 1% of frontend engineers.
                         </p>
                     </div>
 
                     <div className="flex items-center gap-8 relative z-10 justify-center w-full md:w-auto">
                         <div className="text-center">
-                             <div className="text-3xl md:text-4xl font-bold text-brand-400 mb-1">140%</div>
-                             <div className="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-semibold">Avg. Salary Hike</div>
+                             <div className="text-3xl md:text-4xl font-bold text-white mb-1">140%</div>
+                             <div className="text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold">Avg. Salary Hike</div>
                         </div>
-                        <div className="w-px h-12 bg-slate-700"></div>
+                        <div className="w-px h-12 bg-white/30"></div>
                         <div className="text-center">
                              <div className="text-3xl md:text-4xl font-bold text-white mb-1">Top 1%</div>
-                             <div className="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-semibold">Offers Reached</div>
+                             <div className="text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold">Offers Reached</div>
                         </div>
-                        <div className="w-px h-12 bg-slate-700"></div>
+                        <div className="w-px h-12 bg-white/30"></div>
                          <div className="text-center">
-                             <div className="text-3xl md:text-4xl font-bold text-accent-500 mb-1">12k+</div>
-                             <div className="text-[10px] md:text-xs text-slate-500 uppercase tracking-wider font-semibold">Developers Upgraded</div>
+                             <div className="text-3xl md:text-4xl font-bold text-white mb-1">12k+</div>
+                             <div className="text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold">Developers Upgraded</div>
                         </div>
                     </div>
                 </div>
