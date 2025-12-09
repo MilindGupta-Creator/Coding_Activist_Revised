@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import Hero from './Hero';
 import Features from './Features';
+import ReaderShowcase from './ReaderShowcase';
 import SampleGenerator from './SampleGenerator';
 import Testimonials from './Testimonials';
 import Pricing from './Pricing';
@@ -106,6 +107,7 @@ const App: React.FC = () => {
       <div className="pt-20"> 
         <Hero />
         <Features />
+        <ReaderShowcase />
         <SampleGenerator />
         <Testimonials />
         
