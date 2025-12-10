@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="pt-8 border-t border-slate-200 text-center text-slate-500 text-sm">
-          &copy; {new Date().getFullYear()} FrontendMastery. All rights reserved.
+          &copy; {new Date().getFullYear()} Coding Activist. All rights reserved.
         </div>
       </div>
     </footer>

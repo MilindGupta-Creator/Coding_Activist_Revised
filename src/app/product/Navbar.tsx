@@ -445,7 +445,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPurchase, onLogin }) => {
             ></div>
             
             <div 
-              className={`absolute top-0 right-0 w-72 max-w-[80vw] h-full bg-white border-l border-slate-200 shadow-xl transform transition-transform duration-300 ${
+              className={`absolute top-0 right-0 w-72 max-w-[80vw] bg-white border-l border-slate-200 shadow-xl transform transition-transform duration-300 ${
                 isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
               }`}
               onClick={(e) => e.stopPropagation()}

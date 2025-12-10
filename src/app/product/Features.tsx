@@ -59,31 +59,31 @@ const Features: React.FC = () => {
                 ))}
 
                 {/* FAANG Stats Card */}
-                <div className="md:col-span-2 bg-gradient-to-r from-brand-500 via-brand-400 to-accent-500 border-2 border-brand-300 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:shadow-2xl hover:shadow-brand-500/30 transition-all">
+                <div className="md:col-span-2 bg-gradient-to-r from-brand-500 via-brand-400 to-accent-500 border-2 border-brand-300 rounded-2xl p-4 sm:p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 md:gap-8 relative overflow-hidden group hover:shadow-2xl hover:shadow-brand-500/30 transition-all">
                     {/* Background decoration */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-                    <div className="relative z-10 text-center md:text-left">
-                        <h3 className="text-2xl font-bold text-white mb-2">The ROI is Massive</h3>
-                        <p className="text-white/90 max-w-md">
+                    <div className="relative z-10 text-center md:text-left w-full md:w-auto">
+                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">The ROI is Massive</h3>
+                        <p className="text-sm sm:text-base text-white/90 max-w-md mx-auto md:mx-0">
                             Our readers don't just pass interviews—they dictate terms. Join the elite 1% of frontend engineers.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-8 relative z-10 justify-center w-full md:w-auto">
-                        <div className="text-center">
-                             <div className="text-3xl md:text-4xl font-bold text-white mb-1">140%</div>
-                             <div className="text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold">Avg. Salary Hike</div>
+                    <div className="flex items-center gap-3 sm:gap-4 md:gap-8 relative z-10 justify-center w-full md:w-auto flex-wrap sm:flex-nowrap">
+                        <div className="text-center min-w-[80px] sm:min-w-0">
+                             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1">140%</div>
+                             <div className="text-[9px] sm:text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold leading-tight">Avg. Salary Hike</div>
                         </div>
-                        <div className="w-px h-12 bg-white/30"></div>
-                        <div className="text-center">
-                             <div className="text-3xl md:text-4xl font-bold text-white mb-1">Top 1%</div>
-                             <div className="text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold">Offers Reached</div>
+                        <div className="hidden sm:block w-px h-8 md:h-12 bg-white/30"></div>
+                        <div className="text-center min-w-[80px] sm:min-w-0">
+                             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1">Top 1%</div>
+                             <div className="text-[9px] sm:text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold leading-tight">Offers Reached</div>
                         </div>
-                        <div className="w-px h-12 bg-white/30"></div>
-                         <div className="text-center">
-                             <div className="text-3xl md:text-4xl font-bold text-white mb-1">12k+</div>
-                             <div className="text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold">Developers Upgraded</div>
+                        <div className="hidden sm:block w-px h-8 md:h-12 bg-white/30"></div>
+                         <div className="text-center min-w-[80px] sm:min-w-0">
+                             <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1">12k+</div>
+                             <div className="text-[9px] sm:text-[10px] md:text-xs text-white/80 uppercase tracking-wider font-semibold leading-tight">Developers Upgraded</div>
                         </div>
                     </div>
                 </div>
