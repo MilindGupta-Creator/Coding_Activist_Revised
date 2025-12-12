@@ -92,6 +92,37 @@ const companyLogos: { [key: string]: string } = {
   Swiggy: "https://logo.clearbit.com/swiggy.com",
 };
 
+// Company Logo Component with error handling
+const CompanyLogo = ({ 
+  company, 
+  size = 16, 
+  className = "mr-2 rounded-full",
+  iconClassName = "mr-2 h-4 w-4"
+}: { 
+  company: string; 
+  size?: number; 
+  className?: string;
+  iconClassName?: string;
+}) => {
+  const [imageError, setImageError] = useState(false);
+  const logoUrl = companyLogos[company];
+
+  if (!logoUrl || imageError) {
+    return <Briefcase className={iconClassName} />;
+  }
+
+  return (
+    <img
+      src={logoUrl}
+      alt={`${company} logo`}
+      width={size}
+      height={size}
+      className={className}
+      onError={() => setImageError(true)}
+    />
+  );
+};
+
 const questions: Question[] = [
   ...questiondata.questions.map((q) => ({
     ...q,
@@ -450,20 +481,7 @@ export default function Component() {
                   key={company}
                   className="flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm"
                 >
-                  {companyLogos[company] ? (
-                    <img
-                      src={companyLogos[company]}
-                      alt={`${company} logo`}
-                      width={16}
-                      height={16}
-                      className="mr-2 rounded-full"
-                      onError={(e) => {
-                        e.currentTarget.src = "/placeholder.svg?height=16&width=16";
-                      }}
-                    />
-                  ) : (
-                    <Briefcase className="mr-2 h-4 w-4" />
-                  )}
+                  <CompanyLogo company={company} />
                   {company}
                 </div>
               ))}
@@ -613,20 +631,7 @@ export default function Component() {
               key={company}
               className="flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded-full"
             >
-              {companyLogos[company] ? (
-                <img
-                  src={companyLogos[company]}
-                  alt={`${company} logo`}
-                  width={16}
-                  height={16}
-                  className="mr-1 rounded-full"
-                  onError={(e) => {
-                    e.currentTarget.src = "/placeholder.svg?height=16&width=16";
-                  }}
-                />
-              ) : (
-                <Briefcase className="mr-1 h-4 w-4" />
-              )}
+              <CompanyLogo company={company} className="mr-1 rounded-full" iconClassName="mr-1 h-4 w-4" />
               {company}
             </div>
           ))}
@@ -933,21 +938,7 @@ export default function Component() {
                       : "bg-gray-200 text-gray-700"
                   }`}
                 >
-                  {companyLogos[company] ? (
-                    <img
-                      src={companyLogos[company]}
-                      alt={`${company} logo`}
-                      width={16}
-                      height={16}
-                      className="mr-2 rounded-full"
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          "/placeholder.svg?height=16&width=16";
-                      }}
-                    />
-                  ) : (
-                    <Briefcase className="mr-2 h-4 w-4" />
-                  )}
+                  <CompanyLogo company={company} />
                   {company}
                   {selectedCompanies.includes(company) && (
                     <X
