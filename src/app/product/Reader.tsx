@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from 'firebase/auth';
+import { motion } from 'framer-motion';
+import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle } from 'lucide-react';
 import { ebookContent, studyPlans, StudyPlan, DayPlan } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
@@ -10,6 +12,8 @@ import Logo from "../../../public/assets/main-logo.png";
 import ExamQuiz from './ExamQuiz';
 import FrequencyHeatmap from './FrequencyHeatmap';
 import EventLoopSimulator from './EventLoopSimulator';
+import WhatsAppSystemDesignLab from './WhatsAppSystemDesignLab';
+import RandomQuestionSelector from './RandomQuestionSelector';
 
 // Icons for study plans
 const CalendarIcon = ({ className }: { className?: string }) => (
@@ -42,6 +46,99 @@ const RocketIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// Company logos mapping
+const companyLogos: { [key: string]: string } = {
+  Google: "https://logo.clearbit.com/google.com",
+  Amazon: "https://logo.clearbit.com/amazon.com",
+  Facebook: "https://logo.clearbit.com/facebook.com",
+  Meta: "https://logo.clearbit.com/meta.com",
+  Apple: "https://logo.clearbit.com/apple.com",
+  Microsoft: "https://logo.clearbit.com/microsoft.com",
+  Netflix: "https://logo.clearbit.com/netflix.com",
+  Uber: "https://logo.clearbit.com/uber.com",
+  Airbnb: "https://logo.clearbit.com/airbnb.com",
+  Adobe: "https://logo.clearbit.com/adobe.com",
+  Oracle: "https://logo.clearbit.com/oracle.com",
+  IBM: "https://logo.clearbit.com/ibm.com",
+  "Goldman Sachs": "https://logo.clearbit.com/goldmansachs.com",
+  Swiggy: "https://logo.clearbit.com/swiggy.com",
+  Zomato: "https://logo.clearbit.com/zomato.com",
+  Flipkart: "https://logo.clearbit.com/flipkart.com",
+  Walmart: "https://logo.clearbit.com/walmart.com",
+  Infosys: "https://logo.clearbit.com/infosys.com",
+  "ICICI Bank": "https://logo.clearbit.com/icicibank.com",
+  HackerRank: "https://logo.clearbit.com/hackerrank.com",
+  LinkedIn: "https://logo.clearbit.com/linkedin.com",
+  Twitter: "https://logo.clearbit.com/twitter.com",
+  Tesla: "https://logo.clearbit.com/tesla.com",
+  Spotify: "https://logo.clearbit.com/spotify.com",
+  PayPal: "https://logo.clearbit.com/paypal.com",
+  Stripe: "https://logo.clearbit.com/stripe.com",
+  Shopify: "https://logo.clearbit.com/shopify.com",
+  Atlassian: "https://logo.clearbit.com/atlassian.com",
+  Salesforce: "https://logo.clearbit.com/salesforce.com",
+  Zoom: "https://logo.clearbit.com/zoom.us",
+  Dropbox: "https://logo.clearbit.com/dropbox.com",
+  "JPMorgan Chase": "https://logo.clearbit.com/jpmorganchase.com",
+  "Morgan Stanley": "https://logo.clearbit.com/morganstanley.com",
+  "Bank of America": "https://logo.clearbit.com/bankofamerica.com",
+  Visa: "https://logo.clearbit.com/visa.com",
+  Mastercard: "https://logo.clearbit.com/mastercard.com",
+  Intel: "https://logo.clearbit.com/intel.com",
+  NVIDIA: "https://logo.clearbit.com/nvidia.com",
+  AMD: "https://logo.clearbit.com/amd.com",
+  Samsung: "https://logo.clearbit.com/samsung.com",
+  Sony: "https://logo.clearbit.com/sony.com",
+  "Goldman": "https://logo.clearbit.com/goldmansachs.com",
+  "JP Morgan": "https://logo.clearbit.com/jpmorganchase.com",
+  "JPMorgan": "https://logo.clearbit.com/jpmorganchase.com",
+};
+
+// List of known company names (for identification)
+const knownCompanies = new Set(Object.keys(companyLogos));
+
+// Company Logo Component
+const CompanyLogo = ({ 
+  company, 
+  size = 18, 
+  className = "",
+  iconClassName = ""
+}: { 
+  company: string; 
+  size?: number; 
+  className?: string;
+  iconClassName?: string;
+}) => {
+  const [imageError, setImageError] = useState(false);
+  const logoUrl = companyLogos[company];
+
+  if (!logoUrl || imageError) {
+    return (
+      <div 
+        className={`flex-shrink-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center border border-blue-500/30 ${iconClassName}`}
+        style={{ width: size, height: size }}
+      >
+        <Briefcase 
+          className="text-blue-400" 
+          style={{ width: Math.floor(size * 0.6), height: Math.floor(size * 0.6) }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={logoUrl}
+      alt={`${company} logo`}
+      width={size}
+      height={size}
+      className={`rounded-full object-cover border border-slate-700/50 flex-shrink-0 ${className}`}
+      onError={() => setImageError(true)}
+      loading="lazy"
+    />
+  );
+};
+
 interface ReaderProps {
   onLogout: () => void;
 }
@@ -57,13 +154,62 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [isExamMode, setIsExamMode] = useState(false);
   const [showTopicHeatmap, setShowTopicHeatmap] = useState(false);
   const [showEventLoopLab, setShowEventLoopLab] = useState(false);
+  const [showWhatsAppLab, setShowWhatsAppLab] = useState(false);
   const [isTimedQuizActive, setIsTimedQuizActive] = useState(false);
   const [quizDurationMinutes, setQuizDurationMinutes] = useState(15);
   const [quizQuestionCount, setQuizQuestionCount] = useState(10);
   const [quizTimeLeft, setQuizTimeLeft] = useState<number | null>(null);
   const [quizQuestionIndices, setQuizQuestionIndices] = useState<number[]>([]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  
+  // ==================== SEARCH STATE ====================
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Array<{
+    type: 'module' | 'question';
+    moduleId: string;
+    moduleTitle: string;
+    questionIndex?: number;
+    questionText?: string;
+    matchedIn: 'title' | 'question' | 'answer' | 'tags' | 'code';
+    relevance: number;
+  }>>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [showQuickJump, setShowQuickJump] = useState(false);
+  const [quickJumpQuery, setQuickJumpQuery] = useState('');
+  const [selectedResultIndex, setSelectedResultIndex] = useState(0);
+  const [showRandomSelector, setShowRandomSelector] = useState(false);
 
   const contentRef = useRef<HTMLElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Helper function to recursively find a module by ID (including submodules)
+  const findModuleById = useCallback((modules: typeof ebookContent, id: string): typeof ebookContent[0] | null => {
+    for (const module of modules) {
+      if (module.id === id) {
+        return module;
+      }
+      if (module.submodules) {
+        const found = findModuleById(module.submodules, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }, []);
+
+  // Helper function to get all modules (including submodules) as a flat list for navigation
+  const getAllModules = useCallback((modules: typeof ebookContent): Array<{ module: typeof ebookContent[0], level: number }> => {
+    const result: Array<{ module: typeof ebookContent[0], level: number }> = [];
+    for (const module of modules) {
+      result.push({ module, level: 0 });
+      if (module.submodules) {
+        module.submodules.forEach(submodule => {
+          result.push({ module: submodule, level: 1 });
+        });
+      }
+    }
+    return result;
+  }, []);
 
   const scrollToTop = () => {
     if (contentRef.current) {
@@ -80,6 +226,10 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     }
     setActiveModule(moduleId);
     setShowTodayPanel(false);
+    // Reset WhatsApp lab when navigating away
+    if (moduleId !== 'system-design-whatsapp') {
+      setShowWhatsAppLab(false);
+    }
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       setIsSidebarOpen(false);
     }
@@ -103,8 +253,8 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   };
 
   const startTimedQuiz = () => {
-    const module = ebookContent.find(c => c.id === activeModule);
-    if (!module || module.items.length === 0) return;
+    const module = findModuleById(ebookContent, activeModule);
+    if (!module || !module.items || module.items.length === 0) return;
 
     const indices = Array.from({ length: module.items.length }, (_, i) => i);
     // Fisher–Yates shuffle to pick random questions
@@ -138,6 +288,291 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [isPlanDropdownOpen, setIsPlanDropdownOpen] = useState(false);
   const [showTodayPanel, setShowTodayPanel] = useState(false);
   const [planStartDate, setPlanStartDate] = useState<Date | null>(null);
+
+  // Load theme preference from localStorage
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('reader_theme');
+      if (savedTheme === 'light') {
+        setIsDarkMode(false);
+      }
+    } catch (e) {
+      // Ignore parse errors
+    }
+  }, []);
+
+  // Save theme preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('reader_theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('reader_recent_searches');
+      if (saved) {
+        setRecentSearches(JSON.parse(saved));
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }, []);
+
+  // Keyboard shortcut for search (Cmd/Ctrl + K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+        setTimeout(() => searchInputRef.current?.focus(), 100);
+      }
+      if (e.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false);
+        setSearchQuery('');
+        setSearchResults([]);
+        setSelectedResultIndex(0);
+      }
+      // Quick jump: Type "Q" followed by number
+      if (e.key === 'q' && !isSearchOpen && !e.metaKey && !e.ctrlKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          setShowQuickJump(true);
+          setQuickJumpQuery('Q');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen]);
+
+  // Search functionality
+  const performSearch = useCallback((query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const queryLower = query.toLowerCase().trim();
+    const results: Array<{
+      type: 'module' | 'question';
+      moduleId: string;
+      moduleTitle: string;
+      questionIndex?: number;
+      questionText?: string;
+      matchedIn: 'title' | 'question' | 'answer' | 'tags' | 'code';
+      relevance: number;
+    }> = [];
+
+    // Helper to calculate relevance score
+    const calculateRelevance = (text: string, query: string, type: 'exact' | 'contains' | 'partial'): number => {
+      const textLower = text.toLowerCase();
+      if (textLower === query) return 100;
+      if (textLower.startsWith(query)) return 80;
+      if (textLower.includes(query)) return 60;
+      // Check for word matches
+      const queryWords = query.split(/\s+/);
+      const textWords = textLower.split(/\s+/);
+      const wordMatches = queryWords.filter(qw => textWords.some(tw => tw.includes(qw))).length;
+      return wordMatches * 20;
+    };
+
+    // Search through all modules
+    const searchInModules = (modules: typeof ebookContent, parentTitle = '') => {
+      for (const module of modules) {
+        const fullTitle = parentTitle ? `${parentTitle} > ${module.title}` : module.title;
+        
+        // Search in module title
+        if (module.title.toLowerCase().includes(queryLower)) {
+          results.push({
+            type: 'module',
+            moduleId: module.id,
+            moduleTitle: fullTitle,
+            matchedIn: 'title',
+            relevance: calculateRelevance(module.title, queryLower, 'contains'),
+          });
+        }
+
+        // Search in questions
+        if (module.items) {
+          module.items.forEach((item, index) => {
+            let maxRelevance = 0;
+            let matchedIn: 'title' | 'question' | 'answer' | 'tags' | 'code' = 'question';
+
+            // Search in question text
+            const questionText = item.q.replace(/^Q\d+\.\s*/i, '');
+            if (questionText.toLowerCase().includes(queryLower)) {
+              const rel = calculateRelevance(questionText, queryLower, 'contains');
+              if (rel > maxRelevance) {
+                maxRelevance = rel;
+                matchedIn = 'question';
+              }
+            }
+
+            // Search in answer
+            if (item.a.toLowerCase().includes(queryLower)) {
+              const rel = calculateRelevance(item.a, queryLower, 'contains') * 0.7;
+              if (rel > maxRelevance) {
+                maxRelevance = rel;
+                matchedIn = 'answer';
+              }
+            }
+
+            // Search in tags
+            if (item.tags) {
+              const tagMatch = item.tags.some(tag => tag.toLowerCase().includes(queryLower));
+              if (tagMatch) {
+                const rel = 50;
+                if (rel > maxRelevance) {
+                  maxRelevance = rel;
+                  matchedIn = 'tags';
+                }
+              }
+            }
+
+            // Search in code
+            if (item.code && item.code.toLowerCase().includes(queryLower)) {
+              const rel = calculateRelevance(item.code, queryLower, 'contains') * 0.5;
+              if (rel > maxRelevance) {
+                maxRelevance = rel;
+                matchedIn = 'code';
+              }
+            }
+
+            if (maxRelevance > 0) {
+              results.push({
+                type: 'question',
+                moduleId: module.id,
+                moduleTitle: fullTitle,
+                questionIndex: index,
+                questionText: questionText.substring(0, 100),
+                matchedIn,
+                relevance: maxRelevance,
+              });
+            }
+          });
+        }
+
+        // Recursively search submodules
+        if (module.submodules) {
+          searchInModules(module.submodules, fullTitle);
+        }
+      }
+    };
+
+    searchInModules(ebookContent);
+    
+    // Sort by relevance (highest first)
+    results.sort((a, b) => b.relevance - a.relevance);
+    
+    // Limit to top 50 results
+    setSearchResults(results.slice(0, 50));
+  }, []);
+
+  // Handle search input change
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      performSearch(searchQuery);
+      setSelectedResultIndex(0);
+    } else {
+      setSearchResults([]);
+      setSelectedResultIndex(0);
+    }
+  }, [searchQuery, performSearch]);
+
+  // Auto-scroll selected result into view
+  useEffect(() => {
+    if (isSearchOpen && searchResults.length > 0 && selectedResultIndex >= 0) {
+      const selectedElement = document.querySelector(`[data-search-result-index="${selectedResultIndex}"]`);
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }, [selectedResultIndex, isSearchOpen, searchResults.length]);
+
+  // Save to recent searches
+  const saveToRecentSearches = useCallback((query: string) => {
+    if (!query.trim()) return;
+    setRecentSearches(prev => {
+      const updated = [query, ...prev.filter(s => s !== query)].slice(0, 10);
+      localStorage.setItem('reader_recent_searches', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  // Navigate to search result
+  const navigateToResult = useCallback((result: typeof searchResults[0]) => {
+    const currentQuery = searchQuery;
+    goToModule(result.moduleId);
+    setIsSearchOpen(false);
+    setSearchQuery('');
+    setSearchResults([]);
+    saveToRecentSearches(currentQuery);
+    
+    // Scroll to question if it's a question result
+    if (result.type === 'question' && result.questionIndex !== undefined) {
+      setTimeout(() => {
+        const questionEl = document.getElementById(`question-${result.questionIndex}`);
+        if (questionEl) {
+          questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Highlight the question briefly
+          questionEl.classList.add('ring-2', 'ring-brand-500', 'ring-opacity-50');
+          setTimeout(() => {
+            questionEl.classList.remove('ring-2', 'ring-brand-500', 'ring-opacity-50');
+          }, 2000);
+        }
+      }, 300);
+    }
+  }, [goToModule, searchQuery, saveToRecentSearches]);
+
+  // Keyboard navigation for search results
+  useEffect(() => {
+    if (!isSearchOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (searchResults.length > 0) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setSelectedResultIndex(prev => Math.min(prev + 1, searchResults.length - 1));
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setSelectedResultIndex(prev => Math.max(prev - 1, 0));
+        }
+        if (e.key === 'Enter' && searchResults[selectedResultIndex]) {
+          e.preventDefault();
+          navigateToResult(searchResults[selectedResultIndex]);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen, searchResults, selectedResultIndex, navigateToResult]);
+
+  // Quick jump to question number
+  const handleQuickJump = useCallback((query: string) => {
+    const match = query.match(/^q(\d+)$/i);
+    if (match) {
+      const questionNum = parseInt(match[1], 10);
+      const module = findModuleById(ebookContent, activeModule);
+      if (module && module.items && questionNum > 0 && questionNum <= module.items.length) {
+        const questionIndex = questionNum - 1;
+        setTimeout(() => {
+          const questionEl = document.getElementById(`question-${questionIndex}`);
+          if (questionEl) {
+            questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            questionEl.classList.add('ring-2', 'ring-brand-500', 'ring-opacity-50');
+            setTimeout(() => {
+              questionEl.classList.remove('ring-2', 'ring-brand-500', 'ring-opacity-50');
+            }, 2000);
+          }
+        }, 100);
+        setShowQuickJump(false);
+        setQuickJumpQuery('');
+      }
+    }
+  }, [activeModule, findModuleById]);
 
   // Load study plan progress from localStorage
   useEffect(() => {
@@ -750,13 +1185,17 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       });
   };
 
-  const activeContent = ebookContent.find(c => c.id === activeModule);
-  const activeModuleIndex = ebookContent.findIndex(c => c.id === activeModule);
-  const prevModule = activeModuleIndex > 0 ? ebookContent[activeModuleIndex - 1] : null;
+  const activeContent = findModuleById(ebookContent, activeModule);
+  const allModules = getAllModules(ebookContent);
+  const activeModuleIndex = allModules.findIndex(m => m.module.id === activeModule);
+  const prevModule = activeModuleIndex > 0 ? allModules[activeModuleIndex - 1].module : null;
   const nextModule =
-    activeModuleIndex >= 0 && activeModuleIndex < ebookContent.length - 1
-      ? ebookContent[activeModuleIndex + 1]
+    activeModuleIndex >= 0 && activeModuleIndex < allModules.length - 1
+      ? allModules[activeModuleIndex + 1].module
       : null;
+  
+  // Check if we're viewing the WhatsApp System Design submodule
+  const isWhatsAppModule = activeModule === 'system-design-whatsapp';
 
   // Get user email from session
   const userEmail = (() => {
@@ -772,9 +1211,34 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     return "milindgupta578@gmail.com";
   })();
 
+  const toggleTheme = () => {
+    setIsDarkMode(prev => !prev);
+  };
+
+  // Theme utility classes
+  const themeClasses = {
+    bg: isDarkMode ? 'bg-slate-950' : 'bg-gray-50',
+    bgSecondary: isDarkMode ? 'bg-slate-900' : 'bg-white',
+    bgTertiary: isDarkMode ? 'bg-slate-800' : 'bg-gray-100',
+    bgHover: isDarkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100',
+    bgHoverSecondary: isDarkMode ? 'hover:bg-slate-700' : 'hover:bg-gray-200',
+    text: isDarkMode ? 'text-white' : 'text-gray-900',
+    textSecondary: isDarkMode ? 'text-slate-300' : 'text-gray-700',
+    textMuted: isDarkMode ? 'text-slate-400' : 'text-gray-500',
+    textDim: isDarkMode ? 'text-slate-500' : 'text-gray-400',
+    textDim2: isDarkMode ? 'text-slate-600' : 'text-gray-400',
+    border: isDarkMode ? 'border-slate-800' : 'border-gray-200',
+    borderSecondary: isDarkMode ? 'border-slate-700' : 'border-gray-300',
+    borderL: isDarkMode ? 'border-slate-700' : 'border-gray-300',
+    codeBg: isDarkMode ? 'bg-[#0c0e14]' : 'bg-gray-100',
+    codeHeaderBg: isDarkMode ? 'bg-[#1a1d24]' : 'bg-gray-200',
+    codeText: isDarkMode ? 'text-blue-300' : 'text-blue-700',
+    indicatorBg: isDarkMode ? 'bg-slate-500' : 'bg-gray-400',
+  };
+
   return (
     <div 
-      className="fixed inset-0 bg-slate-950 flex flex-col md:flex-row overflow-hidden select-none print:hidden"
+      className={`fixed inset-0 ${themeClasses.bg} flex flex-col md:flex-row overflow-hidden select-none print:hidden`}
       onContextMenu={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}
       onCut={(e) => e.preventDefault()}
@@ -798,6 +1262,284 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
           </div>
         ))}
       </div>
+
+      {/* Search Modal */}
+      {isSearchOpen && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-20 md:pt-32 px-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsSearchOpen(false);
+              setSearchQuery('');
+              setSearchResults([]);
+            }
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className={`relative w-full max-w-2xl ${themeClasses.bgSecondary} rounded-2xl border ${themeClasses.borderSecondary} shadow-2xl overflow-hidden`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Search Input */}
+            <div className={`p-4 border-b ${themeClasses.borderSecondary} flex items-center gap-3`}>
+              <Search className={`w-5 h-5 ${themeClasses.textMuted} flex-shrink-0`} />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search modules, questions, tags, or code... (Press Esc to close)"
+                className={`flex-1 bg-transparent ${themeClasses.text} placeholder:${themeClasses.textDim} outline-none text-sm`}
+                autoFocus
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSearchResults([]);
+                    searchInputRef.current?.focus();
+                  }}
+                  className={`p-1 rounded-lg ${themeClasses.bgHover} ${themeClasses.textMuted} hover:${themeClasses.textSecondary} transition-colors`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setSearchQuery('');
+                  setSearchResults([]);
+                }}
+                className={`px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} text-xs font-medium ${themeClasses.bgHover} transition-colors`}
+              >
+                Esc
+              </button>
+            </div>
+
+            {/* Search Results */}
+            <div className={`max-h-[60vh] overflow-y-auto ${themeClasses.bgSecondary}`}>
+              {searchQuery.trim() && searchResults.length === 0 && (
+                <div className="p-8 text-center">
+                  <Search className={`w-12 h-12 ${themeClasses.textDim} mx-auto mb-3 opacity-50`} />
+                  <p className={`${themeClasses.textMuted} text-sm`}>No results found for "{searchQuery}"</p>
+                  <p className={`${themeClasses.textDim} text-xs mt-2`}>Try different keywords or search by tags</p>
+                </div>
+              )}
+
+              {searchQuery.trim() && searchResults.length > 0 && (
+                <div className="p-2">
+                  <div className={`px-3 py-2 text-xs font-medium ${themeClasses.textDim} uppercase tracking-wider`}>
+                    {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                  </div>
+                  {searchResults.map((result, idx) => {
+                    // Highlight search query in text
+                    const highlightText = (text: string, query: string) => {
+                      if (!query.trim()) return text;
+                      const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                      const parts = text.split(new RegExp(`(${escapedQuery})`, 'gi'));
+                      return parts.map((part, i) => 
+                        part.toLowerCase() === query.toLowerCase() ? (
+                          <mark key={i} className={`bg-brand-500/30 ${themeClasses.text} px-0.5 rounded`}>
+                            {part}
+                          </mark>
+                        ) : part
+                      );
+                    };
+
+                    const isSelected = idx === selectedResultIndex;
+
+                    return (
+                      <button
+                        key={`${result.moduleId}-${result.questionIndex ?? 'module'}-${idx}`}
+                        data-search-result-index={idx}
+                        onClick={() => navigateToResult(result)}
+                        className={`w-full text-left p-3 rounded-lg transition-colors border ${
+                          isSelected 
+                            ? `border-brand-500/50 ${themeClasses.bgTertiary}` 
+                            : `border-transparent ${themeClasses.bgHover} hover:border-brand-500/30`
+                        } group`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
+                            result.type === 'module' 
+                              ? 'bg-blue-500/20 text-blue-400' 
+                              : 'bg-brand-500/20 text-brand-400'
+                          }`}>
+                            {result.type === 'module' ? (
+                              <FileText className="w-4 h-4" />
+                            ) : (
+                              <Hash className="w-4 h-4" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-xs font-medium ${themeClasses.textSecondary} truncate`}>
+                                {highlightText(result.moduleTitle, searchQuery)}
+                              </span>
+                              {result.type === 'question' && result.questionIndex !== undefined && (
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded ${themeClasses.bgTertiary} ${themeClasses.textDim} font-mono`}>
+                                  Q{result.questionIndex + 1}
+                                </span>
+                              )}
+                            </div>
+                            {result.type === 'question' && result.questionText && (
+                              <p className={`text-sm ${themeClasses.textMuted} line-clamp-2 mb-1`}>
+                                {highlightText(result.questionText, searchQuery)}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${themeClasses.bgTertiary} ${themeClasses.textDim} capitalize`}>
+                                {result.matchedIn}
+                              </span>
+                              {result.type === 'question' && (
+                                <span className={`text-[10px] ${themeClasses.textDim} flex items-center gap-1`}>
+                                  <Tag className="w-3 h-3" />
+                                  Question
+                                </span>
+                              )}
+                              {result.type === 'module' && (
+                                <span className={`text-[10px] ${themeClasses.textDim} flex items-center gap-1`}>
+                                  <FileText className="w-3 h-3" />
+                                  Module
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <ArrowRight className={`w-4 h-4 ${themeClasses.textDim} group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0`} />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {!searchQuery.trim() && recentSearches.length > 0 && (
+                <div className="p-2">
+                  <div className={`px-3 py-2 text-xs font-medium ${themeClasses.textDim} uppercase tracking-wider flex items-center gap-2`}>
+                    <Clock className="w-3 h-3" />
+                    Recent Searches
+                  </div>
+                  {recentSearches.map((search, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setSearchQuery(search);
+                        searchInputRef.current?.focus();
+                      }}
+                      className={`w-full text-left p-3 rounded-lg ${themeClasses.bgHover} transition-colors flex items-center gap-3 group`}
+                    >
+                      <Clock className={`w-4 h-4 ${themeClasses.textDim} flex-shrink-0`} />
+                      <span className={`flex-1 text-sm ${themeClasses.textSecondary} group-hover:text-brand-400 transition-colors`}>
+                        {search}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRecentSearches(prev => {
+                            const updated = prev.filter((_, i) => i !== idx);
+                            localStorage.setItem('reader_recent_searches', JSON.stringify(updated));
+                            return updated;
+                          });
+                        }}
+                        className={`p-1 rounded-lg ${themeClasses.bgHover} ${themeClasses.textDim} hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!searchQuery.trim() && recentSearches.length === 0 && (
+                <div className="p-8 text-center">
+                  <Search className={`w-12 h-12 ${themeClasses.textDim} mx-auto mb-3 opacity-50`} />
+                  <p className={`${themeClasses.textMuted} text-sm mb-2`}>Start typing to search</p>
+                  <div className={`text-xs ${themeClasses.textDim} space-y-1 mt-4`}>
+                    <p>• Search across all modules and questions</p>
+                    <p>• Search by tags, topics, or keywords</p>
+                    <p>• Type "Q" + number to quick jump (e.g., Q5)</p>
+                    <p>• Press Esc to close</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Search Tips Footer */}
+            {searchQuery.trim() && searchResults.length > 0 && (
+              <div className={`px-4 py-2 border-t ${themeClasses.borderSecondary} ${themeClasses.bgTertiary}/30 flex items-center justify-between text-xs ${themeClasses.textDim} flex-wrap gap-2`}>
+                <span>Press Enter to open first result</span>
+                <span>↑↓ to navigate • Esc to close</span>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
+
+      {/* Random Question Selector */}
+      {showRandomSelector && (
+        <RandomQuestionSelector
+          onNavigateToQuestion={(moduleId, questionIndex) => {
+            goToModule(moduleId);
+            setTimeout(() => {
+              const questionEl = document.getElementById(`question-${questionIndex}`);
+              if (questionEl) {
+                questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                questionEl.classList.add('ring-2', 'ring-brand-500', 'ring-opacity-50');
+                setTimeout(() => {
+                  questionEl.classList.remove('ring-2', 'ring-brand-500', 'ring-opacity-50');
+                }, 2000);
+              }
+            }, 300);
+          }}
+          onClose={() => setShowRandomSelector(false)}
+          themeClasses={themeClasses}
+          isDarkMode={isDarkMode}
+        />
+      )}
+
+      {/* Quick Jump Input */}
+      {showQuickJump && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[90]">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`${themeClasses.bgSecondary} border ${themeClasses.borderSecondary} rounded-lg shadow-xl p-3 flex items-center gap-2`}
+          >
+            <Hash className={`w-4 h-4 ${themeClasses.textMuted}`} />
+            <input
+              type="text"
+              value={quickJumpQuery}
+              onChange={(e) => {
+                const val = e.target.value;
+                setQuickJumpQuery(val);
+                if (val.match(/^q\d+$/i)) {
+                  handleQuickJump(val);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setShowQuickJump(false);
+                  setQuickJumpQuery('');
+                }
+              }}
+              placeholder="Q1, Q2, Q3..."
+              className={`bg-transparent ${themeClasses.text} placeholder:${themeClasses.textDim} outline-none text-sm w-32 font-mono`}
+              autoFocus
+            />
+            <button
+              onClick={() => {
+                setShowQuickJump(false);
+                setQuickJumpQuery('');
+              }}
+              className={`p-1 rounded ${themeClasses.bgHover} ${themeClasses.textMuted}`}
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </motion.div>
+        </div>
+      )}
 
       {/* Session Expiry Warning Toast */}
       {sessionExpiryMsg && (
@@ -838,21 +1580,30 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
       {/* Mobile Header */}
       {!isFocusMode && (
-        <div className="md:hidden bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center z-40">
+        <div className={`md:hidden ${themeClasses.bgSecondary} border-b ${themeClasses.border} p-4 flex justify-between items-center z-40`}>
           <span className="font-bold text-brand-400">FrontendMastery Reader</span>
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-slate-400">
-            {isSidebarOpen ? 'Close Menu' : 'Menu'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} ${themeClasses.bgHover} transition-colors`}
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className={themeClasses.textMuted}>
+              {isSidebarOpen ? 'Close Menu' : 'Menu'}
+            </button>
+          </div>
         </div>
       )}
 
       {/* Sidebar Navigation */}
       {!isFocusMode && (
       <aside className={`
-        fixed md:relative z-30 w-full md:w-80 h-[calc(100%-60px)] md:h-full bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300
+        fixed md:relative z-30 w-full md:w-80 h-[calc(100%-60px)] md:h-full ${themeClasses.bgSecondary} border-r ${themeClasses.border} flex flex-col transition-transform duration-300
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 border-b border-slate-800 hidden md:block">
+        <div className={`p-6 border-b ${themeClasses.border} hidden md:block`}>
            <div className="flex items-center gap-2 mb-4">
              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
              <span className="text-xs font-mono text-green-500 uppercase">Secure Connection</span>
@@ -869,8 +1620,17 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                  loading="lazy"
                />
              </div>
-             <span className="text-sm font-bold text-white group-hover:text-gray-200 transition-colors">Coding Activist</span>
+             <span className={`text-sm font-bold ${themeClasses.text} group-hover:opacity-80 transition-colors`}>Coding Activist</span>
            </Link>
+           <div className="mt-4 flex items-center justify-end">
+             <button
+               onClick={toggleTheme}
+               className={`p-2 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} ${themeClasses.bgHover} transition-colors`}
+               aria-label="Toggle theme"
+             >
+               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+             </button>
+           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-1">
@@ -882,7 +1642,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 className={`w-full flex items-center justify-between gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border ${
                   activePlan 
                     ? 'bg-gradient-to-r from-brand-500/20 to-purple-500/20 border-brand-500/30 text-brand-300' 
-                    : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800'
+                    : `${themeClasses.bgTertiary}/50 ${themeClasses.borderSecondary} ${themeClasses.textSecondary} ${themeClasses.bgHover}`
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -896,13 +1656,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
               {/* Dropdown */}
               {isPlanDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-20 overflow-hidden">
+                <div className={`absolute top-full left-0 right-0 mt-2 ${themeClasses.bgTertiary} border ${themeClasses.borderSecondary} rounded-lg shadow-xl z-20 overflow-hidden`}>
                   {studyPlans.map((plan) => (
                     <button
                       key={plan.id}
                       onClick={() => selectPlan(plan)}
-                      className={`w-full text-left px-4 py-3 hover:bg-slate-700 transition-colors border-b border-slate-700 last:border-b-0 ${
-                        activePlan?.id === plan.id ? 'bg-slate-700' : ''
+                      className={`w-full text-left px-4 py-3 ${themeClasses.bgHover} transition-colors border-b ${themeClasses.borderSecondary} last:border-b-0 ${
+                        activePlan?.id === plan.id ? themeClasses.bgTertiary : ''
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
@@ -911,12 +1671,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         ) : (
                           <FireIcon className="w-4 h-4 text-orange-400" />
                         )}
-                        <span className="font-medium text-white text-sm">{plan.name}</span>
+                        <span className={`font-medium ${themeClasses.text} text-sm`}>{plan.name}</span>
                       </div>
-                      <p className="text-xs text-slate-400 line-clamp-2">{plan.description}</p>
+                      <p className={`text-xs ${themeClasses.textMuted} line-clamp-2`}>{plan.description}</p>
                       <div className="flex items-center gap-2 mt-2">
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-600 text-slate-300">{plan.totalDays} days</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-600 text-slate-300">{plan.targetRole}</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded ${themeClasses.bgTertiary} ${themeClasses.textSecondary}`}>{plan.totalDays} days</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded ${themeClasses.bgTertiary} ${themeClasses.textSecondary}`}>{plan.targetRole}</span>
                       </div>
                     </button>
                   ))}
@@ -934,19 +1694,19 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
             {/* Active Plan Progress */}
             {activePlan && (
-              <div className="mt-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <div className={`mt-3 p-3 ${themeClasses.bgTertiary}/50 rounded-lg border ${themeClasses.borderSecondary}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400">Overall Progress</span>
+                  <span className={`text-xs ${themeClasses.textMuted}`}>Overall Progress</span>
                   <span className="text-xs font-bold text-brand-400">{overallProgress}%</span>
                 </div>
-                <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div className={`w-full h-2 ${themeClasses.bgTertiary} rounded-full overflow-hidden`}>
                   <div 
                     className="h-full bg-gradient-to-r from-brand-500 to-purple-500 transition-all duration-500"
                     style={{ width: `${overallProgress}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-[10px] text-slate-500">Day {currentDay} of {activePlan.totalDays}</span>
+                  <span className={`text-[10px] ${themeClasses.textDim}`}>Day {currentDay} of {activePlan.totalDays}</span>
                   <button
                     onClick={() => setShowTodayPanel(!showTodayPanel)}
                     className="text-[10px] text-brand-400 hover:text-brand-300 font-medium"
@@ -958,30 +1718,50 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             )}
           </div>
 
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 px-2 mt-4">Modules</div>
+          <div className={`text-xs font-bold ${themeClasses.textDim} uppercase tracking-wider mb-3 px-2 mt-4`}>Modules</div>
           {ebookContent.map((chapter) => (
-            <button
-              key={chapter.id}
-              onClick={() => goToModule(chapter.id)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border border-transparent ${
-                activeModule === chapter.id && !showTodayPanel
-                  ? 'bg-brand-500/10 text-brand-400 border-brand-500/20'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              {chapter.title}
-            </button>
+            <div key={chapter.id}>
+              <button
+                onClick={() => goToModule(chapter.id)}
+                className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border border-transparent ${
+                  activeModule === chapter.id && !showTodayPanel
+                    ? 'bg-brand-500/10 text-brand-400 border-brand-500/20'
+                    : `${themeClasses.textMuted} ${themeClasses.bgHover} ${isDarkMode ? 'hover:text-white' : 'hover:text-gray-900'}`
+                }`}
+              >
+                {chapter.title}
+              </button>
+              {/* Render submodules if they exist */}
+              {chapter.submodules && chapter.submodules.length > 0 && (
+                <div className={`ml-4 mt-1 space-y-1 border-l ${themeClasses.borderL} pl-2`}>
+                  {chapter.submodules.map((submodule) => (
+                    <button
+                      key={submodule.id}
+                      onClick={() => goToModule(submodule.id)}
+                      className={`w-full text-left px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 border border-transparent ${
+                        activeModule === submodule.id && !showTodayPanel
+                          ? 'bg-brand-500/10 text-brand-400 border-brand-500/20'
+                          : `${themeClasses.textDim} ${themeClasses.bgHover} ${isDarkMode ? 'hover:text-slate-300' : 'hover:text-gray-700'}`
+                      }`}
+                    >
+                      <span className={`${themeClasses.textDim2} mr-2`}>└─</span>
+                      {submodule.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </div>
 
-        <div className="p-4 border-t border-slate-800">
-           <div className="bg-slate-800/50 rounded-lg p-3 mb-4">
-              <div className="text-[10px] text-slate-500 uppercase mb-1">License Holder</div>
-              <div className="text-xs text-white font-mono">{userEmail}</div>
+        <div className={`p-4 border-t ${themeClasses.border}`}>
+           <div className={`${themeClasses.bgTertiary}/50 rounded-lg p-3 mb-4`}>
+              <div className={`text-[10px] ${themeClasses.textDim} uppercase mb-1`}>License Holder</div>
+              <div className={`text-xs ${themeClasses.text} font-mono`}>{userEmail}</div>
               </div>
            <button 
              onClick={handleLogout}
-             className="w-full py-2 border border-slate-700 rounded-lg text-slate-400 text-sm hover:bg-slate-800 hover:text-white transition-colors"
+             className={`w-full py-2 border ${themeClasses.borderSecondary} rounded-lg ${themeClasses.textMuted} text-sm ${themeClasses.bgHover} ${isDarkMode ? 'hover:text-white' : 'hover:text-gray-900'} transition-colors`}
            >
              Log Out
            </button>
@@ -990,7 +1770,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       )}
 
       {/* Main Content Area */}
-      <main ref={contentRef} className="flex-1 h-full overflow-y-auto bg-slate-950 relative scroll-smooth">
+      <main ref={contentRef} className={`flex-1 h-full overflow-y-auto ${themeClasses.bg} relative scroll-smooth`}>
          <div
            className={`mx-auto px-6 py-12 md:py-20 transition-all duration-300 ${
              isFocusMode ? 'max-w-2xl md:px-0' : 'max-w-4xl'
@@ -999,10 +1779,44 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
             {/* Top toolbar */}
             <div className="flex items-center justify-between mb-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-slate-600">
+              <span className={`text-[10px] font-mono uppercase tracking-[0.25em] ${themeClasses.textDim2}`}>
                 Reading Mode
               </span>
               <div className="flex items-center gap-2 flex-wrap justify-end">
+                {/* Search Button */}
+                <button
+                  onClick={() => {
+                    setIsSearchOpen(true);
+                    setTimeout(() => searchInputRef.current?.focus(), 100);
+                  }}
+                  className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary} px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-brand-500 hover:text-brand-300 transition-colors`}
+                  title="Search (Cmd/Ctrl + K)"
+                >
+                  <Search className="w-4 h-4" />
+                  <span className="hidden sm:inline">Search</span>
+                  <kbd className="hidden md:inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-800/50 border border-slate-700 text-[10px] font-mono text-slate-400">
+                    <span className="text-[8px]">⌘</span>K
+                  </kbd>
+                </button>
+                
+                {/* Random Question Selector Button */}
+                <button
+                  onClick={() => setShowRandomSelector(true)}
+                  className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary} px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-purple-500 hover:text-purple-300 transition-colors`}
+                  title="Random Question Selector"
+                >
+                  <Shuffle className="w-4 h-4" />
+                  <span className="hidden sm:inline">Random</span>
+                </button>
+                {/* Theme Toggle */}
+                <button
+                  onClick={toggleTheme}
+                  className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary} px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-brand-500 hover:text-brand-300 transition-colors`}
+                  aria-label="Toggle theme"
+                >
+                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                </button>
                 {!isExamMode && (
                   <>
                     {/* Practice quiz toggle (hide/show answers) */}
@@ -1011,12 +1825,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                         isQuizMode
                           ? 'border-amber-500/70 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20'
-                          : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-amber-500 hover:text-amber-300 hover:bg-slate-900'
+                          : `${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 ${themeClasses.textSecondary} hover:border-amber-500 hover:text-amber-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'}`
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(245,158,11,0.8)] ${
-                          isQuizMode ? 'bg-amber-400' : 'bg-slate-500'
+                          isQuizMode ? 'bg-amber-400' : themeClasses.indicatorBg
                         }`}
                       />
                       {isQuizMode ? 'Quiz Mode: On' : 'Quiz Mode: Off'}
@@ -1029,12 +1843,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                           showTopicHeatmap
                             ? 'border-sky-500/70 bg-sky-500/10 text-sky-200 hover:bg-sky-500/20'
-                            : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-sky-500 hover:text-sky-300 hover:bg-slate-900'
+                            : `${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 ${themeClasses.textSecondary} hover:border-sky-500 hover:text-sky-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'}`
                         }`}
                       >
                         <span
                           className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(56,189,248,0.8)] ${
-                            showTopicHeatmap ? 'bg-sky-400' : 'bg-slate-500'
+                            showTopicHeatmap ? 'bg-sky-400' : themeClasses.indicatorBg
                           }`}
                         />
                         {showTopicHeatmap ? 'Topics Heatmap: On' : 'Topics Heatmap'}
@@ -1046,12 +1860,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                         showEventLoopLab
                           ? 'border-emerald-500/70 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20'
-                          : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-emerald-500 hover:text-emerald-300 hover:bg-slate-900'
+                          : `${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 ${themeClasses.textSecondary} hover:border-emerald-500 hover:text-emerald-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'}`
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(52,211,153,0.8)] ${
-                          showEventLoopLab ? 'bg-emerald-400' : 'bg-slate-500'
+                          showEventLoopLab ? 'bg-emerald-400' : themeClasses.indicatorBg
                         }`}
                       />
                       {showEventLoopLab ? 'Event Loop Lab: On' : 'Event Loop Lab'}
@@ -1069,12 +1883,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                   className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                     isExamMode
                       ? 'border-emerald-500/70 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20'
-                      : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-emerald-500 hover:text-emerald-300 hover:bg-slate-900'
+                      : `${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 ${themeClasses.textSecondary} hover:border-emerald-500 hover:text-emerald-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'}`
                   }`}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.8)] ${
-                      isExamMode ? 'bg-emerald-400' : 'bg-slate-500'
+                      isExamMode ? 'bg-emerald-400' : themeClasses.indicatorBg
                     }`}
                   />
                   {isExamMode ? 'Exam Mode: On' : 'Exam Mode'}
@@ -1082,7 +1896,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
                 <button
                   onClick={() => setIsFocusMode(prev => !prev)}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-[11px] font-medium text-slate-300 hover:border-brand-500 hover:text-brand-300 hover:bg-slate-900 transition-colors"
+                  className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-brand-500 hover:text-brand-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'} transition-colors`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
                   {isFocusMode ? 'Exit Focus Mode' : 'Enter Focus Mode'}
@@ -1099,7 +1913,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             ) : showTodayPanel && activePlan && todayPlan ? (
               <div className="animate-fade-in">
                 {/* Header */}
-                <div className="mb-8 pb-6 border-b border-slate-800">
+                <div className={`mb-8 pb-6 border-b ${themeClasses.border}`}>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-500 to-purple-500 flex items-center justify-center">
                       <CalendarIcon className="w-5 h-5 text-white" />
@@ -1108,7 +1922,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                       <span className="text-brand-500 font-mono text-xs tracking-widest uppercase block">
                         {activePlan.name} • Day {currentDay}
                       </span>
-                      <h2 className="text-2xl md:text-4xl font-bold text-white">{todayPlan.title}</h2>
+                      <h2 className={`text-2xl md:text-4xl font-bold ${themeClasses.text}`}>{todayPlan.title}</h2>
                     </div>
                   </div>
 
@@ -1117,7 +1931,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                     <button
                       onClick={goToPreviousDay}
                       disabled={currentDay === 1}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-700 transition-colors"
+                      className={`px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} text-sm disabled:opacity-50 disabled:cursor-not-allowed ${themeClasses.bgHoverSecondary} transition-colors`}
                     >
                       ← Previous Day
                     </button>
@@ -1137,7 +1951,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                 ? 'bg-brand-500 text-white'
                                 : dayNum < currentDay
                                 ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                : `${themeClasses.bgTertiary} ${themeClasses.textMuted} ${themeClasses.bgHover}`
                             }`}
                           >
                             {dayNum}
@@ -1145,13 +1959,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         );
                       })}
                       {activePlan.totalDays > 10 && (
-                        <span className="text-slate-500 text-xs">...</span>
+                        <span className={`${themeClasses.textDim} text-xs`}>...</span>
                       )}
                     </div>
                     <button
                       onClick={goToNextDay}
                       disabled={currentDay === activePlan.totalDays}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-700 transition-colors"
+                      className={`px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} text-sm disabled:opacity-50 disabled:cursor-not-allowed ${themeClasses.bgHoverSecondary} transition-colors`}
                     >
                       Next Day →
                     </button>
@@ -1172,12 +1986,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 )}
 
                 {/* Progress Summary */}
-                <div className="mb-8 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+                <div className={`mb-8 p-4 rounded-xl ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-slate-300 font-medium">Today's Progress</span>
+                    <span className={`${themeClasses.textSecondary} font-medium`}>Today's Progress</span>
                     <span className="text-brand-400 font-bold">{todayStats.completed} / {todayStats.total} tasks</span>
                   </div>
-                  <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
+                  <div className={`w-full h-3 ${themeClasses.bgTertiary} rounded-full overflow-hidden`}>
                     <div 
                       className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-500"
                       style={{ width: todayStats.total > 0 ? `${(todayStats.completed / todayStats.total) * 100}%` : '0%' }}
@@ -1193,19 +2007,19 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
                 {/* Task List */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-white mb-4">Today's Tasks</h3>
+                  <h3 className={`text-lg font-semibold ${themeClasses.text} mb-4`}>Today's Tasks</h3>
                   {todayPlan.tasks.map((task, taskIdx) => {
-                    const module = ebookContent.find(m => m.id === task.moduleId);
+                    const module = findModuleById(ebookContent, task.moduleId);
                     if (!module) return null;
 
                     return (
-                      <div key={taskIdx} className="bg-slate-800/30 rounded-xl border border-slate-700 overflow-hidden">
-                        <div className="px-4 py-3 bg-slate-800/50 border-b border-slate-700">
-                          <span className="text-slate-300 font-medium text-sm">{module.title}</span>
+                      <div key={taskIdx} className={`${themeClasses.bgTertiary}/30 rounded-xl border ${themeClasses.borderSecondary} overflow-hidden`}>
+                        <div className={`px-4 py-3 ${themeClasses.bgTertiary}/50 border-b ${themeClasses.borderSecondary}`}>
+                          <span className={`${themeClasses.textSecondary} font-medium text-sm`}>{module.title}</span>
                         </div>
                         <div className="p-2">
                           {task.questionIndices.map((qIdx) => {
-                            const question = module.items[qIdx];
+                            const question = module.items?.[qIdx];
                             if (!question) return null;
                             const taskKey = `${currentDay}-${task.moduleId}-${qIdx}`;
                             const isCompleted = completedTasks.has(taskKey);
@@ -1215,7 +2029,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                               <div
                                 key={qIdx}
                                 className={`flex items-start gap-3 p-3 rounded-lg transition-all ${
-                                  isCompleted ? 'bg-green-500/10' : 'hover:bg-slate-800/50'
+                                  isCompleted ? 'bg-green-500/10' : `${themeClasses.bgHover}/50`
                                 }`}
                               >
                                 <button
@@ -1223,7 +2037,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                   className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                                     isCompleted
                                       ? 'bg-green-500 border-green-500 text-white'
-                                      : 'border-slate-600 hover:border-brand-400'
+                                      : `${themeClasses.borderSecondary} hover:border-brand-400`
                                   }`}
                                 >
                                   {isCompleted && (
@@ -1236,18 +2050,38 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                   <button
                                     onClick={() => navigateToQuestion(task.moduleId, qIdx)}
                                     className={`text-left text-sm font-medium transition-colors ${
-                                      isCompleted ? 'text-slate-500 line-through' : 'text-slate-200 hover:text-brand-400'
+                                      isCompleted ? `${themeClasses.textDim} line-through` : `${themeClasses.textSecondary} hover:text-brand-400`
                                     }`}
                                   >
                                     Q{qIdx + 1}. {questionText}
                                   </button>
                                   {question.tags && question.tags.length > 0 && (
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                      {question.tags.slice(0, 3).map(tag => (
-                                        <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-400">
-                                          {tag}
-                                        </span>
-                                      ))}
+                                    <div className="flex flex-wrap gap-1.5 mt-1.5 items-center">
+                                      {/* Company tags with logos in study plan */}
+                                      {question.tags
+                                        .filter(tag => knownCompanies.has(tag))
+                                        .slice(0, 2)
+                                        .map((company) => (
+                                          <div
+                                            key={company}
+                                            className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20"
+                                            title={`Asked at ${company}`}
+                                          >
+                                            <CompanyLogo company={company} size={14} />
+                                            <span className="text-[9px] font-medium text-blue-400">
+                                              {company}
+                                            </span>
+                                          </div>
+                                        ))}
+                                      {/* Regular tags */}
+                                      {question.tags
+                                        .filter(tag => !knownCompanies.has(tag))
+                                        .slice(0, 2)
+                                        .map(tag => (
+                                          <span key={tag} className={`text-[9px] px-1.5 py-0.5 rounded ${themeClasses.bgTertiary} ${themeClasses.textMuted}`}>
+                                            {tag}
+                                          </span>
+                                        ))}
                                     </div>
                                   )}
                                 </div>
@@ -1281,9 +2115,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             ) : (
               <>
                 {/* Chapter Header */}
-                <div className="mb-12 border-b border-slate-800 pb-8">
+                <div className={`mb-12 border-b ${themeClasses.border} pb-8`}>
                    <span className="text-brand-500 font-mono text-sm tracking-widest uppercase mb-2 block">Current Module</span>
-                   <h2 className="text-3xl md:text-5xl font-bold text-white">{activeContent?.title}</h2>
+                   <h2 className={`text-3xl md:text-5xl font-bold ${themeClasses.text}`}>{activeContent?.title}</h2>
 
                    {/* Frontend topic heat map – only for first module + when toggle is ON */}
                    {activeContent &&
@@ -1297,15 +2131,104 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                      showEventLoopLab && (
                        <EventLoopSimulator  />
                    )}
+
+                   {/* WhatsApp System Design Lab - Prominent Banner */}
+                   {isWhatsAppModule && (
+                     <div className="mt-8">
+                       {!showWhatsAppLab ? (
+                         <motion.div
+                           initial={{ opacity: 0, y: 20 }}
+                           animate={{ opacity: 1, y: 0 }}
+                           className="relative overflow-hidden rounded-2xl border-2 border-cyan-500/50 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 p-6 shadow-2xl shadow-cyan-500/20"
+                         >
+                           {/* Animated background pattern */}
+                           <div className="absolute inset-0 opacity-10 overflow-hidden">
+                             <motion.div
+                               className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(6,182,212,0.1)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]"
+                               animate={{
+                                 x: [0, 20, 0],
+                                 y: [0, 20, 0],
+                               }}
+                               transition={{
+                                 duration: 20,
+                                 repeat: Infinity,
+                                 ease: "linear"
+                               }}
+                             ></motion.div>
+                           </div>
+                           
+                           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                             <div className="flex-1">
+                               <div className="flex items-center gap-3 mb-3">
+                                 <div className="relative">
+                                   <div className="absolute inset-0 bg-cyan-400 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                                   <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                                     <MessageSquare className="w-6 h-6 text-white" />
+                                   </div>
+                                 </div>
+                                 <div>
+                                   <div className="flex items-center gap-2 mb-1">
+                                     <h3 className={`text-xl font-bold ${themeClasses.text}`}>Interactive System Design Lab</h3>
+                                     <span className={`px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-400/30 ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'} text-[10px] font-bold uppercase tracking-wider`}>
+                                       NEW
+                                     </span>
+                                   </div>
+                                   <p className={`text-sm ${themeClasses.textSecondary}`}>
+                                     Experience real-time messaging architecture with hands-on simulations. Explore WebSocket flows, offline queues, and system architecture interactively.
+                                   </p>
+                                 </div>
+                               </div>
+                               
+                               <div className="flex flex-wrap gap-2 mt-4">
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <Wifi className="w-4 h-4 text-green-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>WebSocket Simulation</span>
+                                 </div>
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <Database className="w-4 h-4 text-amber-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>Offline Queue</span>
+                                 </div>
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <Server className="w-4 h-4 text-purple-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>Architecture Explorer</span>
+                                 </div>
+                               </div>
+                             </div>
+                             
+                             <button
+                               onClick={() => setShowWhatsAppLab(true)}
+                               className="group relative px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold text-sm hover:from-cyan-400 hover:to-blue-400 transition-all duration-300 shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 hover:scale-105 flex items-center gap-2"
+                             >
+                               <span className="relative z-10">Launch Lab</span>
+                               <motion.div
+                                 animate={{ x: [0, 4, 0] }}
+                                 transition={{ repeat: Infinity, duration: 1.5 }}
+                                 className="relative z-10"
+                               >
+                                 <Play className="w-4 h-4 fill-white" />
+                               </motion.div>
+                               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+                             </button>
+                           </div>
+                           
+                           {/* Decorative elements */}
+                           <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl"></div>
+                           <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+                         </motion.div>
+                       ) : (
+                         <WhatsAppSystemDesignLab onClose={() => setShowWhatsAppLab(false)} />
+                       )}
+                     </div>
+                   )}
                 </div>
 
             {/* Questions Loop */}
             <div className="space-y-12">
-               {(activeContent
+               {(activeContent && activeContent.items
                  ? (isTimedQuizActive && quizQuestionIndices.length > 0
                      ? quizQuestionIndices
-                         .filter((idx) => idx >= 0 && idx < activeContent.items.length)
-                         .map((idx) => ({ item: activeContent.items[idx], idx }))
+                         .filter((idx) => idx >= 0 && idx < activeContent.items!.length)
+                         .map((idx) => ({ item: activeContent.items![idx], idx }))
                      : activeContent.items.map((item, idx) => ({ item, idx }))
                    )
                  : []
@@ -1318,23 +2241,42 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                  return (
                  <div key={idx} id={`question-${idx}`} className="group scroll-mt-20">
                     <div className="flex gap-4 items-start mb-2">
-                       <span className="flex-shrink-0 w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-brand-400 font-mono font-bold text-sm">
+                       <span className={`flex-shrink-0 w-8 h-8 rounded ${themeClasses.bgTertiary} border ${themeClasses.borderSecondary} flex items-center justify-center text-brand-400 font-mono font-bold text-sm`}>
                          Q{idx + 1}
                        </span>
                        <div className="flex-1">
-                       <h3 className="text-xl md:text-2xl font-semibold text-slate-200 leading-snug">
+                       <h3 className={`text-xl md:text-2xl font-semibold ${themeClasses.textSecondary} leading-snug`}>
                            {questionText}
                        </h3>
                          {item.tags && item.tags.length > 0 && (
-                           <div className="mt-2 flex flex-wrap gap-2">
-                             {item.tags.map((tag) => (
-                               <span
-                                 key={tag}
-                                 className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300"
-                               >
-                                 {tag}
-                               </span>
-                             ))}
+                           <div className="mt-3 flex flex-wrap gap-2 items-center">
+                             {/* Company Tags with Logos */}
+                             {item.tags
+                               .filter(tag => knownCompanies.has(tag))
+                               .map((company) => (
+                                 <div
+                                   key={company}
+                                   className={`group flex items-center gap-2 px-3 py-1.5 rounded-full ${themeClasses.bgTertiary}/60 border ${themeClasses.borderSecondary} hover:border-brand-500/50 transition-all cursor-default`}
+                                   title={`Asked at ${company}`}
+                                 >
+                                   <CompanyLogo company={company} size={18} />
+                                   <span className={`text-xs font-medium ${themeClasses.textSecondary} group-hover:text-brand-400 transition-colors`}>
+                                     {company}
+                                   </span>
+                                 </div>
+                               ))}
+                             
+                             {/* Regular Tags (non-company) */}
+                             {item.tags
+                               .filter(tag => !knownCompanies.has(tag))
+                               .map((tag) => (
+                                 <span
+                                   key={tag}
+                                   className={`text-[10px] uppercase tracking-wide px-2.5 py-1 rounded-full ${themeClasses.bgTertiary}/80 border ${themeClasses.borderSecondary} ${themeClasses.textSecondary}`}
+                                 >
+                                   {tag}
+                                 </span>
+                               ))}
                            </div>
                          )}
                        </div>
@@ -1345,7 +2287,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                          <button
                            type="button"
                            onClick={() => toggleAnswerReveal(answerKey)}
-                           className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-3 py-1 text-[11px] font-medium text-slate-200 hover:border-amber-500 hover:text-amber-300 hover:bg-slate-900 transition-colors"
+                           className={`mb-3 inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 px-3 py-1 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-amber-500 hover:text-amber-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'} transition-colors`}
                          >
                            {isRevealed ? 'Hide answer' : 'Show answer'}
                          </button>
@@ -1355,9 +2297,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         <>
                           {/* Code Snippet (if exists) - shown before the answer for better question context */}
                           {item.code && (
-                            <div className="relative mt-4 mb-4 rounded-lg overflow-hidden border border-slate-800 bg-[#0c0e14] shadow-lg">
-                              <div className="flex items-center justify-between px-4 py-2 bg-[#1a1d24] border-b border-slate-800">
-                                <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
+                            <div className={`relative mt-4 mb-4 rounded-lg overflow-hidden border ${themeClasses.border} ${themeClasses.codeBg} shadow-lg`}>
+                              <div className={`flex items-center justify-between px-4 py-2 ${themeClasses.codeHeaderBg} border-b ${themeClasses.border}`}>
+                                <span className={`text-xs ${themeClasses.textDim} font-mono flex items-center gap-2`}>
                                   <TerminalIcon className="w-3 h-3" /> solution.js
                                 </span>
                                 <div className="flex gap-1">
@@ -1366,7 +2308,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                   <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
                                 </div>
                               </div>
-                              <pre className="p-4 overflow-x-auto text-sm font-mono text-blue-300 select-none">
+                              <pre className={`p-4 overflow-x-auto text-sm font-mono ${themeClasses.codeText} select-none`}>
                                 <code>{item.code}</code>
                               </pre>
                               {/* Security Overlay for Code */}
@@ -1379,28 +2321,28 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
                           {/* Optional visual diagram (ASCII) */}
                           {item.diagram && (
-                            <div className="mt-4 mb-6 rounded-lg border border-slate-800 bg-slate-900/70 overflow-hidden">
-                              <div className="px-4 py-2 border-b border-slate-800 text-[11px] font-mono uppercase tracking-wider text-slate-400">
+                            <div className={`mt-4 mb-6 rounded-lg border ${themeClasses.border} ${themeClasses.bgSecondary}/70 overflow-hidden`}>
+                              <div className={`px-4 py-2 border-b ${themeClasses.border} text-[11px] font-mono uppercase tracking-wider ${themeClasses.textMuted}`}>
                                 Diagram
                               </div>
-                              <pre className="p-4 text-xs font-mono text-slate-200 whitespace-pre select-none overflow-x-auto">
+                              <pre className={`p-4 text-xs font-mono ${themeClasses.textSecondary} whitespace-pre select-none overflow-x-auto`}>
                                 {item.diagram}
                               </pre>
                             </div>
                           )}
 
                           {/* Answer Block */}
-                          <div className="prose prose-invert prose-slate max-w-none text-slate-400 leading-relaxed whitespace-pre-line mb-6 select-none">
+                          <div className={`prose ${isDarkMode ? 'prose-invert' : ''} prose-slate max-w-none ${themeClasses.textMuted} leading-relaxed whitespace-pre-line mb-6 select-none`}>
                             {item.a}
                           </div>
 
                           {/* Follow-up Questions (if any) */}
                           {item.followUps && item.followUps.length > 0 && (
                             <div className="mb-6">
-                              <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
+                              <div className={`text-xs font-mono ${themeClasses.textDim} uppercase tracking-wider mb-2`}>
                                 Follow-up prompts
                               </div>
-                              <ul className="list-disc list-inside space-y-1 text-[13px] text-slate-400">
+                              <ul className={`list-disc list-inside space-y-1 text-[13px] ${themeClasses.textMuted}`}>
                                 {item.followUps.map((fu, i) => (
                                   <li key={i} className="select-none">
                                     {fu}
@@ -1418,23 +2360,23 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             </div>
 
                 {/* End of Chapter */}
-                <div className="mt-20 p-8 border border-dashed border-slate-800 rounded-2xl text-center bg-slate-900/30">
-                   <LockIcon className="w-8 h-8 text-slate-600 mx-auto mb-4" />
-                   <h4 className="text-slate-400 font-medium">End of Module</h4>
-                   <p className="text-slate-600 text-sm mt-2">Content is watermarked and monitored. Do not distribute.</p>
+                <div className={`mt-20 p-8 border border-dashed ${themeClasses.border} rounded-2xl text-center ${themeClasses.bgSecondary}/30`}>
+                   <LockIcon className={`w-8 h-8 ${themeClasses.textDim2} mx-auto mb-4`} />
+                   <h4 className={`${themeClasses.textMuted} font-medium`}>End of Module</h4>
+                   <p className={`${themeClasses.textDim2} text-sm mt-2`}>Content is watermarked and monitored. Do not distribute.</p>
                 </div>
 
                 {(prevModule || nextModule) && (
-                  <div className="mt-8 flex flex-col gap-3 border-t border-slate-800 pt-6 md:flex-row md:items-center md:justify-between">
+                  <div className={`mt-8 flex flex-col gap-3 border-t ${themeClasses.border} pt-6 md:flex-row md:items-center md:justify-between`}>
                     {prevModule ? (
                       <button
                         onClick={() => goToModule(prevModule.id)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/70 px-4 py-2 text-sm text-slate-200 hover:border-brand-500 hover:text-brand-300 hover:bg-slate-900 transition-colors"
+                        className={`inline-flex items-center gap-2 rounded-lg border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 px-4 py-2 text-sm ${themeClasses.textSecondary} hover:border-brand-500 hover:text-brand-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'} transition-colors`}
                       >
                         ← Previous: <span className="font-medium line-clamp-1">{prevModule.title}</span>
                       </button>
                     ) : (
-                      <span className="text-xs text-slate-500">This is the first module.</span>
+                      <span className={`text-xs ${themeClasses.textDim}`}>This is the first module.</span>
                     )}
 
                     {nextModule && (

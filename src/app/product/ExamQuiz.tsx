@@ -876,7 +876,7 @@ const ExamQuiz: React.FC<ExamQuizProps> = ({ activeModuleId, onExit }) => {
 
   const resolveQuestionContent = (q: ExamQuestion) => {
     const module = ebookContent.find(m => m.id === q.moduleId);
-    const item = module?.items[q.questionIndex];
+    const item = module?.items?.[q.questionIndex];
     if (!item) {
       return {
         text: 'Question not found in content.',
