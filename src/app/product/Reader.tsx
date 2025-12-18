@@ -14,6 +14,7 @@ import FrequencyHeatmap from './FrequencyHeatmap';
 import EventLoopSimulator from './EventLoopSimulator';
 import WhatsAppSystemDesignLab from './WhatsAppSystemDesignLab';
 import RandomQuestionSelector from './RandomQuestionSelector';
+import CodePlayground from './CodePlayground';
 
 // Icons for study plans
 const CalendarIcon = ({ className }: { className?: string }) => (
@@ -179,6 +180,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [quickJumpQuery, setQuickJumpQuery] = useState('');
   const [selectedResultIndex, setSelectedResultIndex] = useState(0);
   const [showRandomSelector, setShowRandomSelector] = useState(false);
+  const [showCodePlayground, setShowCodePlayground] = useState(false);
 
   const contentRef = useRef<HTMLElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -1499,6 +1501,41 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
         />
       )}
 
+      {/* Code Playground Modal */}
+      {showCodePlayground && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`w-full max-w-4xl max-h-[90vh] overflow-auto rounded-2xl ${themeClasses.bg} border ${themeClasses.border} shadow-2xl`}
+          >
+            <div className={`sticky top-0 flex items-center justify-between px-6 py-4 border-b ${themeClasses.border} ${themeClasses.bgSecondary}`}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                  <Play className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className={`text-lg font-bold ${themeClasses.text}`}>Code Playground</h2>
+                  <p className={`text-xs ${themeClasses.textMuted}`}>Write and run JavaScript code instantly</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCodePlayground(false)}
+                className={`p-2 rounded-lg ${themeClasses.bgSecondary} hover:bg-red-500/20 hover:text-red-400 transition-colors`}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <CodePlayground
+                initialCode={`// Write your JavaScript code here\nconsole.log("Hello, World!");\n\n// Try some examples:\nconst arr = [1, 2, 3, 4, 5];\nconsole.log("Sum:", arr.reduce((a, b) => a + b, 0));\n\n// Test closures\nfunction counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst inc = counter();\nconsole.log(inc(), inc(), inc());`}
+                isDarkMode={isDarkMode}
+              />
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Quick Jump Input */}
       {showQuickJump && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[90]">
@@ -1807,6 +1844,15 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 >
                   <Shuffle className="w-4 h-4" />
                   <span className="hidden sm:inline">Random</span>
+                </button>
+                {/* Code Playground Button */}
+                <button
+                  onClick={() => setShowCodePlayground(true)}
+                  className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary} px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-green-500 hover:text-green-300 transition-colors`}
+                  title="Open Code Playground"
+                >
+                  <Play className="w-4 h-4" />
+                  <span className="hidden sm:inline">Run Code</span>
                 </button>
                 {/* Theme Toggle */}
                 <button
@@ -2297,26 +2343,32 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         <>
                           {/* Code Snippet (if exists) - shown before the answer for better question context */}
                           {item.code && (
-                            <div className={`relative mt-4 mb-4 rounded-lg overflow-hidden border ${themeClasses.border} ${themeClasses.codeBg} shadow-lg`}>
-                              <div className={`flex items-center justify-between px-4 py-2 ${themeClasses.codeHeaderBg} border-b ${themeClasses.border}`}>
-                                <span className={`text-xs ${themeClasses.textDim} font-mono flex items-center gap-2`}>
-                                  <TerminalIcon className="w-3 h-3" /> solution.js
-                                </span>
-                                <div className="flex gap-1">
-                                  <span className="w-2 h-2 rounded-full bg-red-500/20"></span>
-                                  <span className="w-2 h-2 rounded-full bg-yellow-500/20"></span>
-                                  <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
-                                </div>
+                            item.playground ? (
+                              <div className="mt-4 mb-4">
+                                <CodePlayground initialCode={item.code} isDarkMode={isDarkMode} />
                               </div>
-                              <pre className={`p-4 overflow-x-auto text-sm font-mono ${themeClasses.codeText} select-none`}>
-                                <code>{item.code}</code>
-                              </pre>
-                              {/* Security Overlay for Code */}
-                              <div
-                                className="absolute inset-0 z-10 bg-transparent"
-                                onContextMenu={(e) => e.preventDefault()}
-                              />
-                            </div>
+                            ) : (
+                              <div className={`relative mt-4 mb-4 rounded-lg overflow-hidden border ${themeClasses.border} ${themeClasses.codeBg} shadow-lg`}>
+                                <div className={`flex items-center justify-between px-4 py-2 ${themeClasses.codeHeaderBg} border-b ${themeClasses.border}`}>
+                                  <span className={`text-xs ${themeClasses.textDim} font-mono flex items-center gap-2`}>
+                                    <TerminalIcon className="w-3 h-3" /> solution.js
+                                  </span>
+                                  <div className="flex gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-red-500/20"></span>
+                                    <span className="w-2 h-2 rounded-full bg-yellow-500/20"></span>
+                                    <span className="w-2 h-2 rounded-full bg-green-500/20"></span>
+                                  </div>
+                                </div>
+                                <pre className={`p-4 overflow-x-auto text-sm font-mono ${themeClasses.codeText} select-none`}>
+                                  <code>{item.code}</code>
+                                </pre>
+                                {/* Security Overlay for Code */}
+                                <div
+                                  className="absolute inset-0 z-10 bg-transparent"
+                                  onContextMenu={(e) => e.preventDefault()}
+                                />
+                              </div>
+                            )
                           )}
 
                           {/* Optional visual diagram (ASCII) */}

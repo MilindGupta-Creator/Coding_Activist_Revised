@@ -1,5 +1,5 @@
 import React from 'react';
-import { CodeIcon, ServerIcon, CpuIcon, CheckIcon } from './Icons';
+import { CodeIcon, ServerIcon, CpuIcon, CheckIcon, TerminalIcon } from './Icons';
 import { Feature } from '@/app/types';
 
 const features: Feature[] = [
@@ -14,9 +14,9 @@ const features: Feature[] = [
     iconPath: "system"
   },
   {
-    title: "Performance Engineering",
-    description: "Deep dive into Critical Rendering Path, Web Workers, WASM, and shaving milliseconds off TTI.",
-    iconPath: "perf"
+    title: "Interactive Code Playground",
+    description: "Run JavaScript code directly in your browser with Monaco Editor. Edit, experiment, and see results instantly.",
+    iconPath: "playground"
   },
   {
     title: "JS Runtime Internals",
@@ -51,7 +51,7 @@ const Features: React.FC = () => {
                             {feature.iconPath === 'js' && <CodeIcon className="w-5 h-5" />}
                             {feature.iconPath === 'react' && <CpuIcon className="w-5 h-5" />}
                             {feature.iconPath === 'system' && <ServerIcon className="w-5 h-5" />}
-                            {feature.iconPath === 'perf' && <CheckIcon className="w-5 h-5" />}
+                            {feature.iconPath === 'playground' && <TerminalIcon className="w-5 h-5" />}
                         </div>
                         <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-brand-600 transition-colors">{feature.title}</h3>
                         <p className="text-slate-600 leading-relaxed font-medium text-sm md:text-base">{feature.description}</p>

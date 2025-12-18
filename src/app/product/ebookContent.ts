@@ -8,6 +8,7 @@ export interface ChapterContent {
     diagram?: string; // Optional ASCII / visual diagram
     tags?: string[]; // Companies / topics chips (Google, Meta, Frontend, DSA, etc.)
     followUps?: string[]; // Extra prompts / follow-up interview questions
+    playground?: boolean; // Enable interactive code playground for this question
   }[];
   submodules?: ChapterContent[]; // Optional submodules for nested structure
 }
@@ -375,6 +376,7 @@ export const ebookContent: ChapterContent[] = [
         q: "Q1. How setTimeout works / Event Loop?",
         a: "Imagine you're a chef in a busy restaurant kitchen. The setTimeout function is like setting a kitchen timer - it tells JavaScript 'wait for X milliseconds, then do this task'.\n\n**The Process:**\n1. Immediate tasks (Call Stack) get done first.\n2. setTimeout tasks wait in a separate waiting area (Web APIs) with their timer.\n3. The Event Loop checks every moment: 'Is the Stack empty?'.\n4. When a timer finishes, that task gets moved to the Queue, and then to the Stack when clear.\n\nKey: setTimeout doesn't pause your program. It schedules a task.",
         code: `console.log("Order taken"); // Runs immediately\n\nsetTimeout(() => {\n  console.log("Food ready"); // Runs after 2 seconds\n}, 2000);\n\nconsole.log("Taking next order"); // Runs immediately\n\n// Output:\n// Order taken\n// Taking next order\n// Food ready`,
+        playground: true,
         diagram: `Call Stack            Web APIs              Callback Queue\n----------           --------              --------------\nconsole.log('Order taken')\nsetTimeout(cb, 2000)  --->  [ timer running ]\nconsole.log('Taking next order')\n\n// After ~2s when stack is empty:\n// [ timer done ]  --->  cb added to Queue  --->  pushed to Stack`,
         followUps: [
           "How would you explain the Event Loop vs Call Stack to a junior engineer using a real production bug you faced?",
@@ -390,17 +392,20 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "Q3. What is the output of following setTimeout calls?",
         a: "Order: yo, a, i, b.\n\n1. 'yo' is synchronous.\n2. 'a' has 0ms delay but goes to macrotask queue.\n3. 'i' is undefined delay (defaults to min/0), goes to queue after 'a'.\n4. 'b' is 5s delay.",
-        code: `setTimeout(()=>console.log("b"), 5000);\nsetTimeout(()=>console.log("a"),0);\nsetTimeout(()=>console.log("i"));\nconsole.log("yo");\n// Output: yo, a, i, b`
+        code: `setTimeout(()=>console.log("b"), 5000);\nsetTimeout(()=>console.log("a"),0);\nsetTimeout(()=>console.log("i"));\nconsole.log("yo");\n// Output: yo, a, i, b`,
+        playground: true
       },
       {
         q: "Q8. What would be the output of the following?",
         a: "1. `arr1` becomes ['j','o','h','n'].\n2. `arr2` is a reference to `arr1` reversed: ['n','h','o','j']. Note: reverse() mutates the original array!\n3. `arr3` is ['j','o','n','e','s'].\n4. `arr2.push(arr3)` adds the entire array as a single element.\n\nResult:\nLength: 5 (n, h, o, j, [array])\nLast: ['j','o','n','e','s']",
-        code: `var arr1 = 'john'.split('');\nvar arr2 = arr1.reverse();\nvar arr3 = 'jones'.split('');\narr2.push(arr3);\nconsole.log('length:', arr1.length, 'last:', arr1.slice(-1));`
+        code: `var arr1 = 'john'.split('');\nvar arr2 = arr1.reverse();\nvar arr3 = 'jones'.split('');\narr2.push(arr3);\nconsole.log('length:', arr1.length, 'last:', arr1.slice(-1));`,
+        playground: true
       },
       {
         q: "Q11. What is the output of the following closure?",
         a: "Output: 1.\nThe IIFE executes immediately. Inside, `delete x` attempts to delete the local variable `x`. However, variables declared with `var` cannot be deleted. The operation returns false (or fails silently in non-strict mode), and the function returns the value of x (1).",
-        code: `var x = 1;\nvar output = (function() {\n  delete x;\n  return x;\n})();\nconsole.log(output);`
+        code: `var x = 1;\nvar output = (function() {\n  delete x;\n  return x;\n})();\nconsole.log(output);`,
+        playground: true
       },
       {
         q: "Q12. How do you lower the load time of your page in Javascript?",
@@ -409,17 +414,20 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "Q13. What is prototype inheritance?",
         a: "Prototype inheritance is JavaScript's way of sharing properties and methods between objects.\n\n- Every object has a prototype (parent object).\n- Child objects inherit properties from their prototype.\n- If a property is not found in the child, JS looks up the prototype chain.",
-        code: `let animal = { type: "mammal" };\nlet dog = Object.create(animal);\ndog.breed = "labrador";\n\nconsole.log(dog.type); // "mammal" (inherited)`
+        code: `let animal = { type: "mammal" };\nlet dog = Object.create(animal);\ndog.breed = "labrador";\n\nconsole.log(dog.type); // "mammal" (inherited)`,
+        playground: true
       },
       {
         q: "Q17. Implement function to read field inside a nested object.",
         a: "We need to safely traverse the object path provided as a string (e.g., 'A.B.C').",
-        code: `function read(obj, path) {\n  const keys = path.split('.');\n  let current = obj;\n\n  for (let key of keys) {\n    if (!current || !(key in current)) return undefined;\n    current = current[key];\n  }\n  return current;\n}\n\nconst obj = { A: { B: { C: { D: { E: 2 } } } } };\nconsole.log(read(obj, "A.B.C.D.E")); // 2`
+        code: `function read(obj, path) {\n  const keys = path.split('.');\n  let current = obj;\n\n  for (let key of keys) {\n    if (!current || !(key in current)) return undefined;\n    current = current[key];\n  }\n  return current;\n}\n\nconst obj = { A: { B: { C: { D: { E: 2 } } } } };\nconsole.log(read(obj, "A.B.C.D.E")); // 2`,
+        playground: true
       },
       {
         q: "Q18. Remove duplicates from array using ES6",
         a: "Use the Set object, which only stores unique values.",
-        code: `const arr = [1, 2, 2, 3, 4, 4];\nconst unique = [...new Set(arr)];\nconsole.log(unique); // [1, 2, 3, 4]`
+        code: `const arr = [1, 2, 2, 3, 4, 4];\nconst unique = [...new Set(arr)];\nconsole.log(unique); // [1, 2, 3, 4]`,
+        playground: true
       },
       {
         q: "Q20. What is the result of 3 + 2 + \"7\"?",
@@ -428,7 +436,8 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "Q21. Output of following (Scope/Const)?",
         a: "Output: 'white_rabbit'.\n`const` has block scope. The inner KEY only exists inside the if block. The outer KEY remains unchanged.",
-        code: `const KEY = 'white_rabbit';\nif (true) {\n  const KEY = 'ginger_rabbit';\n}\nconsole.log(KEY);`
+        code: `const KEY = 'white_rabbit';\nif (true) {\n  const KEY = 'ginger_rabbit';\n}\nconsole.log(KEY);`,
+        playground: true
       },
       {
         q: "Q22. Output of following (Scope/Let)?",
@@ -443,7 +452,8 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "Q39. How is the behavior of 'this' in arrow vs regular functions?",
         a: "**Regular functions** have their own `this` (dynamic, depends on call site).\n**Arrow functions** inherit `this` from their surrounding context (lexical binding).",
-        code: `const obj = {\n  name: "Alice",\n  regular: function() { console.log(this.name); },\n  arrow: () => { console.log(this.name); }\n};\n\nobj.regular(); // "Alice"\nobj.arrow(); // undefined (window/global)`
+        code: `const obj = {\n  name: "Alice",\n  regular: function() { console.log(this.name); },\n  arrow: () => { console.log(this.name); }\n};\n\nobj.regular(); // "Alice"\nobj.arrow(); // undefined (window/global)`,
+        playground: true
       },
       {
         q: "Q43. Explain Promise.all vs Promise.allSettled vs Promise.race",
@@ -460,12 +470,14 @@ export const ebookContent: ChapterContent[] = [
         q: "Q44. What is the difference between var, let, and const?",
         a: "- **var**: Function-scoped, hoisted (initialized as undefined), can be redeclared.\n- **let**: Block-scoped, hoisted but in TDZ (Temporal Dead Zone), cannot be redeclared.\n- **const**: Block-scoped, must be initialized, cannot be reassigned (but object properties can change).",
         code: `// var\nif (true) { var x = 1; }\nconsole.log(x); // 1 (accessible)\n\n// let\nif (true) { let y = 1; }\nconsole.log(y); // ReferenceError\n\n// const\nconst obj = { a: 1 };\nobj.a = 2; // OK\nobj = {}; // TypeError`,
+        playground: true,
         tags: ["Core JS", "Interview"],
       },
       {
         q: "Q45. Explain Closures with a practical example",
         a: "A closure gives you access to an outer function's scope from an inner function. Common use cases: data privacy, function factories, event handlers, debounce/throttle.",
         code: `function createCounter() {\n  let count = 0; // Private variable\n  return function() {\n    return ++count;\n  };\n}\n\nconst counter = createCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2`,
+        playground: true,
         tags: ["Google", "Meta", "Core JS"],
         followUps: [
           "How would you use closures to implement a debounce function?",
@@ -477,6 +489,7 @@ export const ebookContent: ChapterContent[] = [
         q: "Q46. What are Symbols and when to use them?",
         a: "Symbols are unique, immutable primitive values. Use them for:\n- Creating unique object keys (avoid name collisions)\n- Implementing private properties\n- Well-known symbols (Symbol.iterator, Symbol.toPrimitive)",
         code: `const sym1 = Symbol('id');\nconst sym2 = Symbol('id');\nconsole.log(sym1 === sym2); // false (unique!)\n\nconst obj = { [sym1]: 'value' };\nconsole.log(obj[sym1]); // 'value'`,
+        playground: true,
         tags: ["Advanced JS"],
       },
       {
@@ -495,6 +508,7 @@ export const ebookContent: ChapterContent[] = [
         q: "Q49. Implement debounce and throttle functions",
         a: "**Debounce**: Execute function after delay, reset timer on each call.\n**Throttle**: Execute function at most once per interval.",
         code: `function debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\nfunction throttle(fn, limit) {\n  let inThrottle;\n  return function(...args) {\n    if (!inThrottle) {\n      fn.apply(this, args);\n      inThrottle = true;\n      setTimeout(() => inThrottle = false, limit);\n    }\n  };\n}`,
+        playground: true,
         tags: ["Google", "Meta", "Core JS", "Performance"],
         followUps: [
           "When would you use debounce vs throttle for a search input?",
@@ -506,12 +520,14 @@ export const ebookContent: ChapterContent[] = [
         q: "Q50. Explain Generator Functions and yield",
         a: "Generators are functions that can be paused and resumed. They return an iterator object. Use `yield` to pause execution and return a value.",
         code: `function* countUp() {\n  yield 1;\n  yield 2;\n  yield 3;\n}\n\nconst gen = countUp();\nconsole.log(gen.next().value); // 1\nconsole.log(gen.next().value); // 2`,
+        playground: true,
         tags: ["Advanced JS"],
       },
       {
         q: "Q51. What is the difference between == and ===?",
         a: "- **== (loose equality)**: Performs type coercion before comparison.\n- **=== (strict equality)**: No type coercion, compares type and value.\n\nAlways use === unless you specifically need coercion.",
         code: `console.log(5 == "5"); // true (coercion)\nconsole.log(5 === "5"); // false (different types)\nconsole.log(null == undefined); // true\nconsole.log(null === undefined); // false`,
+        playground: true,
         tags: ["Core JS", "Interview"],
       },
       {
@@ -719,6 +735,7 @@ export const ebookContent: ChapterContent[] = [
         q: "Q42. Explain useMemo vs useCallback",
         a: "- **useMemo**: Memoizes a computed VALUE. Returns the cached value until dependencies change.\n- **useCallback**: Memoizes a FUNCTION. Returns the cached function reference until dependencies change.\n\nBoth prevent unnecessary recalculations/recreations.",
         code: `// useMemo - memoize value\nconst expensiveValue = useMemo(() => {\n  return computeExpensiveValue(a, b);\n}, [a, b]);\n\n// useCallback - memoize function\nconst memoizedCallback = useCallback(() => {\n  doSomething(a, b);\n}, [a, b]);`,
+        playground: true,
         tags: ["React", "Performance"],
       },
       {
@@ -809,13 +826,15 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "DSA D: Flatten array of arbitrary depth",
         a: "Use recursion or `reduce`.",
-        code: `const flatten = (arr) => \n  arr.reduce((acc, val) => \n    Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val), \n  []);`,
+        code: `const flatten = (arr) => \n  arr.reduce((acc, val) => \n    Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val), \n  []);\n\n// Test it\nconst nested = [1, [2, [3, [4, 5]]], 6];\nconsole.log(flatten(nested));`,
+        playground: true,
         tags: ["Google", "DSA", "Recursion"]
       },
       {
         q: "DSA E: Longest Substring Without Repeating Characters",
         a: "Classic sliding window asked at Google/Meta.\nGiven a string, return the length of the longest substring without repeating characters.\nUse two pointers and a Set/Map to track the current window; move the left pointer whenever you see a duplicate.",
-        code: `function lengthOfLongestSubstring(s) {\n  let left = 0, maxLen = 0;\n  const seen = new Set();\n\n  for (let right = 0; right < s.length; right++) {\n    while (seen.has(s[right])) {\n      seen.delete(s[left]);\n      left++;\n    }\n    seen.add(s[right]);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}`,
+        code: `function lengthOfLongestSubstring(s) {\n  let left = 0, maxLen = 0;\n  const seen = new Set();\n\n  for (let right = 0; right < s.length; right++) {\n    while (seen.has(s[right])) {\n      seen.delete(s[left]);\n      left++;\n    }\n    seen.add(s[right]);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n  return maxLen;\n}\n\n// Test it\nconsole.log(lengthOfLongestSubstring("abcabcbb")); // 3\nconsole.log(lengthOfLongestSubstring("bbbbb")); // 1\nconsole.log(lengthOfLongestSubstring("pwwkew")); // 3`,
+        playground: true,
         tags: ["Google", "Meta", "DSA", "Strings", "Sliding Window"],
         followUps: [
           "How would you modify this to return the actual substring, not just the length?",
@@ -826,7 +845,8 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "DSA F: Merge Intervals / Meeting Rooms",
         a: "Common at Google/Microsoft.\nGiven meeting time intervals [[s1,e1],[s2,e2],...], merge all overlapping intervals.\nSort by start time, then scan once and merge when the current interval overlaps the previous one.",
-        code: `function merge(intervals) {\n  intervals.sort((a,b) => a[0] - b[0]);\n  const res = [];\n\n  for (const [start, end] of intervals) {\n    if (!res.length || res[res.length - 1][1] < start) {\n      res.push([start, end]);\n    } else {\n      res[res.length - 1][1] = Math.max(res[res.length - 1][1], end);\n    }\n  }\n  return res;\n}`,
+        code: `function merge(intervals) {\n  intervals.sort((a,b) => a[0] - b[0]);\n  const res = [];\n\n  for (const [start, end] of intervals) {\n    if (!res.length || res[res.length - 1][1] < start) {\n      res.push([start, end]);\n    } else {\n      res[res.length - 1][1] = Math.max(res[res.length - 1][1], end);\n    }\n  }\n  return res;\n}\n\n// Test it\nconst intervals = [[1,3],[2,6],[8,10],[15,18]];\nconsole.log(merge(intervals)); // [[1,6],[8,10],[15,18]]`,
+        playground: true,
         tags: ["Google", "Microsoft", "DSA", "Intervals"],
         followUps: [
           "How would you extend this to solve the 'minimum number of meeting rooms required' problem?",
@@ -868,13 +888,15 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "DSA H: Two Sum / Three Sum",
         a: "**Two Sum**: Find two numbers that add up to target. Use HashMap for O(n) solution.\n**Three Sum**: Find three numbers that add up to zero. Sort array, fix one number, use two pointers for the rest.",
-        code: `// Two Sum\nfunction twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n}\n\n// Three Sum\nfunction threeSum(nums) {\n  nums.sort((a, b) => a - b);\n  const res = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i - 1]) continue;\n    let left = i + 1, right = nums.length - 1;\n    while (left < right) {\n      const sum = nums[i] + nums[left] + nums[right];\n      if (sum === 0) {\n        res.push([nums[i], nums[left], nums[right]]);\n        while (left < right && nums[left] === nums[left + 1]) left++;\n        while (left < right && nums[right] === nums[right - 1]) right--;\n        left++; right--;\n      } else if (sum < 0) left++;\n      else right--;\n    }\n  }\n  return res;\n}`,
+        code: `// Two Sum\nfunction twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n}\n\nconsole.log(twoSum([2,7,11,15], 9)); // [0,1]\n\n// Three Sum\nfunction threeSum(nums) {\n  nums.sort((a, b) => a - b);\n  const res = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i - 1]) continue;\n    let left = i + 1, right = nums.length - 1;\n    while (left < right) {\n      const sum = nums[i] + nums[left] + nums[right];\n      if (sum === 0) {\n        res.push([nums[i], nums[left], nums[right]]);\n        while (left < right && nums[left] === nums[left + 1]) left++;\n        while (left < right && nums[right] === nums[right - 1]) right--;\n        left++; right--;\n      } else if (sum < 0) left++;\n      else right--;\n    }\n  }\n  return res;\n}\n\nconsole.log(threeSum([-1,0,1,2,-1,-4])); // [[-1,-1,2],[-1,0,1]]`,
+        playground: true,
         tags: ["Google", "Meta", "Amazon", "DSA", "Arrays"],
       },
       {
         q: "DSA I: Valid Parentheses",
         a: "Given a string containing parentheses, determine if they're valid. Use a stack to track opening brackets.",
-        code: `function isValid(s) {\n  const stack = [];\n  const pairs = { '(': ')', '[': ']', '{': '}' };\n  \n  for (const char of s) {\n    if (pairs[char]) {\n      stack.push(char);\n    } else {\n      if (stack.length === 0 || pairs[stack.pop()] !== char) {\n        return false;\n      }\n    }\n  }\n  return stack.length === 0;\n}`,
+        code: `function isValid(s) {\n  const stack = [];\n  const pairs = { '(': ')', '[': ']', '{': '}' };\n  \n  for (const char of s) {\n    if (pairs[char]) {\n      stack.push(char);\n    } else {\n      if (stack.length === 0 || pairs[stack.pop()] !== char) {\n        return false;\n      }\n    }\n  }\n  return stack.length === 0;\n}\n\nconsole.log(isValid("()[]{}")); // true\nconsole.log(isValid("(]")); // false\nconsole.log(isValid("{[]}")); // true`,
+        playground: true,
         tags: ["Google", "Microsoft", "DSA", "Stack"],
       },
       {
@@ -896,7 +918,8 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "Machine Coding F: Infinite Scroll / Pagination",
         a: "Implement infinite scroll:\n1. Detect when user scrolls near bottom\n2. Fetch next page of data\n3. Append to existing list\n4. Show loading indicator\n5. Handle end of data\n\nUse IntersectionObserver API for efficient scroll detection.",
-        code: `const observer = new IntersectionObserver((entries) => {\n  if (entries[0].isIntersecting && hasMore) {\n    loadMore();\n  }\n});\nobserver.observe(sentinelRef.current);`,
+        code: `// IntersectionObserver example\nconst observer = new IntersectionObserver((entries) => {\n  entries.forEach(entry => {\n    console.log('Element visible:', entry.isIntersecting);\n    console.log('Intersection ratio:', entry.intersectionRatio);\n  });\n});\n\n// In real app: observer.observe(sentinelRef.current);\nconsole.log('IntersectionObserver created!');`,
+        playground: true,
         tags: ["Google", "Meta", "Frontend", "Machine Coding"],
       },
       {
@@ -907,13 +930,15 @@ export const ebookContent: ChapterContent[] = [
       {
         q: "DSA K: Binary Search",
         a: "Search for a target in a sorted array in O(log n) time. Classic algorithm with many variations:\n- Find exact match\n- Find insertion point\n- Search in rotated array",
-        code: `function binarySearch(nums, target) {\n  let left = 0, right = nums.length - 1;\n  \n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}`,
+        code: `function binarySearch(nums, target) {\n  let left = 0, right = nums.length - 1;\n  \n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}\n\nconst arr = [1, 3, 5, 7, 9, 11, 13];\nconsole.log(binarySearch(arr, 7)); // 3\nconsole.log(binarySearch(arr, 6)); // -1`,
+        playground: true,
         tags: ["Google", "Microsoft", "DSA", "Binary Search"],
       },
       {
         q: "DSA L: Maximum Subarray (Kadane's Algorithm)",
         a: "Find the contiguous subarray with the largest sum. O(n) solution using dynamic programming.",
-        code: `function maxSubArray(nums) {\n  let maxSum = nums[0];\n  let currentSum = nums[0];\n  \n  for (let i = 1; i < nums.length; i++) {\n    currentSum = Math.max(nums[i], currentSum + nums[i]);\n    maxSum = Math.max(maxSum, currentSum);\n  }\n  return maxSum;\n}`,
+        code: `function maxSubArray(nums) {\n  let maxSum = nums[0];\n  let currentSum = nums[0];\n  \n  for (let i = 1; i < nums.length; i++) {\n    currentSum = Math.max(nums[i], currentSum + nums[i]);\n    maxSum = Math.max(maxSum, currentSum);\n  }\n  return maxSum;\n}\n\nconsole.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6\nconsole.log(maxSubArray([5,4,-1,7,8])); // 23`,
+        playground: true,
         tags: ["Amazon", "Microsoft", "DSA", "Dynamic Programming"],
       }
     ]
