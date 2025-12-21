@@ -4,7 +4,7 @@ import Link from "next/link";
 import { signOut } from 'firebase/auth';
 import { motion } from 'framer-motion';
 import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle, Link2, ExternalLink, BarChart3 } from 'lucide-react';
-import { ebookContent, studyPlans, StudyPlan, DayPlan } from './ebookContent';
+import { ebookContent, studyPlans } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
 import { db } from '@/firebase/firebase';
@@ -16,6 +16,7 @@ import WhatsAppSystemDesignLab from './WhatsAppSystemDesignLab';
 import URLShortenerSystemDesignLab from './URLShortenerSystemDesignLab';
 import RandomQuestionSelector from './RandomQuestionSelector';
 import CodePlayground from './CodePlayground';
+import { useSearch, useStudyPlan, useTimedQuiz } from './hooks';
 
 // Icons for study plans
 const CalendarIcon = ({ className }: { className?: string }) => (
@@ -146,46 +147,29 @@ interface ReaderProps {
 }
 
 const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
+  // ==================== CUSTOM HOOKS ====================
+  const search = useSearch();
+  const studyPlan = useStudyPlan();
+  const timedQuiz = useTimedQuiz();
+
+  // ==================== LOCAL STATE ====================
   const [activeModule, setActiveModule] = useState(ebookContent[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [sessionExpiryMsg, setSessionExpiryMsg] = useState<string | null>(null);
   const [logoutReason, setLogoutReason] = useState<string | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
-  const [isQuizMode, setIsQuizMode] = useState(false);
-  const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
   const [isExamMode, setIsExamMode] = useState(false);
   const [showTopicHeatmap, setShowTopicHeatmap] = useState(false);
   const [showEventLoopLab, setShowEventLoopLab] = useState(false);
   const [showWhatsAppLab, setShowWhatsAppLab] = useState(false);
   const [showURLShortenerLab, setShowURLShortenerLab] = useState(false);
-  const [isTimedQuizActive, setIsTimedQuizActive] = useState(false);
-  const [quizDurationMinutes, setQuizDurationMinutes] = useState(15);
-  const [quizQuestionCount, setQuizQuestionCount] = useState(10);
-  const [quizTimeLeft, setQuizTimeLeft] = useState<number | null>(null);
-  const [quizQuestionIndices, setQuizQuestionIndices] = useState<number[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(true);
-  
-  // ==================== SEARCH STATE ====================
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Array<{
-    type: 'module' | 'question';
-    moduleId: string;
-    moduleTitle: string;
-    questionIndex?: number;
-    questionText?: string;
-    matchedIn: 'title' | 'question' | 'answer' | 'tags' | 'code';
-    relevance: number;
-  }>>([]);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showQuickJump, setShowQuickJump] = useState(false);
   const [quickJumpQuery, setQuickJumpQuery] = useState('');
-  const [selectedResultIndex, setSelectedResultIndex] = useState(0);
   const [showRandomSelector, setShowRandomSelector] = useState(false);
   const [showCodePlayground, setShowCodePlayground] = useState(false);
 
   const contentRef = useRef<HTMLElement | null>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Helper function to recursively find a module by ID (including submodules)
   const findModuleById = useCallback((modules: typeof ebookContent, id: string): typeof ebookContent[0] | null => {
@@ -224,12 +208,12 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   };
 
   const goToModule = (moduleId: string) => {
-    if (isTimedQuizActive) {
+    if (timedQuiz.isTimedQuizActive) {
       // Prevent switching modules during a timed quiz
       return;
     }
     setActiveModule(moduleId);
-    setShowTodayPanel(false);
+    studyPlan.setShowTodayPanel(false);
     // Reset WhatsApp lab when navigating away
     if (moduleId !== 'system-design-whatsapp') {
       setShowWhatsAppLab(false);
@@ -240,58 +224,10 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     scrollToTop();
   };
 
-  const toggleAnswerReveal = (key: string) => {
-    setRevealedAnswers(prev => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const formatQuizTime = (seconds: number | null) => {
-    if (seconds === null || seconds < 0) return '';
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    const mm = mins.toString().padStart(2, '0');
-    const ss = secs.toString().padStart(2, '0');
-    return `${mm}:${ss}`;
-  };
-
-  const startTimedQuiz = () => {
-    const module = findModuleById(ebookContent, activeModule);
-    if (!module || !module.items || module.items.length === 0) return;
-
-    const indices = Array.from({ length: module.items.length }, (_, i) => i);
-    // Fisher–Yates shuffle to pick random questions
-    for (let i = indices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [indices[i], indices[j]] = [indices[j], indices[i]];
-    }
-
-    const selected = indices.slice(0, Math.min(quizQuestionCount, indices.length));
-    if (selected.length === 0) return;
-
-    setQuizQuestionIndices(selected);
-    setQuizTimeLeft(quizDurationMinutes * 60);
-    setIsTimedQuizActive(true);
-    setIsQuizMode(true);
-    setRevealedAnswers({});
+  const handleStartTimedQuiz = () => {
+    timedQuiz.startTimedQuiz(activeModule, findModuleById);
     scrollToTop();
   };
-
-  const endTimedQuiz = () => {
-    setIsTimedQuizActive(false);
-    setQuizTimeLeft(null);
-    setQuizQuestionIndices([]);
-    setIsQuizMode(false);
-  };
-
-  // ==================== STUDY PLAN STATE ====================
-  const [activePlan, setActivePlan] = useState<StudyPlan | null>(null);
-  const [currentDay, setCurrentDay] = useState(1);
-  const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
-  const [isPlanDropdownOpen, setIsPlanDropdownOpen] = useState(false);
-  const [showTodayPanel, setShowTodayPanel] = useState(false);
-  const [planStartDate, setPlanStartDate] = useState<Date | null>(null);
 
   // Load theme preference from localStorage
   useEffect(() => {
@@ -310,34 +246,11 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     localStorage.setItem('reader_theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
-  // Load recent searches from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('reader_recent_searches');
-      if (saved) {
-        setRecentSearches(JSON.parse(saved));
-      }
-    } catch (e) {
-      // Ignore
-    }
-  }, []);
-
-  // Keyboard shortcut for search (Cmd/Ctrl + K)
+  // Additional keyboard shortcut for quick jump (not handled by useSearch hook)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsSearchOpen(true);
-        setTimeout(() => searchInputRef.current?.focus(), 100);
-      }
-      if (e.key === 'Escape' && isSearchOpen) {
-        setIsSearchOpen(false);
-        setSearchQuery('');
-        setSearchResults([]);
-        setSelectedResultIndex(0);
-      }
       // Quick jump: Type "Q" followed by number
-      if (e.key === 'q' && !isSearchOpen && !e.metaKey && !e.ctrlKey) {
+      if (e.key === 'q' && !search.isSearchOpen && !e.metaKey && !e.ctrlKey) {
         const target = e.target as HTMLElement;
         if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
           setShowQuickJump(true);
@@ -348,211 +261,24 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSearchOpen]);
+  }, [search.isSearchOpen]);
 
-  // Search functionality
-  const performSearch = useCallback((query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    const queryLower = query.toLowerCase().trim();
-    const results: Array<{
-      type: 'module' | 'question';
-      moduleId: string;
-      moduleTitle: string;
-      questionIndex?: number;
-      questionText?: string;
-      matchedIn: 'title' | 'question' | 'answer' | 'tags' | 'code';
-      relevance: number;
-    }> = [];
-
-    // Helper to calculate relevance score
-    const calculateRelevance = (text: string, query: string, type: 'exact' | 'contains' | 'partial'): number => {
-      const textLower = text.toLowerCase();
-      if (textLower === query) return 100;
-      if (textLower.startsWith(query)) return 80;
-      if (textLower.includes(query)) return 60;
-      // Check for word matches
-      const queryWords = query.split(/\s+/);
-      const textWords = textLower.split(/\s+/);
-      const wordMatches = queryWords.filter(qw => textWords.some(tw => tw.includes(qw))).length;
-      return wordMatches * 20;
-    };
-
-    // Search through all modules
-    const searchInModules = (modules: typeof ebookContent, parentTitle = '') => {
-      for (const module of modules) {
-        const fullTitle = parentTitle ? `${parentTitle} > ${module.title}` : module.title;
-        
-        // Search in module title
-        if (module.title.toLowerCase().includes(queryLower)) {
-          results.push({
-            type: 'module',
-            moduleId: module.id,
-            moduleTitle: fullTitle,
-            matchedIn: 'title',
-            relevance: calculateRelevance(module.title, queryLower, 'contains'),
-          });
-        }
-
-        // Search in questions
-        if (module.items) {
-          module.items.forEach((item, index) => {
-            let maxRelevance = 0;
-            let matchedIn: 'title' | 'question' | 'answer' | 'tags' | 'code' = 'question';
-
-            // Search in question text
-            const questionText = item.q.replace(/^Q\d+\.\s*/i, '');
-            if (questionText.toLowerCase().includes(queryLower)) {
-              const rel = calculateRelevance(questionText, queryLower, 'contains');
-              if (rel > maxRelevance) {
-                maxRelevance = rel;
-                matchedIn = 'question';
-              }
-            }
-
-            // Search in answer
-            if (item.a.toLowerCase().includes(queryLower)) {
-              const rel = calculateRelevance(item.a, queryLower, 'contains') * 0.7;
-              if (rel > maxRelevance) {
-                maxRelevance = rel;
-                matchedIn = 'answer';
-              }
-            }
-
-            // Search in tags
-            if (item.tags) {
-              const tagMatch = item.tags.some(tag => tag.toLowerCase().includes(queryLower));
-              if (tagMatch) {
-                const rel = 50;
-                if (rel > maxRelevance) {
-                  maxRelevance = rel;
-                  matchedIn = 'tags';
-                }
-              }
-            }
-
-            // Search in code
-            if (item.code && item.code.toLowerCase().includes(queryLower)) {
-              const rel = calculateRelevance(item.code, queryLower, 'contains') * 0.5;
-              if (rel > maxRelevance) {
-                maxRelevance = rel;
-                matchedIn = 'code';
-              }
-            }
-
-            if (maxRelevance > 0) {
-              results.push({
-                type: 'question',
-                moduleId: module.id,
-                moduleTitle: fullTitle,
-                questionIndex: index,
-                questionText: questionText.substring(0, 100),
-                matchedIn,
-                relevance: maxRelevance,
-              });
-            }
-          });
-        }
-
-        // Recursively search submodules
-        if (module.submodules) {
-          searchInModules(module.submodules, fullTitle);
-        }
-      }
-    };
-
-    searchInModules(ebookContent);
-    
-    // Sort by relevance (highest first)
-    results.sort((a, b) => b.relevance - a.relevance);
-    
-    // Limit to top 50 results
-    setSearchResults(results.slice(0, 50));
-  }, []);
-
-  // Handle search input change
+  // Handle Enter key for search results navigation
   useEffect(() => {
-    if (searchQuery.trim()) {
-      performSearch(searchQuery);
-      setSelectedResultIndex(0);
-    } else {
-      setSearchResults([]);
-      setSelectedResultIndex(0);
-    }
-  }, [searchQuery, performSearch]);
-
-  // Auto-scroll selected result into view
-  useEffect(() => {
-    if (isSearchOpen && searchResults.length > 0 && selectedResultIndex >= 0) {
-      const selectedElement = document.querySelector(`[data-search-result-index="${selectedResultIndex}"]`);
-      if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }
-  }, [selectedResultIndex, isSearchOpen, searchResults.length]);
-
-  // Save to recent searches
-  const saveToRecentSearches = useCallback((query: string) => {
-    if (!query.trim()) return;
-    setRecentSearches(prev => {
-      const updated = [query, ...prev.filter(s => s !== query)].slice(0, 10);
-      localStorage.setItem('reader_recent_searches', JSON.stringify(updated));
-      return updated;
-    });
-  }, []);
-
-  // Navigate to search result
-  const navigateToResult = useCallback((result: typeof searchResults[0]) => {
-    const currentQuery = searchQuery;
-    goToModule(result.moduleId);
-    setIsSearchOpen(false);
-    setSearchQuery('');
-    setSearchResults([]);
-    saveToRecentSearches(currentQuery);
-    
-    // Scroll to question if it's a question result
-    if (result.type === 'question' && result.questionIndex !== undefined) {
-      setTimeout(() => {
-        const questionEl = document.getElementById(`question-${result.questionIndex}`);
-        if (questionEl) {
-          questionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Highlight the question briefly
-          questionEl.classList.add('ring-2', 'ring-brand-500', 'ring-opacity-50');
-          setTimeout(() => {
-            questionEl.classList.remove('ring-2', 'ring-brand-500', 'ring-opacity-50');
-          }, 2000);
-        }
-      }, 300);
-    }
-  }, [goToModule, searchQuery, saveToRecentSearches]);
-
-  // Keyboard navigation for search results
-  useEffect(() => {
-    if (!isSearchOpen) return;
+    if (!search.isSearchOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (searchResults.length > 0) {
-        if (e.key === 'ArrowDown') {
+      if (search.searchResults.length > 0) {
+        if (e.key === 'Enter' && search.searchResults[search.selectedResultIndex]) {
           e.preventDefault();
-          setSelectedResultIndex(prev => Math.min(prev + 1, searchResults.length - 1));
-        }
-        if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          setSelectedResultIndex(prev => Math.max(prev - 1, 0));
-        }
-        if (e.key === 'Enter' && searchResults[selectedResultIndex]) {
-          e.preventDefault();
-          navigateToResult(searchResults[selectedResultIndex]);
+          search.navigateToResult(search.searchResults[search.selectedResultIndex], goToModule);
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSearchOpen, searchResults, selectedResultIndex, navigateToResult]);
+  }, [search.isSearchOpen, search.searchResults, search.selectedResultIndex, search.navigateToResult, goToModule]);
 
   // Quick jump to question number
   const handleQuickJump = useCallback((query: string) => {
@@ -578,100 +304,10 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
     }
   }, [activeModule, findModuleById]);
 
-  // Load study plan progress from localStorage
-  useEffect(() => {
-    try {
-      const savedProgress = localStorage.getItem('ebook_study_progress');
-      if (savedProgress) {
-        const { planId, day, completed, startDate } = JSON.parse(savedProgress);
-        const plan = studyPlans.find(p => p.id === planId);
-        if (plan) {
-          setActivePlan(plan);
-          setCurrentDay(day);
-          setCompletedTasks(new Set(completed || []));
-          setPlanStartDate(startDate ? new Date(startDate) : new Date());
-        }
-      }
-    } catch (e) {
-      // Ignore parse errors
-    }
-  }, []);
-
-  // Timed quiz countdown
-  useEffect(() => {
-    if (!isTimedQuizActive || quizTimeLeft === null) return;
-
-    const id = window.setInterval(() => {
-      setQuizTimeLeft(prev => {
-        if (prev === null) return prev;
-        if (prev <= 1) {
-          window.clearInterval(id);
-          setIsTimedQuizActive(false);
-          setIsQuizMode(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      window.clearInterval(id);
-    };
-  }, [isTimedQuizActive, quizTimeLeft]);
-
-  // Save study plan progress to localStorage
-  const savePlanProgress = useCallback((plan: StudyPlan | null, day: number, completed: Set<string>) => {
-    if (plan) {
-      localStorage.setItem('ebook_study_progress', JSON.stringify({
-        planId: plan.id,
-        day,
-        completed: Array.from(completed),
-        startDate: planStartDate || new Date()
-      }));
-    } else {
-      localStorage.removeItem('ebook_study_progress');
-    }
-  }, [planStartDate]);
-
-  // Select a study plan
-  const selectPlan = (plan: StudyPlan) => {
-    setActivePlan(plan);
-    setCurrentDay(1);
-    setCompletedTasks(new Set());
-    setPlanStartDate(new Date());
-    setIsPlanDropdownOpen(false);
-    setShowTodayPanel(true);
-    savePlanProgress(plan, 1, new Set());
-  };
-
-  // Clear active plan
-  const clearPlan = () => {
-    setActivePlan(null);
-    setCurrentDay(1);
-    setCompletedTasks(new Set());
-    setPlanStartDate(null);
-    setShowTodayPanel(false);
-    localStorage.removeItem('ebook_study_progress');
-  };
-
-  // Toggle task completion
-  const toggleTaskCompletion = (taskKey: string) => {
-    setCompletedTasks(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(taskKey)) {
-        newSet.delete(taskKey);
-      } else {
-        newSet.add(taskKey);
-      }
-      savePlanProgress(activePlan, currentDay, newSet);
-      return newSet;
-    });
-  };
-
-  // Navigate to a specific question
+  // Navigate to a specific question (for study plan)
   const navigateToQuestion = (moduleId: string, questionIndex: number) => {
     setActiveModule(moduleId);
-    setShowTodayPanel(false);
+    studyPlan.setShowTodayPanel(false);
     // Scroll to question after a short delay
     setTimeout(() => {
       const questionEl = document.getElementById(`question-${questionIndex}`);
@@ -680,64 +316,6 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       }
     }, 100);
   };
-
-  // Go to next day
-  const goToNextDay = () => {
-    if (activePlan && currentDay < activePlan.totalDays) {
-      const newDay = currentDay + 1;
-      setCurrentDay(newDay);
-      savePlanProgress(activePlan, newDay, completedTasks);
-    }
-  };
-
-  // Go to previous day
-  const goToPreviousDay = () => {
-    if (currentDay > 1) {
-      const newDay = currentDay - 1;
-      setCurrentDay(newDay);
-      savePlanProgress(activePlan, newDay, completedTasks);
-    }
-  };
-
-  // Get today's plan
-  const todayPlan: DayPlan | undefined = activePlan?.schedule.find(s => s.day === currentDay);
-
-  // Calculate overall progress
-  const calculateProgress = () => {
-    if (!activePlan) return 0;
-    let totalTasks = 0;
-    let completedCount = 0;
-    activePlan.schedule.forEach(day => {
-      day.tasks.forEach(task => {
-        task.questionIndices.forEach(qIdx => {
-          totalTasks++;
-          if (completedTasks.has(`${day.day}-${task.moduleId}-${qIdx}`)) {
-            completedCount++;
-          }
-        });
-      });
-    });
-    return totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
-  };
-
-  // Get task count for today
-  const getTodayTaskCount = () => {
-    if (!todayPlan) return { total: 0, completed: 0 };
-    let total = 0;
-    let completed = 0;
-    todayPlan.tasks.forEach(task => {
-      task.questionIndices.forEach(qIdx => {
-        total++;
-        if (completedTasks.has(`${currentDay}-${task.moduleId}-${qIdx}`)) {
-          completed++;
-        }
-      });
-    });
-    return { total, completed };
-  };
-
-  const todayStats = getTodayTaskCount();
-  const overallProgress = calculateProgress();
   
   // Enhanced Anti-Screenshot / Copy Protection Logic (Global Listeners)
   useEffect(() => {
@@ -1269,14 +847,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       </div>
 
       {/* Search Modal */}
-      {isSearchOpen && (
+      {search.isSearchOpen && (
         <div 
           className="fixed inset-0 z-[100] flex items-start justify-center pt-20 md:pt-32 px-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
-              setIsSearchOpen(false);
-              setSearchQuery('');
-              setSearchResults([]);
+              search.setIsSearchOpen(false);
+              search.clearSearch();
             }
           }}
         >
@@ -1291,20 +868,19 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             <div className={`p-4 border-b ${themeClasses.borderSecondary} flex items-center gap-3`}>
               <Search className={`w-5 h-5 ${themeClasses.textMuted} flex-shrink-0`} />
               <input
-                ref={searchInputRef}
+                ref={search.searchInputRef}
                 type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={search.searchQuery}
+                onChange={(e) => search.setSearchQuery(e.target.value)}
                 placeholder="Search modules, questions, tags, or code... (Press Esc to close)"
                 className={`flex-1 bg-transparent ${themeClasses.text} placeholder:${themeClasses.textDim} outline-none text-sm`}
                 autoFocus
               />
-              {searchQuery && (
+              {search.searchQuery && (
                 <button
                   onClick={() => {
-                    setSearchQuery('');
-                    setSearchResults([]);
-                    searchInputRef.current?.focus();
+                    search.clearSearch();
+                    search.searchInputRef.current?.focus();
                   }}
                   className={`p-1 rounded-lg ${themeClasses.bgHover} ${themeClasses.textMuted} hover:${themeClasses.textSecondary} transition-colors`}
                 >
@@ -1313,9 +889,8 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               )}
               <button
                 onClick={() => {
-                  setIsSearchOpen(false);
-                  setSearchQuery('');
-                  setSearchResults([]);
+                  search.setIsSearchOpen(false);
+                  search.clearSearch();
                 }}
                 className={`px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} text-xs font-medium ${themeClasses.bgHover} transition-colors`}
               >
@@ -1325,20 +900,20 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
 
             {/* Search Results */}
             <div className={`max-h-[60vh] overflow-y-auto ${themeClasses.bgSecondary}`}>
-              {searchQuery.trim() && searchResults.length === 0 && (
+              {search.searchQuery.trim() && search.searchResults.length === 0 && (
                 <div className="p-8 text-center">
                   <Search className={`w-12 h-12 ${themeClasses.textDim} mx-auto mb-3 opacity-50`} />
-                  <p className={`${themeClasses.textMuted} text-sm`}>No results found for "{searchQuery}"</p>
+                  <p className={`${themeClasses.textMuted} text-sm`}>No results found for "{search.searchQuery}"</p>
                   <p className={`${themeClasses.textDim} text-xs mt-2`}>Try different keywords or search by tags</p>
                 </div>
               )}
 
-              {searchQuery.trim() && searchResults.length > 0 && (
+              {search.searchQuery.trim() && search.searchResults.length > 0 && (
                 <div className="p-2">
                   <div className={`px-3 py-2 text-xs font-medium ${themeClasses.textDim} uppercase tracking-wider`}>
-                    {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                    {search.searchResults.length} result{search.searchResults.length !== 1 ? 's' : ''} found
                   </div>
-                  {searchResults.map((result, idx) => {
+                  {search.searchResults.map((result, idx) => {
                     // Highlight search query in text
                     const highlightText = (text: string, query: string) => {
                       if (!query.trim()) return text;
@@ -1353,13 +928,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                       );
                     };
 
-                    const isSelected = idx === selectedResultIndex;
+                    const isSelected = idx === search.selectedResultIndex;
 
                     return (
                       <button
                         key={`${result.moduleId}-${result.questionIndex ?? 'module'}-${idx}`}
                         data-search-result-index={idx}
-                        onClick={() => navigateToResult(result)}
+                        onClick={() => search.navigateToResult(result, goToModule)}
                         className={`w-full text-left p-3 rounded-lg transition-colors border ${
                           isSelected 
                             ? `border-brand-500/50 ${themeClasses.bgTertiary}` 
@@ -1381,7 +956,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <span className={`text-xs font-medium ${themeClasses.textSecondary} truncate`}>
-                                {highlightText(result.moduleTitle, searchQuery)}
+                                {highlightText(result.moduleTitle, search.searchQuery)}
                               </span>
                               {result.type === 'question' && result.questionIndex !== undefined && (
                                 <span className={`text-[10px] px-1.5 py-0.5 rounded ${themeClasses.bgTertiary} ${themeClasses.textDim} font-mono`}>
@@ -1391,7 +966,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                             </div>
                             {result.type === 'question' && result.questionText && (
                               <p className={`text-sm ${themeClasses.textMuted} line-clamp-2 mb-1`}>
-                                {highlightText(result.questionText, searchQuery)}
+                                {highlightText(result.questionText, search.searchQuery)}
                               </p>
                             )}
                             <div className="flex items-center gap-2 flex-wrap">
@@ -1420,44 +995,31 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 </div>
               )}
 
-              {!searchQuery.trim() && recentSearches.length > 0 && (
+              {!search.searchQuery.trim() && search.recentSearches.length > 0 && (
                 <div className="p-2">
                   <div className={`px-3 py-2 text-xs font-medium ${themeClasses.textDim} uppercase tracking-wider flex items-center gap-2`}>
                     <Clock className="w-3 h-3" />
                     Recent Searches
                   </div>
-                  {recentSearches.map((search, idx) => (
+                  {search.recentSearches.map((recentSearch, idx) => (
                     <button
                       key={idx}
                       onClick={() => {
-                        setSearchQuery(search);
-                        searchInputRef.current?.focus();
+                        search.setSearchQuery(recentSearch);
+                        search.searchInputRef.current?.focus();
                       }}
                       className={`w-full text-left p-3 rounded-lg ${themeClasses.bgHover} transition-colors flex items-center gap-3 group`}
                     >
                       <Clock className={`w-4 h-4 ${themeClasses.textDim} flex-shrink-0`} />
                       <span className={`flex-1 text-sm ${themeClasses.textSecondary} group-hover:text-brand-400 transition-colors`}>
-                        {search}
+                        {recentSearch}
                       </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setRecentSearches(prev => {
-                            const updated = prev.filter((_, i) => i !== idx);
-                            localStorage.setItem('reader_recent_searches', JSON.stringify(updated));
-                            return updated;
-                          });
-                        }}
-                        className={`p-1 rounded-lg ${themeClasses.bgHover} ${themeClasses.textDim} hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity`}
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
                     </button>
                   ))}
                 </div>
               )}
 
-              {!searchQuery.trim() && recentSearches.length === 0 && (
+              {!search.searchQuery.trim() && search.recentSearches.length === 0 && (
                 <div className="p-8 text-center">
                   <Search className={`w-12 h-12 ${themeClasses.textDim} mx-auto mb-3 opacity-50`} />
                   <p className={`${themeClasses.textMuted} text-sm mb-2`}>Start typing to search</p>
@@ -1472,7 +1034,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             </div>
 
             {/* Search Tips Footer */}
-            {searchQuery.trim() && searchResults.length > 0 && (
+            {search.searchQuery.trim() && search.searchResults.length > 0 && (
               <div className={`px-4 py-2 border-t ${themeClasses.borderSecondary} ${themeClasses.bgTertiary}/30 flex items-center justify-between text-xs ${themeClasses.textDim} flex-wrap gap-2`}>
                 <span>Press Enter to open first result</span>
                 <span>↑↓ to navigate • Esc to close</span>
@@ -1678,9 +1240,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
           <div className="mb-4">
             <div className="relative">
               <button
-                onClick={() => setIsPlanDropdownOpen(!isPlanDropdownOpen)}
+                onClick={() => studyPlan.setIsPlanDropdownOpen(!studyPlan.isPlanDropdownOpen)}
                 className={`w-full flex items-center justify-between gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border ${
-                  activePlan 
+                  studyPlan.activePlan 
                     ? 'bg-gradient-to-r from-brand-500/20 to-purple-500/20 border-brand-500/30 text-brand-300' 
                     : `${themeClasses.bgTertiary}/50 ${themeClasses.borderSecondary} ${themeClasses.textSecondary} ${themeClasses.bgHover}`
                 }`}
@@ -1688,21 +1250,21 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4" />
                   <span className="truncate">
-                    {activePlan ? activePlan.name : 'Choose Study Plan'}
+                    {studyPlan.activePlan ? studyPlan.activePlan.name : 'Choose Study Plan'}
                   </span>
                 </div>
-                <ChevronDownIcon className={`w-4 h-4 transition-transform ${isPlanDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDownIcon className={`w-4 h-4 transition-transform ${studyPlan.isPlanDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Dropdown */}
-              {isPlanDropdownOpen && (
+              {studyPlan.isPlanDropdownOpen && (
                 <div className={`absolute top-full left-0 right-0 mt-2 ${themeClasses.bgTertiary} border ${themeClasses.borderSecondary} rounded-lg shadow-xl z-20 overflow-hidden`}>
                   {studyPlans.map((plan) => (
                     <button
                       key={plan.id}
-                      onClick={() => selectPlan(plan)}
+                      onClick={() => studyPlan.selectPlan(plan)}
                       className={`w-full text-left px-4 py-3 ${themeClasses.bgHover} transition-colors border-b ${themeClasses.borderSecondary} last:border-b-0 ${
-                        activePlan?.id === plan.id ? themeClasses.bgTertiary : ''
+                        studyPlan.activePlan?.id === plan.id ? themeClasses.bgTertiary : ''
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
@@ -1720,9 +1282,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                       </div>
                     </button>
                   ))}
-                  {activePlan && (
+                  {studyPlan.activePlan && (
                     <button
-                      onClick={clearPlan}
+                      onClick={studyPlan.clearPlan}
                       className="w-full text-left px-4 py-3 hover:bg-red-900/20 transition-colors text-red-400 text-sm"
                     >
                       ✕ Clear Active Plan
@@ -1733,25 +1295,25 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             </div>
 
             {/* Active Plan Progress */}
-            {activePlan && (
+            {studyPlan.activePlan && (
               <div className={`mt-3 p-3 ${themeClasses.bgTertiary}/50 rounded-lg border ${themeClasses.borderSecondary}`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className={`text-xs ${themeClasses.textMuted}`}>Overall Progress</span>
-                  <span className="text-xs font-bold text-brand-400">{overallProgress}%</span>
+                  <span className="text-xs font-bold text-brand-400">{studyPlan.overallProgress}%</span>
                 </div>
                 <div className={`w-full h-2 ${themeClasses.bgTertiary} rounded-full overflow-hidden`}>
                   <div 
                     className="h-full bg-gradient-to-r from-brand-500 to-purple-500 transition-all duration-500"
-                    style={{ width: `${overallProgress}%` }}
+                    style={{ width: `${studyPlan.overallProgress}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                  <span className={`text-[10px] ${themeClasses.textDim}`}>Day {currentDay} of {activePlan.totalDays}</span>
+                  <span className={`text-[10px] ${themeClasses.textDim}`}>Day {studyPlan.currentDay} of {studyPlan.activePlan.totalDays}</span>
                   <button
-                    onClick={() => setShowTodayPanel(!showTodayPanel)}
+                    onClick={() => studyPlan.setShowTodayPanel(!studyPlan.showTodayPanel)}
                     className="text-[10px] text-brand-400 hover:text-brand-300 font-medium"
                   >
-                    {showTodayPanel ? 'Hide' : 'Show'} Today's Tasks
+                    {studyPlan.showTodayPanel ? 'Hide' : 'Show'} Today's Tasks
                   </button>
                 </div>
               </div>
@@ -1764,7 +1326,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               <button
                 onClick={() => goToModule(chapter.id)}
                 className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border border-transparent ${
-                  activeModule === chapter.id && !showTodayPanel
+                  activeModule === chapter.id && !studyPlan.showTodayPanel
                     ? 'bg-brand-500/10 text-brand-400 border-brand-500/20'
                     : `${themeClasses.textMuted} ${themeClasses.bgHover} ${isDarkMode ? 'hover:text-white' : 'hover:text-gray-900'}`
                 }`}
@@ -1779,7 +1341,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                       key={submodule.id}
                       onClick={() => goToModule(submodule.id)}
                       className={`w-full text-left px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200 border border-transparent ${
-                        activeModule === submodule.id && !showTodayPanel
+                        activeModule === submodule.id && !studyPlan.showTodayPanel
                           ? 'bg-brand-500/10 text-brand-400 border-brand-500/20'
                           : `${themeClasses.textDim} ${themeClasses.bgHover} ${isDarkMode ? 'hover:text-slate-300' : 'hover:text-gray-700'}`
                       }`}
@@ -1826,8 +1388,8 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 {/* Search Button */}
                 <button
                   onClick={() => {
-                    setIsSearchOpen(true);
-                    setTimeout(() => searchInputRef.current?.focus(), 100);
+                    search.setIsSearchOpen(true);
+                    setTimeout(() => search.searchInputRef.current?.focus(), 100);
                   }}
                   className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary} px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-brand-500 hover:text-brand-300 transition-colors`}
                   title="Search (Cmd/Ctrl + K)"
@@ -1870,19 +1432,19 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                   <>
                     {/* Practice quiz toggle (hide/show answers) */}
                     <button
-                      onClick={() => setIsQuizMode(prev => !prev)}
+                      onClick={() => timedQuiz.setIsQuizMode(!timedQuiz.isQuizMode)}
                       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
-                        isQuizMode
+                        timedQuiz.isQuizMode
                           ? 'border-amber-500/70 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20'
                           : `${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 ${themeClasses.textSecondary} hover:border-amber-500 hover:text-amber-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'}`
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full shadow-[0_0_6px_rgba(245,158,11,0.8)] ${
-                          isQuizMode ? 'bg-amber-400' : themeClasses.indicatorBg
+                          timedQuiz.isQuizMode ? 'bg-amber-400' : themeClasses.indicatorBg
                         }`}
                       />
-                      {isQuizMode ? 'Quiz Mode: On' : 'Quiz Mode: Off'}
+                      {timedQuiz.isQuizMode ? 'Quiz Mode: On' : 'Quiz Mode: Off'}
                     </button>
 
                     {/* Topic Heat Map toggle – only meaningful on first module */}
@@ -1925,9 +1487,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 {/* Exam Mode toggle */}
                 <button
                   onClick={() => {
-                    setShowTodayPanel(false);
+                    studyPlan.setShowTodayPanel(false);
                     setIsExamMode(prev => !prev);
-                    setIsQuizMode(false);
+                    timedQuiz.setIsQuizMode(false);
                   }}
                   className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                     isExamMode
@@ -1959,7 +1521,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 activeModuleId={activeModule}
                 onExit={() => setIsExamMode(false)}
               />
-            ) : showTodayPanel && activePlan && todayPlan ? (
+            ) : studyPlan.showTodayPanel && studyPlan.activePlan && studyPlan.todayPlan ? (
               <div className="animate-fade-in">
                 {/* Header */}
                 <div className={`mb-8 pb-6 border-b ${themeClasses.border}`}>
@@ -1969,36 +1531,33 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                     </div>
                     <div>
                       <span className="text-brand-500 font-mono text-xs tracking-widest uppercase block">
-                        {activePlan.name} • Day {currentDay}
+                        {studyPlan.activePlan.name} • Day {studyPlan.currentDay}
                       </span>
-                      <h2 className={`text-2xl md:text-4xl font-bold ${themeClasses.text}`}>{todayPlan.title}</h2>
+                      <h2 className={`text-2xl md:text-4xl font-bold ${themeClasses.text}`}>{studyPlan.todayPlan.title}</h2>
                     </div>
                   </div>
 
                   {/* Day Navigation */}
                   <div className="flex items-center gap-4 mt-4">
                     <button
-                      onClick={goToPreviousDay}
-                      disabled={currentDay === 1}
+                      onClick={studyPlan.goToPreviousDay}
+                      disabled={studyPlan.currentDay === 1}
                       className={`px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} text-sm disabled:opacity-50 disabled:cursor-not-allowed ${themeClasses.bgHoverSecondary} transition-colors`}
                     >
                       ← Previous Day
                     </button>
                     <div className="flex-1 flex items-center gap-2">
-                      {Array.from({ length: Math.min(activePlan.totalDays, 10) }).map((_, i) => {
-                        const dayNum = currentDay <= 5 ? i + 1 : currentDay - 5 + i + 1;
-                        if (dayNum > activePlan.totalDays) return null;
+                      {Array.from({ length: Math.min(studyPlan.activePlan.totalDays, 10) }).map((_, i) => {
+                        const dayNum = studyPlan.currentDay <= 5 ? i + 1 : studyPlan.currentDay - 5 + i + 1;
+                        if (dayNum > studyPlan.activePlan!.totalDays) return null;
                         return (
                           <button
                             key={dayNum}
-                            onClick={() => {
-                              setCurrentDay(dayNum);
-                              savePlanProgress(activePlan, dayNum, completedTasks);
-                            }}
+                            onClick={() => studyPlan.setCurrentDay(dayNum)}
                             className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${
-                              dayNum === currentDay
+                              dayNum === studyPlan.currentDay
                                 ? 'bg-brand-500 text-white'
-                                : dayNum < currentDay
+                                : dayNum < studyPlan.currentDay
                                 ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                                 : `${themeClasses.bgTertiary} ${themeClasses.textMuted} ${themeClasses.bgHover}`
                             }`}
@@ -2007,13 +1566,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                           </button>
                         );
                       })}
-                      {activePlan.totalDays > 10 && (
+                      {studyPlan.activePlan.totalDays > 10 && (
                         <span className={`${themeClasses.textDim} text-xs`}>...</span>
                       )}
                     </div>
                     <button
-                      onClick={goToNextDay}
-                      disabled={currentDay === activePlan.totalDays}
+                      onClick={studyPlan.goToNextDay}
+                      disabled={studyPlan.currentDay === studyPlan.activePlan.totalDays}
                       className={`px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} text-sm disabled:opacity-50 disabled:cursor-not-allowed ${themeClasses.bgHoverSecondary} transition-colors`}
                     >
                       Next Day →
@@ -2022,13 +1581,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 </div>
 
                 {/* Daily Tip */}
-                {todayPlan.tip && (
+                {studyPlan.todayPlan.tip && (
                   <div className="mb-8 p-4 rounded-xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
                     <div className="flex items-start gap-3">
                       <span className="text-2xl">💡</span>
                       <div>
                         <span className="text-amber-400 font-semibold text-sm uppercase tracking-wide">Pro Tip</span>
-                        <p className="text-amber-100/80 text-sm mt-1">{todayPlan.tip}</p>
+                        <p className="text-amber-100/80 text-sm mt-1">{studyPlan.todayPlan.tip}</p>
                       </div>
                     </div>
                   </div>
@@ -2038,15 +1597,15 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 <div className={`mb-8 p-4 rounded-xl ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
                   <div className="flex items-center justify-between mb-3">
                     <span className={`${themeClasses.textSecondary} font-medium`}>Today's Progress</span>
-                    <span className="text-brand-400 font-bold">{todayStats.completed} / {todayStats.total} tasks</span>
+                    <span className="text-brand-400 font-bold">{studyPlan.todayStats.completed} / {studyPlan.todayStats.total} tasks</span>
                   </div>
                   <div className={`w-full h-3 ${themeClasses.bgTertiary} rounded-full overflow-hidden`}>
                     <div 
                       className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-500"
-                      style={{ width: todayStats.total > 0 ? `${(todayStats.completed / todayStats.total) * 100}%` : '0%' }}
+                      style={{ width: studyPlan.todayStats.total > 0 ? `${(studyPlan.todayStats.completed / studyPlan.todayStats.total) * 100}%` : '0%' }}
                     />
                   </div>
-                  {todayStats.completed === todayStats.total && todayStats.total > 0 && (
+                  {studyPlan.todayStats.completed === studyPlan.todayStats.total && studyPlan.todayStats.total > 0 && (
                     <div className="mt-3 flex items-center gap-2 text-green-400">
                       <CheckCircleIcon className="w-5 h-5" />
                       <span className="text-sm font-medium">Day complete! Great work! 🎉</span>
@@ -2057,7 +1616,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 {/* Task List */}
                 <div className="space-y-4">
                   <h3 className={`text-lg font-semibold ${themeClasses.text} mb-4`}>Today's Tasks</h3>
-                  {todayPlan.tasks.map((task, taskIdx) => {
+                  {studyPlan.todayPlan.tasks.map((task, taskIdx) => {
                     const module = findModuleById(ebookContent, task.moduleId);
                     if (!module) return null;
 
@@ -2070,8 +1629,8 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                           {task.questionIndices.map((qIdx) => {
                             const question = module.items?.[qIdx];
                             if (!question) return null;
-                            const taskKey = `${currentDay}-${task.moduleId}-${qIdx}`;
-                            const isCompleted = completedTasks.has(taskKey);
+                            const taskKey = `${studyPlan.currentDay}-${task.moduleId}-${qIdx}`;
+                            const isCompleted = studyPlan.completedTasks.has(taskKey);
                             const questionText = question.q.replace(/^Q\d+\.\s*/i, '');
 
                             return (
@@ -2082,7 +1641,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                 }`}
                               >
                                 <button
-                                  onClick={() => toggleTaskCompletion(taskKey)}
+                                  onClick={() => studyPlan.toggleTaskCompletion(taskKey)}
                                   className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                                     isCompleted
                                       ? 'bg-green-500 border-green-500 text-white'
@@ -2108,9 +1667,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                     <div className="flex flex-wrap gap-1.5 mt-1.5 items-center">
                                       {/* Company tags with logos in study plan */}
                                       {question.tags
-                                        .filter(tag => knownCompanies.has(tag))
+                                        .filter((tag: string) => knownCompanies.has(tag))
                                         .slice(0, 2)
-                                        .map((company) => (
+                                        .map((company: string) => (
                                           <div
                                             key={company}
                                             className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20"
@@ -2124,9 +1683,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                         ))}
                                       {/* Regular tags */}
                                       {question.tags
-                                        .filter(tag => !knownCompanies.has(tag))
+                                        .filter((tag: string) => !knownCompanies.has(tag))
                                         .slice(0, 2)
-                                        .map(tag => (
+                                        .map((tag: string) => (
                                           <span key={tag} className={`text-[9px] px-1.5 py-0.5 rounded ${themeClasses.bgTertiary} ${themeClasses.textMuted}`}>
                                             {tag}
                                           </span>
@@ -2150,13 +1709,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 </div>
 
                 {/* Day Complete Action */}
-                {todayStats.completed === todayStats.total && todayStats.total > 0 && currentDay < activePlan.totalDays && (
+                {studyPlan.todayStats.completed === studyPlan.todayStats.total && studyPlan.todayStats.total > 0 && studyPlan.currentDay < studyPlan.activePlan.totalDays && (
                   <div className="mt-8 text-center">
                     <button
-                      onClick={goToNextDay}
+                      onClick={studyPlan.goToNextDay}
                       className="px-8 py-3 bg-gradient-to-r from-brand-500 to-purple-500 text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-brand-500/25"
                     >
-                      Continue to Day {currentDay + 1} →
+                      Continue to Day {studyPlan.currentDay + 1} →
                     </button>
                   </div>
                 )}
@@ -2367,18 +1926,18 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             {/* Questions Loop */}
             <div className="space-y-12">
                {(activeContent && activeContent.items
-                 ? (isTimedQuizActive && quizQuestionIndices.length > 0
-                     ? quizQuestionIndices
-                         .filter((idx) => idx >= 0 && idx < activeContent.items!.length)
-                         .map((idx) => ({ item: activeContent.items![idx], idx }))
+                 ? (timedQuiz.isTimedQuizActive && timedQuiz.quizQuestionIndices.length > 0
+                     ? timedQuiz.quizQuestionIndices
+                         .filter((idx: number) => idx >= 0 && idx < activeContent.items!.length)
+                         .map((idx: number) => ({ item: activeContent.items![idx], idx }))
                      : activeContent.items.map((item, idx) => ({ item, idx }))
                    )
                  : []
-               ).map(({ item, idx }) => {
+               ).map(({ item, idx }: { item: NonNullable<typeof activeContent>['items'] extends (infer T)[] | undefined ? T : never; idx: number }) => {
                  // Remove "Q{number}." prefix from question text if it exists
                  const questionText = item.q.replace(/^Q\d+\.\s*/i, '');
                  const answerKey = `${activeModule}-${idx}`;
-                 const isRevealed = !isQuizMode || revealedAnswers[answerKey];
+                 const isRevealed = !timedQuiz.isQuizMode || timedQuiz.revealedAnswers[answerKey];
 
                  return (
                  <div key={idx} id={`question-${idx}`} className="group scroll-mt-20">
@@ -2393,9 +1952,9 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                          {item.tags && item.tags.length > 0 && (
                            <div className="mt-3 flex flex-wrap gap-2 items-center">
                              {/* Company Tags with Logos */}
-                             {item.tags
-                               .filter(tag => knownCompanies.has(tag))
-                               .map((company) => (
+                            {item.tags
+                               .filter((tag: string) => knownCompanies.has(tag))
+                               .map((company: string) => (
                                  <div
                                    key={company}
                                    className={`group flex items-center gap-2 px-3 py-1.5 rounded-full ${themeClasses.bgTertiary}/60 border ${themeClasses.borderSecondary} hover:border-brand-500/50 transition-all cursor-default`}
@@ -2407,11 +1966,11 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                    </span>
                                  </div>
                                ))}
-                             
-                             {/* Regular Tags (non-company) */}
-                             {item.tags
-                               .filter(tag => !knownCompanies.has(tag))
-                               .map((tag) => (
+                            
+                            {/* Regular Tags (non-company) */}
+                            {item.tags
+                               .filter((tag: string) => !knownCompanies.has(tag))
+                               .map((tag: string) => (
                                  <span
                                    key={tag}
                                    className={`text-[10px] uppercase tracking-wide px-2.5 py-1 rounded-full ${themeClasses.bgTertiary}/80 border ${themeClasses.borderSecondary} ${themeClasses.textSecondary}`}
@@ -2425,17 +1984,17 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                     </div>
 
                     <div className="pl-12 mt-2">
-                       {isQuizMode && (
+                       {timedQuiz.isQuizMode && (
                          <button
                            type="button"
-                           onClick={() => toggleAnswerReveal(answerKey)}
+                           onClick={() => timedQuiz.toggleAnswerReveal(answerKey)}
                            className={`mb-3 inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary}/70 px-3 py-1 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-amber-500 hover:text-amber-300 ${isDarkMode ? 'hover:bg-slate-900' : 'hover:bg-white'} transition-colors`}
                          >
                            {isRevealed ? 'Hide answer' : 'Show answer'}
                          </button>
                        )}
 
-                      {(!isQuizMode || isRevealed) && (
+                      {(!timedQuiz.isQuizMode || isRevealed) && (
                         <>
                           {/* Code Snippet (if exists) - shown before the answer for better question context */}
                           {item.code && (
@@ -2491,7 +2050,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                                 Follow-up prompts
                               </div>
                               <ul className={`list-disc list-inside space-y-1 text-[13px] ${themeClasses.textMuted}`}>
-                                {item.followUps.map((fu, i) => (
+                                {item.followUps.map((fu: string, i: number) => (
                                   <li key={i} className="select-none">
                                     {fu}
                                   </li>
