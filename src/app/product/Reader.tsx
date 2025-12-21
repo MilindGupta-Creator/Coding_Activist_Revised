@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from 'firebase/auth';
 import { motion } from 'framer-motion';
-import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle } from 'lucide-react';
+import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle, Link2, ExternalLink, BarChart3 } from 'lucide-react';
 import { ebookContent, studyPlans, StudyPlan, DayPlan } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
@@ -13,6 +13,7 @@ import ExamQuiz from './ExamQuiz';
 import FrequencyHeatmap from './FrequencyHeatmap';
 import EventLoopSimulator from './EventLoopSimulator';
 import WhatsAppSystemDesignLab from './WhatsAppSystemDesignLab';
+import URLShortenerSystemDesignLab from './URLShortenerSystemDesignLab';
 import RandomQuestionSelector from './RandomQuestionSelector';
 import CodePlayground from './CodePlayground';
 
@@ -156,6 +157,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [showTopicHeatmap, setShowTopicHeatmap] = useState(false);
   const [showEventLoopLab, setShowEventLoopLab] = useState(false);
   const [showWhatsAppLab, setShowWhatsAppLab] = useState(false);
+  const [showURLShortenerLab, setShowURLShortenerLab] = useState(false);
   const [isTimedQuizActive, setIsTimedQuizActive] = useState(false);
   const [quizDurationMinutes, setQuizDurationMinutes] = useState(15);
   const [quizQuestionCount, setQuizQuestionCount] = useState(10);
@@ -1198,6 +1200,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   
   // Check if we're viewing the WhatsApp System Design submodule
   const isWhatsAppModule = activeModule === 'system-design-whatsapp';
+  const isURLShortenerModule = activeModule === 'system-design-url-shortener';
 
   // Get user email from session
   const userEmail = (() => {
@@ -2263,6 +2266,99 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                          </motion.div>
                        ) : (
                          <WhatsAppSystemDesignLab onClose={() => setShowWhatsAppLab(false)} />
+                       )}
+                     </div>
+                   )}
+
+                   {/* URL Shortener System Design Lab - Prominent Banner */}
+                   {isURLShortenerModule && (
+                     <div className="mt-8">
+                       {!showURLShortenerLab ? (
+                         <motion.div
+                           initial={{ opacity: 0, y: 20 }}
+                           animate={{ opacity: 1, y: 0 }}
+                           className="relative overflow-hidden rounded-2xl border-2 border-purple-500/50 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 p-6 shadow-2xl shadow-purple-500/20"
+                         >
+                           {/* Animated background pattern */}
+                           <div className="absolute inset-0 opacity-10 overflow-hidden">
+                             <motion.div
+                               className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(168,85,247,0.1)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]"
+                               animate={{
+                                 x: [0, 20, 0],
+                                 y: [0, 20, 0],
+                               }}
+                               transition={{
+                                 duration: 20,
+                                 repeat: Infinity,
+                                 ease: "linear"
+                               }}
+                             ></motion.div>
+                           </div>
+                           
+                           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                             <div className="flex-1">
+                               <div className="flex items-center gap-3 mb-3">
+                                 <div className="relative">
+                                   <div className="absolute inset-0 bg-purple-400 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                                   <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+                                     <Link2 className="w-6 h-6 text-white" />
+                                   </div>
+                                 </div>
+                                 <div>
+                                   <div className="flex items-center gap-2 mb-1">
+                                     <h3 className={`text-xl font-bold ${themeClasses.text}`}>Interactive URL Shortener Lab</h3>
+                                     <span className={`px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/30 ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} text-[10px] font-bold uppercase tracking-wider`}>
+                                       NEW
+                                     </span>
+                                   </div>
+                                   <p className={`text-sm ${themeClasses.textSecondary}`}>
+                                     Experience URL shortening architecture with hands-on simulations. Shorten URLs, test redirects, view analytics, and explore the system architecture interactively.
+                                   </p>
+                                 </div>
+                               </div>
+                               
+                               <div className="flex flex-wrap gap-2 mt-4">
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <Link2 className="w-4 h-4 text-purple-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>URL Shortening</span>
+                                 </div>
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <ExternalLink className="w-4 h-4 text-blue-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>Redirect Flow</span>
+                                 </div>
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <BarChart3 className="w-4 h-4 text-yellow-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>Analytics Dashboard</span>
+                                 </div>
+                                 <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${themeClasses.bgTertiary}/50 border ${themeClasses.borderSecondary}`}>
+                                   <Server className="w-4 h-4 text-green-400" />
+                                   <span className={`text-xs ${themeClasses.textSecondary}`}>Architecture Explorer</span>
+                                 </div>
+                               </div>
+                             </div>
+                             
+                             <button
+                               onClick={() => setShowURLShortenerLab(true)}
+                               className="group relative px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-sm hover:from-purple-400 hover:to-pink-400 transition-all duration-300 shadow-lg shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105 flex items-center gap-2"
+                             >
+                               <span className="relative z-10">Launch Lab</span>
+                               <motion.div
+                                 animate={{ x: [0, 4, 0] }}
+                                 transition={{ repeat: Infinity, duration: 1.5 }}
+                                 className="relative z-10"
+                               >
+                                 <Play className="w-4 h-4 fill-white" />
+                               </motion.div>
+                               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity blur-xl"></div>
+                             </button>
+                           </div>
+                           
+                           {/* Decorative elements */}
+                           <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
+                           <div className="absolute bottom-0 left-0 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl"></div>
+                         </motion.div>
+                       ) : (
+                         <URLShortenerSystemDesignLab onClose={() => setShowURLShortenerLab(false)} />
                        )}
                      </div>
                    )}
