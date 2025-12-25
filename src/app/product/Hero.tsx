@@ -142,7 +142,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative pt-32 pb-20 lg:pt-24 lg:pb-28 overflow-hidden bg-gradient-to-b from-white via-blue-50/30 to-white">
+    <div className="relative pt-32 pb-20 lg:pt-12 lg:pb-12 overflow-hidden bg-gradient-to-b from-white via-blue-50/30 to-white">
       {/* 3D Floating Shapes Background */}
       <div className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
         <FloatingShapes shapeCount={10} colors={["#3b82f6", "#8b5cf6", "#ec4899", "#10b981"]} />

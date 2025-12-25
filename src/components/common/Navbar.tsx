@@ -30,6 +30,19 @@ const Navbar = () => {
   const [user, setUser] = useState<firebase.User | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [diceFace, setDiceFace] = useState(5);
+
+  const faceHasPip = (face: number, pos: string) => {
+    const layout: Record<number, string[]> = {
+      1: ['center'],
+      2: ['tl', 'br'],
+      3: ['tl', 'center', 'br'],
+      4: ['tl', 'tr', 'bl', 'br'],
+      5: ['tl', 'tr', 'bl', 'br', 'center'],
+      6: ['tl', 'tr', 'ml', 'mr', 'bl', 'br'],
+    };
+    return layout[face]?.includes(pos);
+  };
 
   const pathname = usePathname();
 
@@ -47,6 +60,17 @@ const Navbar = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDiceFace((prev) => {
+        let next = Math.floor(Math.random() * 6) + 1;
+        if (next === prev) next = ((next % 6) + 1); // nudge change
+        return next;
+      });
+    }, 1200);
+    return () => clearInterval(interval);
   }, []);
 
   const handleSignOut = async () => {
@@ -94,6 +118,23 @@ const Navbar = () => {
               <p className="font-bold text-white text-lg group-hover:text-brand-300 transition-all duration-300">Coding Activist</p>
             </div>
             
+          </div>
+        </Link>
+        <Link
+          href="/fun"
+          className="hidden md:flex items-center justify-center w-12 h-12 rounded-xl relative group"
+          aria-label="Fun Zone"
+        >
+          <div className="relative w-10 h-10">
+            <div className="absolute inset-0 rounded-lg bg-white text-slate-900 border border-black/10 shadow-[0_4px_16px_rgba(0,0,0,0.25)] cube-spin transform-gpu">
+              {['tl','tr','ml','mr','bl','br','center'].map((pos) => (
+                <span
+                  key={pos}
+                  className={`pip pip-${pos} ${faceHasPip(diceFace, pos) ? 'opacity-100' : 'opacity-0'}`}
+                />
+              ))}
+            </div>
+            <div className="absolute inset-[2px] rounded-md border-white/40 mix-blend-screen pointer-events-none" />
           </div>
         </Link>
         <div className="md:flex items-center gap-x-6 lg:gap-x-8 hidden relative">
@@ -306,6 +347,36 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes cube-spin {
+          0% { transform: rotateX(18deg) rotateY(0deg) rotateZ(0deg); }
+          25% { transform: rotateX(22deg) rotateY(90deg) rotateZ(4deg); }
+          50% { transform: rotateX(24deg) rotateY(180deg) rotateZ(-6deg); }
+          75% { transform: rotateX(20deg) rotateY(270deg) rotateZ(2deg); }
+          100% { transform: rotateX(18deg) rotateY(360deg) rotateZ(0deg); }
+        }
+
+        .cube-spin {
+          animation: cube-spin 6s linear infinite;
+        }
+
+        .pip {
+          position: absolute;
+          width: 6px;
+          height: 6px;
+          background: #0b0b0b;
+          border-radius: 9999px;
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.2);
+          transition: opacity 0.15s ease;
+        }
+        .pip-tl { top: 6px; left: 6px; }
+        .pip-tr { top: 6px; right: 6px; }
+        .pip-ml { top: 50%; left: 6px; transform: translateY(-50%); }
+        .pip-mr { top: 50%; right: 6px; transform: translateY(-50%); }
+        .pip-bl { bottom: 6px; left: 6px; }
+        .pip-br { bottom: 6px; right: 6px; }
+        .pip-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+      `}</style>
     </div>
   );
 };

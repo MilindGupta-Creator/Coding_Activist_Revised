@@ -183,6 +183,80 @@ setTimeout(() => {
           </div>
         </div>
       )
+    },
+    {
+      title: "Code Challenges",
+      description: "Interactive coding challenges with real-time test execution. Build Drag & Drop lists, implement Promise.all & more. Practice with actual interview problems.",
+      icon: "🧩",
+      color: "from-violet-500 to-purple-600",
+      isPremium: true,
+      preview: (
+        <div className="bg-slate-900 rounded-lg p-3 border border-violet-500/30 relative overflow-hidden">
+          <div className="absolute top-0 right-0 px-2 py-0.5 text-[9px] font-bold bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-bl-lg">
+            PREMIUM
+          </div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-medium">Hard</span>
+            <span className="text-[10px] text-slate-500">Drag & Drop List</span>
+          </div>
+          <div className="bg-[#0c0e14] rounded p-2 font-mono text-[10px] text-blue-300 mb-2">
+            <div className="text-slate-500">{'// Reorder array utility'}</div>
+            <div><span className="text-purple-400">function</span> <span className="text-yellow-300">reorderArray</span>(arr, from, to) {'{'}</div>
+            <div className="text-slate-600 pl-2">...</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.8)]" />
+            <span className="text-[10px] text-emerald-400">4/5 Tests Passing</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "CSS Battles",
+      description: "Master CSS with pixel-perfect challenges. Recreate designs with minimal code. Compete on leaderboards and track your code golf scores.",
+      icon: "🎨",
+      color: "from-fuchsia-500 to-pink-600",
+      isPremium: true,
+      preview: (
+        <div className="bg-slate-900 rounded-lg p-3 border border-fuchsia-500/30 relative overflow-hidden">
+          <div className="absolute top-0 right-0 px-2 py-0.5 text-[9px] font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white rounded-bl-lg">
+            PREMIUM
+          </div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-medium">Hard</span>
+            <span className="text-[10px] text-slate-500">Yin Yang</span>
+          </div>
+          <div className="flex gap-2 mb-2">
+            <div className="flex-1">
+              <div className="text-[9px] text-slate-500 mb-1">Target</div>
+              <div className="h-14 rounded bg-[#e9e9e9] flex items-center justify-center">
+                {/* Yin Yang Symbol */}
+                <div className="w-10 h-10 rounded-full relative overflow-hidden" style={{ background: 'linear-gradient(to right, #000 50%, #fff 50%)', boxShadow: '0 0 0 2px #000' }}>
+                  <div className="absolute w-5 h-5 rounded-full bg-black top-0 left-1/2 -translate-x-1/2" />
+                  <div className="absolute w-5 h-5 rounded-full bg-white bottom-0 left-1/2 -translate-x-1/2" />
+                  <div className="absolute w-2 h-2 rounded-full bg-white top-[6px] left-1/2 -translate-x-1/2" />
+                  <div className="absolute w-2 h-2 rounded-full bg-black bottom-[6px] left-1/2 -translate-x-1/2" />
+                </div>
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="text-[9px] text-slate-500 mb-1">Your Output</div>
+              <div className="h-14 rounded bg-[#e9e9e9] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full relative overflow-hidden opacity-95" style={{ background: 'linear-gradient(to right, #000 50%, #fff 50%)', boxShadow: '0 0 0 2px #000' }}>
+                  <div className="absolute w-5 h-5 rounded-full bg-black top-0 left-1/2 -translate-x-1/2" />
+                  <div className="absolute w-5 h-5 rounded-full bg-white bottom-0 left-1/2 -translate-x-1/2" />
+                  <div className="absolute w-2 h-2 rounded-full bg-white top-[6px] left-1/2 -translate-x-1/2" />
+                  <div className="absolute w-2 h-2 rounded-full bg-black bottom-[6px] left-1/2 -translate-x-1/2" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-fuchsia-400 font-bold">99.2% Match</span>
+            <span className="text-[10px] text-slate-500">156 chars</span>
+          </div>
+        </div>
+      )
     }
   ];
 
@@ -271,17 +345,35 @@ setTimeout(() => {
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="feature-card group bg-white border-2 border-slate-200 rounded-2xl p-6 hover:border-brand-400 transition-all duration-500 hover:shadow-2xl hover:shadow-brand-500/20 hover:-translate-y-2 flex flex-col relative overflow-hidden"
+              className={`feature-card group bg-white border-2 rounded-2xl p-6 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 flex flex-col relative overflow-hidden ${
+                feature.isPremium 
+                  ? 'border-purple-300 hover:border-purple-400 hover:shadow-purple-500/20' 
+                  : 'border-slate-200 hover:border-brand-400 hover:shadow-brand-500/20'
+              }`}
               style={{ 
                 animationDelay: `${idx * 0.1}s`,
                 animationFillMode: isVisible ? 'both' : 'none'
               }}
             >
+              {/* Premium Badge */}
+              {feature.isPremium && (
+                <div className="absolute top-3 right-3 z-20">
+                  <span className="px-2 py-1 text-[10px] font-bold bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white rounded-full shadow-lg shadow-purple-500/30 flex items-center gap-1">
+                    <span className="text-xs">✨</span> ADVANCED
+                  </span>
+                </div>
+              )}
+
               {/* Shimmer Effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer pointer-events-none" />
               
               {/* Gradient Border on Hover */}
               <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none`} />
+              
+              {/* Premium Glow Effect */}
+              {feature.isPremium && (
+                <div className="absolute -inset-1 bg-gradient-to-r from-violet-500/20 via-purple-500/20 to-fuchsia-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              )}
               
               {/* Icon */}
               <div className={`relative w-14 h-14 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 animate-pulse-glow`}>
@@ -290,7 +382,11 @@ setTimeout(() => {
               </div>
 
               {/* Title */}
-              <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-600 transition-colors duration-300 relative z-10">
+              <h3 className={`text-lg font-bold mb-2 transition-colors duration-300 relative z-10 ${
+                feature.isPremium 
+                  ? 'text-slate-900 group-hover:text-purple-600' 
+                  : 'text-slate-900 group-hover:text-brand-600'
+              }`}>
                 {feature.title}
               </h3>
 
@@ -404,6 +500,12 @@ setTimeout(() => {
                       </div>
                       <div className="px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900/70 text-xs text-slate-300">
                         Enter Focus Mode
+                      </div>
+                      <div className="px-3 py-1.5 rounded-full border border-violet-500/40 bg-violet-500/10 text-xs text-violet-300 flex items-center gap-1">
+                        <span className="text-[10px]">✨</span> Code Challenges
+                      </div>
+                      <div className="px-3 py-1.5 rounded-full border border-fuchsia-500/40 bg-fuchsia-500/10 text-xs text-fuchsia-300 flex items-center gap-1">
+                        <span className="text-[10px]">🎨</span> CSS Battles
                       </div>
                     </div>
                   </div>

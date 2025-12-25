@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from 'firebase/auth';
 import { motion } from 'framer-motion';
-import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle, Link2, ExternalLink, BarChart3 } from 'lucide-react';
+import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle, Link2, ExternalLink, BarChart3, Code, Sparkles } from 'lucide-react';
 import { ebookContent, studyPlans } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
@@ -16,6 +16,8 @@ import WhatsAppSystemDesignLab from './WhatsAppSystemDesignLab';
 import URLShortenerSystemDesignLab from './URLShortenerSystemDesignLab';
 import RandomQuestionSelector from './RandomQuestionSelector';
 import CodePlayground from './CodePlayground';
+import CodeChallenges from './CodeChallenges';
+import CSSBattle from './CSSBattle';
 import { useSearch, useStudyPlan, useTimedQuiz } from './hooks';
 
 // Icons for study plans
@@ -168,6 +170,8 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [quickJumpQuery, setQuickJumpQuery] = useState('');
   const [showRandomSelector, setShowRandomSelector] = useState(false);
   const [showCodePlayground, setShowCodePlayground] = useState(false);
+  const [showCodeChallenges, setShowCodeChallenges] = useState(false);
+  const [showCSSBattle, setShowCSSBattle] = useState(false);
 
   const contentRef = useRef<HTMLElement | null>(null);
 
@@ -1101,6 +1105,22 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
         </div>
       )}
 
+      {/* Code Challenges Modal */}
+      {showCodeChallenges && (
+        <CodeChallenges
+          onClose={() => setShowCodeChallenges(false)}
+          isDarkMode={isDarkMode}
+        />
+      )}
+
+      {/* CSS Battle Modal */}
+      {showCSSBattle && (
+        <CSSBattle
+          onClose={() => setShowCSSBattle(false)}
+          isDarkMode={isDarkMode}
+        />
+      )}
+
       {/* Quick Jump Input */}
       {showQuickJump && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[90]">
@@ -1418,6 +1438,62 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                 >
                   <Play className="w-4 h-4" />
                   <span className="hidden sm:inline">Run Code</span>
+                </button>
+                {/* Code Challenges Button - Premium Feature */}
+                <button
+                  onClick={() => setShowCodeChallenges(true)}
+                  className="group relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 px-4 py-2 text-[11px] font-bold text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-300 overflow-hidden"
+                  title="Practice Coding Challenges - Build Real Components!"
+                >
+                  {/* Animated shine effect */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  
+                  {/* Pulsing glow ring */}
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300 -z-10" />
+                  
+                  {/* Icon with animation */}
+                  <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors">
+                    <Code className="w-3 h-3" />
+                  </span>
+                  
+                  {/* Text */}
+                  <span className="relative">Code Challenges</span>
+                  
+                  {/* NEW badge */}
+                  <span className="relative flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-400 text-amber-900 text-[9px] font-black uppercase tracking-wide animate-pulse">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    NEW
+                  </span>
+                </button>
+                
+                {/* CSS Battle Button - Visual CSS Challenges */}
+                <button
+                  onClick={() => setShowCSSBattle(true)}
+                  className="group relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-fuchsia-600 via-pink-600 to-cyan-500 px-4 py-2 text-[11px] font-bold text-white shadow-lg shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40 hover:scale-105 transition-all duration-300 overflow-hidden"
+                  title="CSS Battle - Master CSS with pixel-perfect challenges!"
+                >
+                  {/* Animated shine effect */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  
+                  {/* Pulsing glow ring */}
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-fuchsia-600 to-cyan-500 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300 -z-10" />
+                  
+                  {/* Icon with palette */}
+                  <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors">
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+                      <circle cx="12" cy="12" r="3" fill="currentColor" />
+                    </svg>
+                  </span>
+                  
+                  {/* Text */}
+                  <span className="relative">CSS Battle</span>
+                  
+                  {/* HOT badge */}
+                  <span className="relative flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-orange-400 to-red-500 text-white text-[9px] font-black uppercase tracking-wide animate-pulse">
+                    🔥 HOT
+                  </span>
                 </button>
                 {/* Theme Toggle */}
                 <button
