@@ -4,10 +4,12 @@ import Image from "next/image";
 import Logo from "../../../public/assets/main-logo.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import { ProductNavLink } from "../three/ProductNavLink";
+import { useChaosMode } from "../../app/fun/components/useChaosMode";
+import { ChaosOverlay } from "../../app/fun/components/ChaosOverlay";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -31,6 +33,8 @@ const Navbar = () => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [diceFace, setDiceFace] = useState(5);
+  const diceRef = useRef<HTMLButtonElement>(null);
+  const { triggerChaos, isExploding, crackBurst, showConfetti } = useChaosMode();
 
   const faceHasPip = (face: number, pos: string) => {
     const layout: Record<number, string[]> = {
@@ -85,8 +89,26 @@ const Navbar = () => {
     }
   };
 
+  const getConfettiPosition = () => {
+    if (typeof window !== 'undefined' && diceRef.current) {
+      const rect = diceRef.current.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+    }
+    return { x: 0, y: 0 };
+  };
+
   return (
-    <div className={`w-full transition-all duration-300 ${'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50'
+    <>
+      <ChaosOverlay 
+        isExploding={isExploding}
+        crackBurst={crackBurst}
+        showConfetti={showConfetti}
+        confettiPosition={getConfettiPosition()}
+      />
+      <div className={`w-full transition-all duration-300 ${'bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50'
       }`}>
       <div className="flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-x-3 group relative z-50" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
@@ -120,10 +142,11 @@ const Navbar = () => {
             
           </div>
         </Link>
-        <Link
-          href="/fun"
-          className="hidden md:flex items-center justify-center w-12 h-12 rounded-xl relative group"
-          aria-label="Fun Zone"
+        <button
+          ref={diceRef}
+          onClick={triggerChaos}
+          className="hidden md:flex items-center justify-center w-12 h-12 rounded-xl relative group cursor-pointer"
+          aria-label="Chaos Mode"
         >
           <div className="relative w-10 h-10">
             <div className="absolute inset-0 rounded-lg bg-white text-slate-900 border border-black/10 shadow-[0_4px_16px_rgba(0,0,0,0.25)] cube-spin transform-gpu">
@@ -136,7 +159,7 @@ const Navbar = () => {
             </div>
             <div className="absolute inset-[2px] rounded-md border-white/40 mix-blend-screen pointer-events-none" />
           </div>
-        </Link>
+        </button>
         <div className="md:flex items-center gap-x-6 lg:gap-x-8 hidden relative">
           <Link
             href="/"
@@ -377,7 +400,8 @@ const Navbar = () => {
         .pip-br { bottom: 6px; right: 6px; }
         .pip-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 };
 
