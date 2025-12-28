@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-2">
-            <span className="text-2xl font-bold text-slate-900">Frontend<span className="text-brand-600">Mastery</span></span>
+            <span className="text-2xl font-bold text-slate-900">Coding<span className="text-brand-600">Activist</span></span>
             <p className="text-slate-600 mt-4 max-w-sm">
               Helping developers crack the code to their dream jobs. The most comprehensive guide to frontend engineering interviews.
             </p>

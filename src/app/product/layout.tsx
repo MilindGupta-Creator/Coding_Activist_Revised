@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Frontend Mastery - Ultimate Guide to Next.js & React | Coding Activist',
+  title: 'Coding Activist - Ultimate Guide to Next.js & React',
   description: 'Master Next.js 14 App Router, React Server Components, Machine Coding, and System Design. The Ultimate Guide (Vol 2) - Transform your frontend career with comprehensive tutorials and real-world projects.',
   keywords: 'Next.js, React, Frontend Development, App Router, Server Components, Machine Coding, System Design, Web Development, Coding Tutorials',
   openGraph: {
-    title: 'Frontend Mastery - Ultimate Guide to Next.js & React | Coding Activist',
+    title: 'Coding Activist - Ultimate Guide to Next.js & React',
     description: 'Master Next.js 14 App Router, React Server Components, Machine Coding, and System Design. Transform your frontend career with comprehensive tutorials.',
     type: 'website',
     url: 'https://codingactivist.com/product',
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Frontend Mastery - Ultimate Guide to Next.js & React',
+    title: 'Coding Activist - Ultimate Guide to Next.js & React',
     description: 'Master Next.js 14 App Router, React Server Components, Machine Coding, and System Design.',
   },
   robots: {

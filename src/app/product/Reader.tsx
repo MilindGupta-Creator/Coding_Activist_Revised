@@ -1203,7 +1203,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       {/* Mobile Header */}
       {!isFocusMode && (
         <div className={`md:hidden ${themeClasses.bgSecondary} border-b ${themeClasses.border} p-4 flex justify-between items-center z-40`}>
-          <span className="font-bold text-brand-400">FrontendMastery Reader</span>
+          <span className="font-bold text-brand-400">Coding Activist Reader</span>
           <div className="flex items-center gap-2">
             <button
               onClick={toggleTheme}
