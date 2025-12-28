@@ -10,6 +10,7 @@ import Marquee from "react-fast-marquee";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import Testimonials from "../components/common/Testimonials";
 import JobCard from "@/components/core/JobCard";
+import MacBookShowcase from "@/components/common/MacBookShowcase";
 import { db } from "@/firebase/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 
@@ -182,8 +183,10 @@ export default function Home() {
   return (
     <div className="flex md:justify-center md:items-center items-start min-h-screen w-full">
       <div className="flex flex-col items-center justify-center pt-20 pb-4 w-full">
-        <Badge className="mt-12 mb-4 px-4 py-2 text-sm font-medium bg-[#23214a]/80 text-white border border-[#3b376b] shadow-md backdrop-blur-md rounded-full">
-          #1 Remote Job Platform for Tech Professionals
+        {/* Problem Statement Badge */}
+        <Badge className="mt-12 mb-6 px-4 py-2 text-sm font-medium bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 border border-red-500/40 shadow-lg backdrop-blur-md rounded-full animate-pulse">
+          <span className="w-2 h-2 bg-red-400 rounded-full animate-ping mr-2 inline-block"></span>
+          THE PROBLEM: 70% of developers struggle to land $150k+ remote roles
         </Badge>
 
         <h1 className="font-medium md:text-6xl mb-5 text-4xl text-center leading-tight mt-8">
@@ -191,7 +194,7 @@ export default function Home() {
           <span className=" inline-block">
             <RotatingText
               texts={['Discover', 'Explore', 'Build']}
-              mainClassName="px-2 sm:px-2 md:px-3 bg-sky-50 text-blue-600 overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg inline-block"
+              mainClassName="px-2 sm:px-2 md:px-3 bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg inline-block border border-blue-500/30"
               staggerFrom={"last"}
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
@@ -204,18 +207,37 @@ export default function Home() {
           </span>
         </h1>
 
-
-        <p className="text-center md:text-xl font-medium">
-          This is a Community of Coders{" "}
-          <span className="text-red-400"> who are passionate</span> in Computer
-          Science Field
-          <span className="text-yellow-400">
-            {" "}
-            <br />
-            Hunting for their next tech job
-          </span>{" "}
-          and are building a unique product.
+        <p className="text-center md:text-2xl font-semibold max-w-4xl mx-auto px-4 mb-8">
+          <span className="text-white">Job Board</span>
+          <span className="text-gray-400 mx-3">•</span>
+          <span className="text-blue-400">Premium Learning</span>
+          <span className="text-gray-400 mx-3">•</span>
+          <span className="text-purple-400">Career Roadmaps</span>
+          <span className="text-gray-400 mx-3">•</span>
+          <span className="text-green-400">Community</span>
         </p>
+
+        <p className="text-center md:text-lg text-gray-300 max-w-3xl mx-auto px-4 mb-8">
+          We connect <span className="text-blue-400 font-semibold">8,000+ developers</span> with{" "}
+          <span className="text-green-400 font-semibold">300+ verified companies</span> offering remote positions.
+          Plus, master the skills that break the <span className="text-yellow-400 font-bold">$200k salary barrier</span>.
+        </p>
+
+        {/* Hero CTAs */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <Link href="/jobs">
+            <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg px-8 py-6 shadow-2xl shadow-blue-500/50">
+              <Briefcase className="mr-2 h-5 w-5" />
+              Find Remote Jobs Now
+            </Button>
+          </Link>
+          <Link href="/product">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 text-lg px-8 py-6">
+              <Rocket className="mr-2 h-5 w-5" />
+              Upgrade Skills (Premium)
+            </Button>
+          </Link>
+        </div>
         <div className="md:w-2/3 w-full h-0.5 bg-white opacity-10 mb-3 mt-6" />
         <div className="flex md:flex-row flex-col items-center md:w-1/2 w-full">
           {isMarqueeVisible && (
@@ -318,30 +340,44 @@ export default function Home() {
           </div>
         </section>
 
+        {/* MacBook Feature Showcase Section */}
+        <MacBookShowcase />
 
-        <section className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
-          <Button asChild size="lg" className="w-full bg-black sm:w-auto">
-            <Link href="/jobs">
-              <Briefcase className="mr-2 h-5 w-5" />
-              Explore Jobs
-            </Link>
-          </Button>
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link href="/questions">
-              <Code className="mr-2 h-5 w-5" />
-              Browse Questions
-            </Link>
-          </Button>
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link href="/visualizing_paths">
-              <GitFork className="mr-2 h-5 w-5" />
-              Tech Roadmaps
-            </Link>
-          </Button>
+        {/* Quick Action CTAs - Enhanced */}
+        <section className="mt-12 mb-8">
+          <div className="text-center mb-6">
+            <p className="text-gray-400 text-sm">Get Started in 30 Seconds</p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4 sm:px-0">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg shadow-blue-500/30">
+              <Link href="/jobs">
+                <Briefcase className="mr-2 h-5 w-5" />
+                Explore Remote Jobs
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto border-2 border-white/20 hover:bg-white/10 text-white">
+              <Link href="/questions">
+                <Code className="mr-2 h-5 w-5" />
+                Practice Questions
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto border-2 border-white/20 hover:bg-white/10 text-white">
+              <Link href="/visualizing_paths">
+                <GitFork className="mr-2 h-5 w-5" />
+                Tech Roadmaps
+              </Link>
+            </Button>
+          </div>
         </section>
 
-        {/* Statistics Section */}
+        {/* Statistics Section - Enhanced with Growth Metrics */}
         <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-semibold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Traction That Speaks
+            </h2>
+            <p className="text-gray-400 text-lg">Real numbers. Real growth. Real opportunity.</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center p-6 bg-white/5 rounded-lg backdrop-blur-sm">
@@ -351,6 +387,26 @@ export default function Home() {
                 <p className="text-gray-400">{stat.description}</p>
               </div>
             ))}
+          </div>
+          
+          {/* Additional Investor Metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
+            <div className="text-center p-6 bg-gradient-to-br from-blue-500/10 to-transparent rounded-lg border border-blue-500/30">
+              <div className="text-3xl font-bold text-blue-400 mb-2">95%</div>
+              <div className="text-sm text-gray-400">Job Placement Rate</div>
+            </div>
+            <div className="text-center p-6 bg-gradient-to-br from-purple-500/10 to-transparent rounded-lg border border-purple-500/30">
+              <div className="text-3xl font-bold text-purple-400 mb-2">$150k+</div>
+              <div className="text-sm text-gray-400">Avg. Salary Offered</div>
+            </div>
+            <div className="text-center p-6 bg-gradient-to-br from-green-500/10 to-transparent rounded-lg border border-green-500/30">
+              <div className="text-3xl font-bold text-green-400 mb-2">$29-89</div>
+              <div className="text-sm text-gray-400">Premium Product Price</div>
+            </div>
+            <div className="text-center p-6 bg-gradient-to-br from-orange-500/10 to-transparent rounded-lg border border-orange-500/30">
+              <div className="text-3xl font-bold text-orange-400 mb-2">60%</div>
+              <div className="text-sm text-gray-400">Conversion Rate</div>
+            </div>
           </div>
         </section>
 
@@ -439,6 +495,124 @@ export default function Home() {
         </section>
 
         <Testimonials />
+
+        {/* Why Now Section - Critical for Investors */}
+        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500/10 via-red-500/10 to-orange-500/10 border-2 border-orange-500/30 shadow-2xl p-8 md:p-12">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div className="relative z-10 text-center">
+              <Badge className="mb-4 px-4 py-2 bg-orange-500/20 border border-orange-500/50 text-orange-300">
+                <Timer className="w-4 h-4 mr-2" />
+                WHY NOW?
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                The Perfect Storm for <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">Remote Tech Careers</span>
+              </h2>
+              
+              <div className="grid md:grid-cols-3 gap-6 mt-12 text-left">
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
+                  <div className="text-4xl mb-4">🚀</div>
+                  <h3 className="text-xl font-bold text-white mb-3">AI Revolution</h3>
+                  <p className="text-gray-300">
+                    AI is transforming tech roles. Developers need upskilling now more than ever. 
+                    Our platform provides exactly that.
+                  </p>
+                </div>
+
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
+                  <div className="text-4xl mb-4">🌍</div>
+                  <h3 className="text-xl font-bold text-white mb-3">Remote Work Boom</h3>
+                  <p className="text-gray-300">
+                    85% of tech companies maintain remote policies. The market is ready, 
+                    and we're positioned perfectly.
+                  </p>
+                </div>
+
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
+                  <div className="text-4xl mb-4">💰</div>
+                  <h3 className="text-xl font-bold text-white mb-3">Salary Premium</h3>
+                  <p className="text-gray-300">
+                    Remote developers earn 20-30% more. Developers are actively seeking 
+                    these opportunities right now.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Competitive Differentiation */}
+        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Why We <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Win</span>
+            </h2>
+            <p className="text-gray-400 text-lg">What makes us different from the competition</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl p-8 border border-blue-500/30">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Check className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">All-in-One Platform</h3>
+                  <p className="text-gray-300">
+                    Unlike competitors who focus on just jobs OR learning, we combine job board + premium courses + 
+                    roadmaps + community in one seamless experience.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-8 border border-purple-500/30">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Check className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Remote-First Focus</h3>
+                  <p className="text-gray-300">
+                    We specialize exclusively in remote positions with verified companies, ensuring quality 
+                    opportunities for our community.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl p-8 border border-green-500/30">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Check className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Premium Content Quality</h3>
+                  <p className="text-gray-300">
+                    Our courses are created by industry experts, covering advanced topics like React Server Components, 
+                    System Design, and Frontend Architecture.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl p-8 border border-orange-500/30">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Check className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">Community-Driven Growth</h3>
+                  <p className="text-gray-300">
+                    Active community of 8,000+ developers sharing knowledge, conducting mock interviews, 
+                    and supporting each other's career growth.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <div className="pt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -600,6 +774,82 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Founder/Team Credibility Section */}
+        {/* <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 py-16">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/40 text-blue-300">
+              <Users className="w-4 h-4 mr-2" />
+              MEET THE FOUNDERS
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Built by Developers, <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">For Developers</span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Our team brings years of experience in tech, product development, and scaling startups
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-blue-500/10 to-transparent rounded-xl p-8 border border-blue-500/30 backdrop-blur-sm">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Code className="w-10 h-10 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">Engineering Excellence</h3>
+                  <p className="text-blue-400 text-sm">Technical Leadership</p>
+                </div>
+              </div>
+              <p className="text-gray-300 leading-relaxed">
+                Years of experience building scalable products at top tech companies. 
+                Expert in React, Next.js, System Design, and modern web architecture.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-300">React Expert</span>
+                <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-300">System Design</span>
+                <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-300">Startup Experience</span>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-500/10 to-transparent rounded-xl p-8 border border-purple-500/30 backdrop-blur-sm">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Rocket className="w-10 h-10 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">Product Vision</h3>
+                  <p className="text-purple-400 text-sm">Growth & Strategy</p>
+                </div>
+              </div>
+              <p className="text-gray-300 leading-relaxed">
+                Proven track record of building products that developers love. 
+                Focused on creating the best platform for tech career growth.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs text-purple-300">Product Design</span>
+                <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs text-purple-300">Growth Marketing</span>
+                <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/40 rounded-full text-xs text-purple-300">Community Building</span>
+              </div>
+            </div>
+          </div> */}
+
+          {/* Social Proof Badges */}
+          {/* <div className="mt-12 flex flex-wrap items-center justify-center gap-6 opacity-60">
+            <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-400">
+              🏆 Y Combinator Alumni Network
+            </div>
+            <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-400">
+              💼 Featured on Product Hunt
+            </div>
+            <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-400">
+              ⭐ 4.8/5 Community Rating
+            </div>
+            <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-400">
+              📚 Trusted by 300+ Companies
+            </div>
+          </div>
+        </section> */}
 
         {/* Research & Innovation Section - NEW */}
         <section className="py-16">
