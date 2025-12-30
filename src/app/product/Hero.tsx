@@ -214,9 +214,7 @@ const Hero: React.FC = () => {
 
           {/* Improved 3D Code Visual */}
           <div className="flex-1 flex justify-center perspective-[1500px] z-10" ref={bookRef}>
-            <div className={`transition-all duration-1000 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform ${
-              isVisible ? 'opacity-100 translate-y-0 rotate-y-[-8deg] rotate-x-[5deg]' : 'opacity-0 translate-y-20 rotate-y-0'
-            }`}>
+            <div className={`transition-all duration-1000 ease-[cubic-bezier(0.34,1.56,0.64,1)] transform ${isVisible ? 'opacity-100 translate-y-0 rotate-y-[-8deg] rotate-x-[5deg]' : 'opacity-0 translate-y-20 rotate-y-0'}`}>
               <div className="relative group animate-float">
                 
                 {/* Glow/Backlight */}

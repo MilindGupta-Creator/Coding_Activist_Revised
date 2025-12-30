@@ -568,10 +568,10 @@ const MacBookShowcase: React.FC = () => {
   return (
     <section className="w-full py-24 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
       {/* Enhanced Background decorations with animation */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2 animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500 rounded-full blur-3xl translate-y-1/2 translate-x-1/2 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-slate-600 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-slate-700 rounded-full blur-3xl translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-slate-800/30 rounded-full blur-3xl"></div>
       </div>
 
       {/* Floating particles effect */}
@@ -579,7 +579,7 @@ const MacBookShowcase: React.FC = () => {
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+            className="absolute w-1 h-1 bg-slate-500/20 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -592,12 +592,12 @@ const MacBookShowcase: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-6">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            <span className="text-sm text-blue-300 font-medium">PREMIUM FEATURES</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-600/50 mb-6">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-sm text-slate-300 font-medium">PREMIUM FEATURES</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-gradient">Features</span>
+            Premium <span className="text-slate-200">Features</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-6">
             Experience our product features as you scroll
@@ -611,7 +611,7 @@ const MacBookShowcase: React.FC = () => {
                 onClick={() => changeFeature(index, index > activeFeatureIndex ? 'forward' : 'backward')}
                 className={`transition-all duration-300 rounded-full ${
                   index === activeFeatureIndex
-                    ? 'w-8 h-2 bg-gradient-to-r from-blue-400 to-purple-400'
+                    ? 'w-8 h-2 bg-slate-400'
                     : 'w-2 h-2 bg-gray-600 hover:bg-gray-500'
                 }`}
                 aria-label={`Go to feature ${index + 1}`}
@@ -624,11 +624,11 @@ const MacBookShowcase: React.FC = () => {
             onClick={() => setIsAutoPlay(!isAutoPlay)}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
               isAutoPlay
-                ? 'bg-green-500/20 border border-green-500/50 text-green-300'
+                ? 'bg-emerald-600/20 border border-emerald-600/50 text-emerald-300'
                 : 'bg-white/5 border border-white/10 text-gray-400 hover:border-white/20'
             }`}
           >
-            <span className={`w-2 h-2 rounded-full ${isAutoPlay ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`}></span>
+            <span className={`w-2 h-2 rounded-full ${isAutoPlay ? 'bg-emerald-500 animate-pulse' : 'bg-gray-500'}`}></span>
             <span className="text-sm font-medium">
               {isAutoPlay ? 'Auto-play ON' : 'Auto-play OFF'}
             </span>
@@ -653,9 +653,9 @@ const MacBookShowcase: React.FC = () => {
                 {/* Screen Section */}
                 <div className="relative mb-2">
                   {/* Screen Lid - Space Gray with enhanced gradient */}
-                  <div className="bg-gradient-to-b from-[#2d2d2d] via-[#1d1d1d] to-[#2d2d2d] rounded-t-[20px] p-[6px] shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(59,130,246,0.3)] border border-[#3a3a3a]/50 relative overflow-hidden">
+                  <div className="bg-gradient-to-b from-[#2d2d2d] via-[#1d1d1d] to-[#2d2d2d] rounded-t-[20px] p-[6px] shadow-[0_20px_60px_rgba(0,0,0,0.5)] border border-[#3a3a3a]/50 relative overflow-hidden">
                     {/* Animated glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-purple-500/0 animate-shimmer pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-slate-700/5 pointer-events-none"></div>
                     
                     {/* Notch - More realistic with glow */}
                     <div className="absolute top-[6px] left-1/2 -translate-x-1/2 w-[200px] h-[28px] bg-black rounded-b-[14px] z-20 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.3)]">
@@ -674,7 +674,7 @@ const MacBookShowcase: React.FC = () => {
                         <div className={`absolute inset-0 rounded-[12px] pointer-events-none transition-opacity duration-500 ${
                           isHovered ? 'opacity-100' : 'opacity-0'
                         }`}>
-                          <div className="absolute inset-0 rounded-[12px] bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-sm"></div>
+                          <div className="absolute inset-0 rounded-[12px] bg-slate-600/10 blur-sm"></div>
                         </div>
                         
                         {/* Screen Content - Feature Visuals with smooth transitions */}
@@ -715,13 +715,13 @@ const MacBookShowcase: React.FC = () => {
                 {/* Enhanced shadow with color */}
                 <div className={`absolute -bottom-8 left-1/2 -translate-x-1/2 w-[80%] h-16 rounded-full transition-all duration-500 ${
                   isHovered 
-                    ? 'bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-pink-500/30 blur-2xl' 
+                    ? 'bg-slate-900/60 blur-2xl' 
                     : 'bg-black/40 blur-2xl'
                 }`}></div>
 
                 {/* Corner glow effects */}
-                <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-500/20 rounded-full blur-md pointer-events-none"></div>
-                <div className="absolute -top-2 -right-2 w-4 h-4 bg-purple-500/20 rounded-full blur-md pointer-events-none"></div>
+                <div className="absolute -top-2 -left-2 w-4 h-4 bg-slate-700/20 rounded-full blur-md pointer-events-none"></div>
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-slate-700/20 rounded-full blur-md pointer-events-none"></div>
               </div>
             </div>
           </div>
@@ -736,7 +736,7 @@ const MacBookShowcase: React.FC = () => {
                 ref={(el) => { featureRefs.current[index] = el; }}
                   className={`group relative p-6 rounded-xl border-2 transition-all duration-500 cursor-pointer overflow-hidden ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 border-blue-500/50 shadow-2xl shadow-blue-500/20 scale-105 z-10'
+                      ? 'bg-slate-800/60 border-slate-500/50 shadow-2xl shadow-slate-900/50 scale-105 z-10'
                       : 'bg-white/5 border-white/10 hover:border-white/20 hover:scale-[1.02]'
                   }`}
                   onClick={() => changeFeature(index, index > activeFeatureIndex ? 'forward' : 'backward')}
@@ -747,38 +747,38 @@ const MacBookShowcase: React.FC = () => {
                   }}
                 >
                   {/* Animated background gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-pink-500/0 transition-all duration-500 ${
-                    isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-20'
+                  <div className={`absolute inset-0 bg-slate-700/20 transition-all duration-500 ${
+                    isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-10'
                   }`}></div>
                   
-                  {/* Shimmer effect for active item */}
+                  {/* Subtle highlight for active item */}
                   {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-white/5 pointer-events-none"></div>
                   )}
 
                   <div className="relative flex items-start gap-4">
                     <div className={`relative w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-500 ${
                       isActive
-                        ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white scale-110 shadow-lg shadow-blue-500/50'
+                        ? 'bg-slate-600 text-white scale-110 shadow-lg shadow-slate-900/50'
                         : 'bg-white/10 text-gray-400 group-hover:bg-white/15'
                   }`}>
                     {getFeatureIcon(feature.iconPath)}
                       {/* Pulse ring for active icon */}
                       {isActive && (
-                        <div className="absolute inset-0 rounded-lg bg-blue-400/30 animate-ping"></div>
+                        <div className="absolute inset-0 rounded-lg bg-slate-400/20 animate-ping"></div>
                       )}
                   </div>
                   <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className={`text-xl font-bold transition-all duration-300 ${
                           isActive 
-                            ? 'text-white bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent' 
+                            ? 'text-white' 
                             : 'text-gray-300'
                     }`}>
                       {feature.title}
                     </h3>
                         {isActive && (
-                          <span className="px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-[10px] text-blue-300 font-medium">
+                          <span className="px-2 py-0.5 rounded-full bg-slate-700/50 border border-slate-500/50 text-[10px] text-slate-300 font-medium">
                             ACTIVE
                           </span>
                         )}
@@ -792,15 +792,15 @@ const MacBookShowcase: React.FC = () => {
                       {/* Progress bar for active feature */}
                       {isActive && (
                         <div className="mt-3 h-1 bg-white/10 rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-shimmer"></div>
+                          <div className="h-full bg-slate-400 rounded-full"></div>
                         </div>
                       )}
                     </div>
                     <div className="flex flex-col items-center gap-2">
                       {isActive && (
                         <>
-                          <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-lg shadow-blue-400/50"></div>
-                          <div className="text-[10px] text-blue-400 font-mono font-bold">
+                          <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse shadow-lg shadow-slate-400/30"></div>
+                          <div className="text-[10px] text-slate-300 font-mono font-bold">
                             {String(index + 1).padStart(2, '0')}
                           </div>
                         </>
@@ -813,7 +813,7 @@ const MacBookShowcase: React.FC = () => {
 
                   {/* Corner accent */}
                   {isActive && (
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-blue-500/20 to-transparent rounded-bl-full pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-slate-700/20 rounded-bl-full pointer-events-none"></div>
                   )}
                 </div>
               );

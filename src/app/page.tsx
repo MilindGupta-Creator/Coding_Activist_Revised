@@ -184,12 +184,12 @@ export default function Home() {
     <div className="flex md:justify-center md:items-center items-start min-h-screen w-full">
       <div className="flex flex-col items-center justify-center pt-20 pb-4 w-full">
         {/* Problem Statement Badge */}
-        <Badge className="mt-12 mb-6 px-4 py-2 text-sm font-medium bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 border border-red-500/40 shadow-lg backdrop-blur-md rounded-full animate-pulse">
+        <Badge className="mt-12 mb-6 px-4 py-2 text-sm font-normal bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-300 border border-red-500/40 shadow-lg backdrop-blur-md rounded-full animate-pulse">
           <span className="w-2 h-2 bg-red-400 rounded-full animate-ping mr-2 inline-block"></span>
           THE PROBLEM: 70% of developers struggle to land $150k+ remote roles
         </Badge>
 
-        <h1 className="font-medium md:text-6xl mb-5 text-4xl text-center leading-tight mt-8">
+        <h1 className="font-normal md:text-5xl mb-5 text-3xl text-center leading-tight mt-8">
           Connect .Create.{" "}
           <span className=" inline-block">
             <RotatingText
@@ -207,7 +207,7 @@ export default function Home() {
           </span>
         </h1>
 
-        <p className="text-center md:text-2xl font-semibold max-w-4xl mx-auto px-4 mb-8">
+        <p className="text-center md:text-xl font-normal max-w-4xl mx-auto px-4 mb-8">
           <span className="text-white">Job Board</span>
           <span className="text-gray-400 mx-3">•</span>
           <span className="text-blue-400">Premium Learning</span>
@@ -217,23 +217,23 @@ export default function Home() {
           <span className="text-green-400">Community</span>
         </p>
 
-        <p className="text-center md:text-lg text-gray-300 max-w-3xl mx-auto px-4 mb-8">
-          We connect <span className="text-blue-400 font-semibold">8,000+ developers</span> with{" "}
-          <span className="text-green-400 font-semibold">300+ verified companies</span> offering remote positions.
-          Plus, master the skills that break the <span className="text-yellow-400 font-bold">$200k salary barrier</span>.
+        <p className="text-center md:text-base text-gray-300 max-w-3xl mx-auto px-4 mb-8">
+          We connect <span className="text-blue-400 font-normal">8,000+ developers</span> with{" "}
+          <span className="text-green-400 font-normal">300+ verified companies</span> offering remote positions.
+          Plus, master the skills that break the <span className="text-yellow-400 font-normal">$200k salary barrier</span>.
         </p>
 
         {/* Hero CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
           <Link href="/jobs">
-            <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg px-8 py-6 shadow-2xl shadow-blue-500/50">
-              <Briefcase className="mr-2 h-5 w-5" />
+            <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3 shadow-2xl shadow-blue-500/50">
+              <Briefcase className="mr-2 h-4 w-4" />
               Find Remote Jobs Now
             </Button>
           </Link>
           <Link href="/product">
-            <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 text-lg px-8 py-6">
-              <Rocket className="mr-2 h-5 w-5" />
+            <Button variant="outline" className="w-full sm:w-auto border-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 px-6 py-3">
+              <Rocket className="mr-2 h-4 w-4" />
               Upgrade Skills (Premium)
             </Button>
           </Link>
@@ -290,14 +290,14 @@ export default function Home() {
               <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
                 {/* Left Content */}
                 <div className="flex-1 text-center md:text-left">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-sm font-medium mb-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-300 text-sm font-normal mb-4">
                     <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
                     NEW PREMIUM PRODUCT
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  <h2 className="text-2xl md:text-3xl font-normal text-white mb-4">
                     Level Up Your Frontend Skills
                   </h2>
-                  <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                  <p className="text-base text-gray-300 mb-6 leading-relaxed">
                     Master <strong className="text-blue-400">Advanced React & Server Components</strong>, 
                     <strong className="text-purple-400"> Frontend Architecture</strong>, and 
                     <strong className="text-green-400"> System Design</strong>. Transform from a component builder to a Staff Engineer.
@@ -373,17 +373,17 @@ export default function Home() {
         {/* Statistics Section - Enhanced with Growth Metrics */}
         <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-semibold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-normal mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Traction That Speaks
             </h2>
-            <p className="text-gray-400 text-lg">Real numbers. Real growth. Real opportunity.</p>
+            <p className="text-gray-400 text-base">Real numbers. Real growth. Real opportunity.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center p-6 bg-white/5 rounded-lg backdrop-blur-sm">
                 <div className="mb-4 flex justify-center">{stat.icon}</div>
-                <div className="text-4xl font-medium mb-2">{stat.value}</div>
-                <h3 className="text-xl font-medium mb-2">{stat.label}</h3>
+                <div className="text-3xl font-normal mb-2">{stat.value}</div>
+                <h3 className="text-lg font-normal mb-2">{stat.label}</h3>
                 <p className="text-gray-400">{stat.description}</p>
               </div>
             ))}
@@ -392,19 +392,19 @@ export default function Home() {
           {/* Additional Investor Metrics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
             <div className="text-center p-6 bg-gradient-to-br from-blue-500/10 to-transparent rounded-lg border border-blue-500/30">
-              <div className="text-3xl font-bold text-blue-400 mb-2">95%</div>
+              <div className="text-2xl font-normal text-blue-400 mb-2">95%</div>
               <div className="text-sm text-gray-400">Job Placement Rate</div>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-purple-500/10 to-transparent rounded-lg border border-purple-500/30">
-              <div className="text-3xl font-bold text-purple-400 mb-2">$150k+</div>
+              <div className="text-2xl font-normal text-purple-400 mb-2">$150k+</div>
               <div className="text-sm text-gray-400">Avg. Salary Offered</div>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-green-500/10 to-transparent rounded-lg border border-green-500/30">
-              <div className="text-3xl font-bold text-green-400 mb-2">$29-89</div>
+              <div className="text-2xl font-normal text-green-400 mb-2">$29-89</div>
               <div className="text-sm text-gray-400">Premium Product Price</div>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-orange-500/10 to-transparent rounded-lg border border-orange-500/30">
-              <div className="text-3xl font-bold text-orange-400 mb-2">60%</div>
+              <div className="text-2xl font-normal text-orange-400 mb-2">60%</div>
               <div className="text-sm text-gray-400">Conversion Rate</div>
             </div>
           </div>
@@ -412,7 +412,7 @@ export default function Home() {
 
         <div className="mt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-medium mb-4">
+            <h2 className="text-3xl md:text-4xl font-normal mb-4">
               Recently Added <span className="text-blue-500">Jobs</span>
             </h2>
           </div>
@@ -436,7 +436,7 @@ export default function Home() {
           </div>
 
           <div className="mt-12 text-center">
-            <Link href="/jobs" className="inline-flex items-center text-blue-500 hover:text-blue-400 transition-colors text-lg font-medium">
+            <Link href="/jobs" className="inline-flex items-center text-blue-500 hover:text-blue-400 transition-colors text-base font-normal">
               View More Jobs
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
@@ -445,7 +445,7 @@ export default function Home() {
         {/* Career Tracks Section */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-medium text-center mb-12">Specialized Career Tracks</h2>
+            <h2 className="text-2xl font-normal text-center mb-12">Specialized Career Tracks</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {careerTracks.map((track, index) => (
                 <Link href="/visualizing_paths" key={index} className="group">
@@ -460,7 +460,7 @@ export default function Home() {
                           {track.icon}
                         </div>
                       </div>
-                      <h3 className="text-2xl font-medium mb-3 text-white group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-xl font-normal mb-3 text-white group-hover:text-blue-400 transition-colors">
                         {track.title}
                       </h3>
                       <p className="text-gray-400 mb-6 line-clamp-2">
@@ -480,7 +480,7 @@ export default function Home() {
 
                     {/* Arrow button */}
                     <div className="absolute bottom-8 right-8">
-                      <span className="flex items-center gap-2 text-sm font-medium">
+                      <span className="flex items-center gap-2 text-sm font-normal">
                         <span className="text-gray-400 group-hover:text-blue-400 transition-colors">Learn More</span>
                         <span className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:translate-x-1 transition-all duration-300">
                           <ArrowRight className="w-4 h-4 text-blue-500 group-hover:text-white transition-colors" />
@@ -506,14 +506,14 @@ export default function Home() {
                 <Timer className="w-4 h-4 mr-2" />
                 WHY NOW?
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              <h2 className="text-3xl md:text-4xl font-normal text-white mb-6">
                 The Perfect Storm for <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">Remote Tech Careers</span>
               </h2>
               
               <div className="grid md:grid-cols-3 gap-6 mt-12 text-left">
                 <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
-                  <div className="text-4xl mb-4">🚀</div>
-                  <h3 className="text-xl font-bold text-white mb-3">AI Revolution</h3>
+                  <div className="text-base mb-4">🚀</div>
+                  <h3 className="text-lg font-normal text-white mb-3">AI Revolution</h3>
                   <p className="text-gray-300">
                     AI is transforming tech roles. Developers need upskilling now more than ever. 
                     Our platform provides exactly that.
@@ -521,8 +521,8 @@ export default function Home() {
                 </div>
 
                 <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
-                  <div className="text-4xl mb-4">🌍</div>
-                  <h3 className="text-xl font-bold text-white mb-3">Remote Work Boom</h3>
+                  <div className="text-base mb-4">🌍</div>
+                  <h3 className="text-lg font-normal text-white mb-3">Remote Work Boom</h3>
                   <p className="text-gray-300">
                     85% of tech companies maintain remote policies. The market is ready, 
                     and we're positioned perfectly.
@@ -530,8 +530,8 @@ export default function Home() {
                 </div>
 
                 <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
-                  <div className="text-4xl mb-4">💰</div>
-                  <h3 className="text-xl font-bold text-white mb-3">Salary Premium</h3>
+                  <div className="text-base mb-4">💰</div>
+                  <h3 className="text-lg font-normal text-white mb-3">Salary Premium</h3>
                   <p className="text-gray-300">
                     Remote developers earn 20-30% more. Developers are actively seeking 
                     these opportunities right now.
@@ -545,10 +545,10 @@ export default function Home() {
         {/* Competitive Differentiation */}
         <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-normal mb-4">
               Why We <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Win</span>
             </h2>
-            <p className="text-gray-400 text-lg">What makes us different from the competition</p>
+            <p className="text-gray-400 text-base">What makes us different from the competition</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -558,7 +558,7 @@ export default function Home() {
                   <Check className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">All-in-One Platform</h3>
+                  <h3 className="text-lg font-normal text-white mb-2">All-in-One Platform</h3>
                   <p className="text-gray-300">
                     Unlike competitors who focus on just jobs OR learning, we combine job board + premium courses + 
                     roadmaps + community in one seamless experience.
@@ -573,7 +573,7 @@ export default function Home() {
                   <Check className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Remote-First Focus</h3>
+                  <h3 className="text-lg font-normal text-white mb-2">Remote-First Focus</h3>
                   <p className="text-gray-300">
                     We specialize exclusively in remote positions with verified companies, ensuring quality 
                     opportunities for our community.
@@ -588,7 +588,7 @@ export default function Home() {
                   <Check className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Premium Content Quality</h3>
+                  <h3 className="text-lg font-normal text-white mb-2">Premium Content Quality</h3>
                   <p className="text-gray-300">
                     Our courses are created by industry experts, covering advanced topics like React Server Components, 
                     System Design, and Frontend Architecture.
@@ -603,7 +603,7 @@ export default function Home() {
                   <Check className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Community-Driven Growth</h3>
+                  <h3 className="text-lg font-normal text-white mb-2">Community-Driven Growth</h3>
                   <p className="text-gray-300">
                     Active community of 8,000+ developers sharing knowledge, conducting mock interviews, 
                     and supporting each other's career growth.
@@ -617,14 +617,14 @@ export default function Home() {
         <div className="pt-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-medium mb-4">Why Remote Work?</h2>
+              <h2 className="text-2xl font-normal mb-4">Why Remote Work?</h2>
               <p className="text-gray-400">Embrace the future of work with these amazing benefits</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {benefits.map((benefit, index) => (
                 <div key={index} className="text-center p-6">
                   <div className="mb-4 flex justify-center">{benefit.icon}</div>
-                  <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
+                  <h3 className="text-lg font-normal mb-2">{benefit.title}</h3>
                   <p className="text-gray-400">{benefit.description}</p>
                 </div>
               ))}
@@ -634,7 +634,7 @@ export default function Home() {
         {/* Technologies Section */}
         <section className="pt-8">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-medium text-center mb-12">Technologies We Cover</h2>
+            <h2 className="text-2xl font-normal text-center mb-12">Technologies We Cover</h2>
             <div className="flex flex-wrap justify-center gap-4">
               {technologies.map((tech, index) => (
                 <span key={index} className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
@@ -648,7 +648,7 @@ export default function Home() {
         {/* FAQ Section */}
         <section className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-medium mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-normal mb-4">Frequently Asked Questions</h2>
             <p className="text-gray-400">Everything you need to know about our platform</p>
           </div>
           <Accordion type="single" collapsible className="w-full">
@@ -666,10 +666,10 @@ export default function Home() {
         {/* Industry Insights Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-medium text-center mb-12">Industry Insights</h2>
+            <h2 className="text-2xl font-normal text-center mb-12">Industry Insights</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-2xl font-semibold mb-4">Remote Work Trends 2025</h3>
+                <h3 className="text-xl font-normal mb-4">Remote Work Trends 2025</h3>
                 <p className="text-gray-400 mb-4">
                   The landscape of remote work continues to evolve rapidly. Our latest research indicates that by 2025:
                 </p>
@@ -681,7 +681,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-2xl font-semibold mb-4">Emerging Tech Roles</h3>
+                <h3 className="text-xl font-normal mb-4">Emerging Tech Roles</h3>
                 <p className="text-gray-400 mb-4">
                   New technological advances are creating unprecedented career opportunities:
                 </p>
@@ -700,10 +700,10 @@ export default function Home() {
         {/* Professional Development Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-medium text-center mb-12">Professional Development Resources</h2>
+            <h2 className="text-2xl font-normal text-center mb-12">Professional Development Resources</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-xl font-semibold mb-4">Technical Writing</h3>
+                <h3 className="text-lg font-normal mb-4">Technical Writing</h3>
                 <p className="text-gray-400 mb-4">
                   Enhance your documentation skills with our comprehensive technical writing course. Learn to:
                 </p>
@@ -715,7 +715,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-xl font-semibold mb-4">System Design</h3>
+                <h3 className="text-lg font-normal mb-4">System Design</h3>
                 <p className="text-gray-400 mb-4">
                   Master the art of designing scalable systems through:
                 </p>
@@ -727,7 +727,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-xl font-semibold mb-4">Soft Skills</h3>
+                <h3 className="text-lg font-normal mb-4">Soft Skills</h3>
                 <p className="text-gray-400 mb-4">
                   Develop essential non-technical skills:
                 </p>
@@ -745,10 +745,10 @@ export default function Home() {
         {/* Global Impact Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-medium text-center mb-12">Global Impact & Sustainability</h2>
+            <h2 className="text-2xl font-normal text-center mb-12">Global Impact & Sustainability</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-2xl font-semibold mb-4">Environmental Impact</h3>
+                <h3 className="text-xl font-normal mb-4">Environmental Impact</h3>
                 <p className="text-gray-400 mb-4">
                   Remote work contributes to environmental sustainability:
                 </p>
@@ -760,7 +760,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-2xl font-semibold mb-4">Social Impact</h3>
+                <h3 className="text-xl font-normal mb-4">Social Impact</h3>
                 <p className="text-gray-400 mb-4">
                   Our platform promotes inclusive tech opportunities:
                 </p>
@@ -782,10 +782,10 @@ export default function Home() {
               <Users className="w-4 h-4 mr-2" />
               MEET THE FOUNDERS
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl font-normal mb-4">
               Built by Developers, <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">For Developers</span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-400 text-base max-w-2xl mx-auto">
               Our team brings years of experience in tech, product development, and scaling startups
             </p>
           </div>
@@ -797,7 +797,7 @@ export default function Home() {
                   <Code className="w-10 h-10 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-1">Engineering Excellence</h3>
+                  <h3 className="text-xl font-normal text-white mb-1">Engineering Excellence</h3>
                   <p className="text-blue-400 text-sm">Technical Leadership</p>
                 </div>
               </div>
@@ -818,7 +818,7 @@ export default function Home() {
                   <Rocket className="w-10 h-10 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-1">Product Vision</h3>
+                  <h3 className="text-xl font-normal text-white mb-1">Product Vision</h3>
                   <p className="text-purple-400 text-sm">Growth & Strategy</p>
                 </div>
               </div>
@@ -854,10 +854,10 @@ export default function Home() {
         {/* Research & Innovation Section - NEW */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-medium text-center mb-12">Research & Innovation Hub</h2>
+            <h2 className="text-2xl font-normal text-center mb-12">Research & Innovation Hub</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-xl font-semibold mb-4">Latest Research Papers</h3>
+                <h3 className="text-lg font-normal mb-4">Latest Research Papers</h3>
                 <ul className="space-y-4 text-gray-400">
                   <li>
                     <strong className="text-white">Remote Work Productivity Study</strong>
@@ -874,7 +874,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-xl font-semibold mb-4">Innovation Projects</h3>
+                <h3 className="text-lg font-normal mb-4">Innovation Projects</h3>
                 <ul className="space-y-4 text-gray-400">
                   <li>
                     <strong className="text-white">AI Career Guidance</strong>
@@ -891,7 +891,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="p-6 rounded-lg bg-white/5">
-                <h3 className="text-xl font-semibold mb-4">Upcoming Initiatives</h3>
+                <h3 className="text-lg font-normal mb-4">Upcoming Initiatives</h3>
                 <ul className="space-y-4 text-gray-400">
                   <li>
                     <strong className="text-white">Global Tech Census</strong>
