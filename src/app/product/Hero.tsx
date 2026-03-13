@@ -175,13 +175,17 @@ const Hero: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
               <button 
                 onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-xl font-semibold text-lg transition-all shadow-xl shadow-brand-500/30 hover:shadow-2xl hover:shadow-brand-500/40 hover:-translate-y-1"
+                className="px-4 py-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-xl font-semibold text-lg transition-all shadow-xl shadow-brand-500/30 hover:shadow-2xl hover:shadow-brand-500/40 hover:-translate-y-1 flex items-center gap-3"
               >
-                Get the Ebook ($29)
+                <span>Get the Ebook</span>
+                <span className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm">
+                  <span className="text-slate-300 line-through text-base font-normal">₹1999</span>
+                  <span className="text-xl font-bold">₹449</span>
+                </span>
               </button>
               <button 
                 onClick={() => document.getElementById('preview')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-xl font-semibold text-lg transition-all hover:border-brand-300 hover:shadow-lg"
+                className="px-4 py-4 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-xl font-semibold text-lg transition-all hover:border-brand-300 hover:shadow-lg"
               >
                 Test Your Knowledge
               </button>

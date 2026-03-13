@@ -400,7 +400,7 @@ export default function Home() {
               <div className="text-sm text-gray-400">Avg. Salary Offered</div>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-green-500/10 to-transparent rounded-lg border border-green-500/30">
-              <div className="text-2xl font-normal text-green-400 mb-2">$29-89</div>
+              <div className="text-2xl font-normal text-green-400 mb-2">₹449</div>
               <div className="text-sm text-gray-400">Premium Product Price</div>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-orange-500/10 to-transparent rounded-lg border border-orange-500/30">

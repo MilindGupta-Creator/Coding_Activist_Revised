@@ -2234,7 +2234,7 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
     for (const test of selectedChallenge.testCases) {
       try {
         // Create async function with user's code + test
-        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+        const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
         const testCode = `
           ${code}
           return (${test.input});
@@ -2302,11 +2302,11 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
   const allPassed = totalTests > 0 && passedCount === totalTests;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex bg-black/80 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className={`w-full max-w-6xl h-[95vh] overflow-hidden rounded-2xl ${themeClasses.bg} border ${themeClasses.border} shadow-2xl flex flex-col`}
+        className={`w-full h-full overflow-hidden ${themeClasses.bg} border ${themeClasses.border} flex flex-col`}
       >
         {/* Header */}
         <div className={`flex items-center justify-between px-6 py-4 border-b ${themeClasses.border} ${themeClasses.bgSecondary}`}>
@@ -2362,11 +2362,10 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
                       <button
                         key={d}
                         onClick={() => setFilterDifficulty(d)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                          filterDifficulty === d
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filterDifficulty === d
                             ? 'bg-violet-500 text-white'
                             : `${themeClasses.bgTertiary} ${themeClasses.textSecondary} hover:bg-violet-500/20`
-                        }`}
+                          }`}
                       >
                         {d}
                       </button>
@@ -2408,7 +2407,7 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
                           </div>
                         </div>
                       )}
-                      
+
                       <div className="flex items-start gap-3 mb-3">
                         <div className={`w-10 h-10 rounded-lg ${diffConfig.bg} flex items-center justify-center`}>
                           {challenge.difficulty === 'Easy' && <Zap className={`w-5 h-5 ${diffConfig.text}`} />}
@@ -2519,11 +2518,10 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
                       {selectedChallenge.hints.map((hint, i) => (
                         <div
                           key={i}
-                          className={`p-3 rounded-lg text-sm ${
-                            i < revealedHints
+                          className={`p-3 rounded-lg text-sm ${i < revealedHints
                               ? `${themeClasses.bgTertiary} ${themeClasses.textSecondary}`
                               : `${themeClasses.bgTertiary}/50 ${themeClasses.textMuted}`
-                          }`}
+                            }`}
                         >
                           {i < revealedHints ? (
                             <div className="flex gap-2">
@@ -2545,9 +2543,8 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
                   <div>
                     <button
                       onClick={() => setShowSolution(!showSolution)}
-                      className={`flex items-center gap-2 text-sm font-semibold ${
-                        showSolution ? 'text-violet-400' : themeClasses.textMuted
-                      } hover:text-violet-400 transition-colors`}
+                      className={`flex items-center gap-2 text-sm font-semibold ${showSolution ? 'text-violet-400' : themeClasses.textMuted
+                        } hover:text-violet-400 transition-colors`}
                     >
                       {showSolution ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       {showSolution ? 'Hide Solution' : 'Show Solution'}
@@ -2650,9 +2647,8 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
                       <div className={`w-2 h-2 rounded-full ${testResults.length > 0 ? (allPassed ? 'bg-emerald-500' : 'bg-amber-500') : 'bg-slate-500'} animate-pulse`}></div>
                       <span className={`text-xs font-semibold ${themeClasses.text}`}>Test Results</span>
                       {testResults.length > 0 && (
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          allPassed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-                        }`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${allPassed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                          }`}>
                           {passedCount}/{totalTests} passed
                         </span>
                       )}
@@ -2694,11 +2690,10 @@ const CodeChallenges: React.FC<CodeChallengesProps> = ({ onClose, isDarkMode = t
                         return (
                           <div
                             key={result.testId}
-                            className={`p-3 rounded-lg border ${
-                              result.passed
+                            className={`p-3 rounded-lg border ${result.passed
                                 ? 'border-emerald-500/30 bg-emerald-500/10'
                                 : 'border-red-500/30 bg-red-500/10'
-                            }`}
+                              }`}
                           >
                             <div className="flex items-center gap-2 mb-2">
                               {result.passed ? (

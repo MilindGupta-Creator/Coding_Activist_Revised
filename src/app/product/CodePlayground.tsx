@@ -15,6 +15,11 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode, isDarkMode
   const [copied, setCopied] = useState(false);
   const editorRef = useRef<any>(null);
 
+  React.useEffect(() => {
+    setCode(initialCode);
+    setOutput([]);
+  }, [initialCode]);
+
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
   };
@@ -22,14 +27,14 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode, isDarkMode
   const runCode = useCallback(() => {
     setIsRunning(true);
     setOutput([]);
-    
+
     const logs: string[] = [];
     const originalConsoleLog = console.log;
     const originalConsoleError = console.error;
     const originalConsoleWarn = console.warn;
 
     console.log = (...args) => {
-      logs.push(args.map(arg => 
+      logs.push(args.map(arg =>
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
       ).join(' '));
     };
@@ -41,9 +46,9 @@ const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode, isDarkMode
     };
 
     try {
-      const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
       const fn = new AsyncFunction(code);
-      
+
       Promise.resolve(fn()).then(() => {
         setOutput(logs.length > 0 ? logs : ['✓ Code executed (no output)']);
       }).catch((err: Error) => {

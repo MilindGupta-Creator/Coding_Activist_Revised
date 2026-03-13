@@ -28,7 +28,7 @@ const App: React.FC = () => {
           const sessionData = JSON.parse(activeSession);
           // Basic expiry check (24h)
           const isExpired = new Date().getTime() - sessionData.timestamp >= 24 * 60 * 60 * 1000;
-          
+
           if (!isExpired && sessionData.uid && sessionData.sessionId) {
             // Validate session ID against Firestore
             try {
@@ -47,7 +47,7 @@ const App: React.FC = () => {
               console.error('Session validation error:', error);
             }
           }
-          
+
           // If session is invalid or expired, clear it
           localStorage.removeItem("frontend_mastery_active_session");
         } catch (e) {
@@ -63,9 +63,8 @@ const App: React.FC = () => {
   }, []);
 
   const handlePurchaseClick = () => {
-    // Navigate to under construction page
-    setCurrentView('underConstruction');
-    window.scrollTo(0, 0);
+    // Redirect to payment checkout
+    window.open('https://dodo.pe/ic4vo842tzb', '_blank');
   };
 
   const handleLoginClick = () => {
@@ -104,9 +103,9 @@ const App: React.FC = () => {
       <Navbar onPurchase={handlePurchaseClick} onLogin={handleLoginClick} />
 
       {/* Main Landing Page Content */}
-      <div className="pt-20"> 
+      <div className="pt-20">
         <Hero />
-        
+
         {/* Premium Features Banner - Compact & Impactful */}
         <section className="relative py-12 md:py-16 overflow-hidden">
           {/* Premium Dark Background */}
@@ -134,12 +133,13 @@ const App: React.FC = () => {
                   Practice Like <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400">FAANG Engineers</span>
                 </h2>
               </div>
-              
+
               {/* Stats */}
               <div className="flex gap-6 md:gap-8">
                 {[
                   { value: '50+', label: 'Challenges' },
                   { value: '30+', label: 'CSS Battles' },
+                  { value: '11', label: 'XSS Topics' },
                 ].map((stat, i) => (
                   <div key={i} className="text-center">
                     <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
@@ -151,7 +151,7 @@ const App: React.FC = () => {
 
             {/* Feature Cards */}
             <div className="grid md:grid-cols-2 gap-5 mb-8">
-              
+
               {/* Code Challenges */}
               <div className="group relative">
                 <div className="absolute -inset-0.5 bg-slate-800/50 rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity" />
@@ -166,7 +166,7 @@ const App: React.FC = () => {
                         <span className="px-2.5 py-1 text-[10px] font-semibold bg-violet-500/20 text-violet-300 rounded-full border border-violet-500/30">15+</span>
                       </div>
                       <p className="text-slate-400 text-sm mb-4 leading-relaxed">Real interview problems with instant test feedback. Build what FAANG actually asks.</p>
-                      
+
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-4">
                         {['Drag & Drop', 'Promise.all', 'Debounce', 'Curry'].map((tag, i) => (
@@ -175,7 +175,7 @@ const App: React.FC = () => {
                           </span>
                         ))}
                       </div>
-                      
+
                       {/* Mini Preview */}
                       <div className="flex items-center justify-between p-3 bg-slate-950/80 rounded-xl border border-slate-800/50">
                         <div className="flex items-center gap-2.5">
@@ -206,7 +206,7 @@ const App: React.FC = () => {
                         <span className="px-2.5 py-1 text-[10px] font-semibold bg-fuchsia-500/20 text-fuchsia-300 rounded-full border border-fuchsia-500/30">8+</span>
                       </div>
                       <p className="text-slate-400 text-sm mb-4 leading-relaxed">Pixel-perfect designs with code golf scoring. Compete on global leaderboards.</p>
-                      
+
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-4">
                         {['Yin Yang', 'Checkerboard', '3D Button', 'Sunset'].map((tag, i) => (
@@ -215,7 +215,7 @@ const App: React.FC = () => {
                           </span>
                         ))}
                       </div>
-                      
+
                       {/* Mini Preview */}
                       <div className="flex items-center justify-between p-3 bg-slate-950/80 rounded-xl border border-slate-800/50">
                         <div className="flex items-center gap-2.5">
@@ -229,6 +229,46 @@ const App: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <span className="text-sm text-fuchsia-400 font-semibold">99.2%</span>
                           <span className="text-xs text-slate-500">156 chars</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Web Security */}
+              <div className="group relative md:col-span-2">
+                <div className="absolute -inset-0.5 bg-slate-800/50 rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity" />
+                <div className="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-slate-700/30 p-6 hover:border-slate-600/50 transition-all">
+                  <div className="flex items-start gap-5">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-2xl shadow-md shadow-black/20 flex-shrink-0 group-hover:scale-105 transition-transform">
+                      🛡️
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xl font-semibold text-white">Web Security — XSS Deep Dive</h3>
+                        <span className="px-2.5 py-1 text-[10px] font-semibold bg-red-500/20 text-red-300 rounded-full border border-red-500/30">NEW</span>
+                      </div>
+                      <p className="text-slate-400 text-sm mb-4 leading-relaxed">Master Cross-Site Scripting (XSS) attacks & defenses. CSP, DOMPurify, cookie security, real-world case studies & production checklists.</p>
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {['Stored XSS', 'DOM XSS', 'CSP Headers', 'DOMPurify', 'Cookie Flags', 'React Security'].map((tag, i) => (
+                          <span key={i} className="px-2 py-0.5 text-[10px] bg-red-500/10 text-red-300 rounded-full border border-red-500/20">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Mini Preview */}
+                      <div className="flex items-center justify-between p-3 bg-slate-950/80 rounded-xl border border-slate-800/50">
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-medium">OWASP Top 10</span>
+                          <span className="text-sm text-slate-300 font-mono">XSS Prevention Checklist</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-red-500 shadow-sm shadow-black/10" />
+                          <span className="text-xs text-red-400 font-medium">11 Topics</span>
                         </div>
                       </div>
                     </div>
@@ -250,7 +290,7 @@ const App: React.FC = () => {
                   <span className="text-emerald-400">✓</span> Free Updates
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 className="group flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 hover:from-violet-500 hover:via-fuchsia-500 hover:to-pink-500 text-white rounded-xl font-medium text-sm transition-all shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/25"
               >
@@ -265,7 +305,7 @@ const App: React.FC = () => {
         <ReaderShowcase />
         <SampleGenerator />
         <Testimonials />
-        
+
         {/* Pricing Section with manual purchase handler */}
         <section id="pricing" className="py-24 bg-gradient-to-b from-white to-slate-50 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -281,10 +321,10 @@ const App: React.FC = () => {
               <div className="p-8 md:p-12 text-center border-b border-slate-200 bg-gradient-to-br from-white to-brand-50/30">
                 <h3 className="text-2xl font-medium text-slate-900 mb-2">The Ultimate Guide (Vol 2)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-6">
-                    <span className="text-5xl font-semibold bg-gradient-to-r from-brand-600 to-accent-600 bg-clip-text text-transparent">$29</span>
-                    <span className="text-xl text-slate-400 line-through">$89</span>
+                  <span className="text-5xl font-semibold bg-gradient-to-r from-brand-600 to-accent-600 bg-clip-text text-transparent">₹449</span>
+                  <span className="text-xl text-slate-400 line-through">₹1999</span>
                 </div>
-                <button 
+                <button
                   onClick={handlePurchaseClick}
                   className="w-full py-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-xl font-semibold text-lg shadow-lg shadow-black/15 transition-all transform hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20"
                 >
@@ -292,7 +332,7 @@ const App: React.FC = () => {
                 </button>
                 <p className="mt-4 text-xs text-slate-500">Includes lifetime updates for Next.js 15+</p>
               </div>
-              
+
               <div className="p-8 md:p-12 bg-gradient-to-br from-slate-50 to-white">
                 <h4 className="text-slate-900 font-medium mb-6 uppercase tracking-wider text-sm">Everything Inside:</h4>
                 <ul className="space-y-4 text-left">
@@ -308,9 +348,13 @@ const App: React.FC = () => {
                     <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
                     <span>Machine Coding: Kanban Board, Infinite Feed</span>
                   </li>
-                   <li className="flex items-start gap-3 text-slate-700">
+                  <li className="flex items-start gap-3 text-slate-700">
                     <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
                     <span>System Design: Designing WhatsApp Web</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-slate-700">
+                    <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
+                    <span className="flex items-center gap-2">Web Security: XSS Deep Dive <span className="px-1.5 py-0.5 text-[9px] font-bold bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full">NEW</span></span>
                   </li>
                 </ul>
               </div>

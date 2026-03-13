@@ -22,8 +22,8 @@ const Pricing: React.FC = () => {
              </div>
              <h3 className="text-2xl font-semibold text-white mb-2">The Ultimate Guide (Vol 2)</h3>
              <div className="flex items-baseline justify-center gap-2 mb-6">
-                <span className="text-5xl font-bold text-white">$29</span>
-                <span className="text-xl text-slate-500 line-through">$89</span>
+                <span className="text-5xl font-bold text-white">₹449</span>
+                <span className="text-xl text-slate-500 line-through">₹1999</span>
              </div>
              <button className="w-full py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-brand-500/25 transition-all transform hover:scale-[1.02]">
                Instantly Upgrade My Career
