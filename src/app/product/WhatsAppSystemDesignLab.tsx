@@ -1,11 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw, Send, Wifi, WifiOff, Server, Database, MessageSquare, Users, Clock, CheckCircle2, XCircle, Loader2, X, HelpCircle, Info, ArrowRight, Lightbulb, Zap, BookOpen } from 'lucide-react';
+import { 
+  Play, Pause, RotateCcw, Send, Wifi, WifiOff, Server, Database, 
+  MessageSquare, Users, Clock, CheckCircle2, XCircle, Loader2, 
+  X, HelpCircle, Info, ArrowRight, Lightbulb, Zap, BookOpen, 
+  Code, Activity, Terminal, Layers, Share2, Globe, Shield, 
+  Maximize2, ChevronRight, Check
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 type Message = {
   id: string;
   content: string;
-  sender: string;
+  sender: 'You' | 'Alice';
   timestamp: number;
   status: 'pending' | 'sent' | 'delivered' | 'read';
   isOffline?: boolean;
@@ -15,47 +23,89 @@ type LabMode = 'websocket' | 'offline-queue' | 'architecture';
 
 interface WhatsAppSystemDesignLabProps {
   onClose?: () => void;
+  onOpenPlayground?: (code: string) => void;
 }
 
-const WhatsAppSystemDesignLab: React.FC<WhatsAppSystemDesignLabProps> = ({ onClose }) => {
+const CodeBlock = ({ code, language = 'javascript' }: { code: string; language?: string }) => (
+  <div className="rounded-lg bg-[#0d1117] p-4 font-mono text-xs leading-relaxed overflow-hidden relative group">
+    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <Badge variant="outline" className="text-[10px] bg-slate-800 border-slate-700 text-slate-400">
+        {language}
+      </Badge>
+    </div>
+    <pre className="text-slate-300">
+      {code.split('\n').map((line, i) => (
+        <div key={i} className="flex gap-4">
+          <span className="text-slate-600 w-4 text-right select-none">{i + 1}</span>
+          <span>{line}</span>
+        </div>
+      ))}
+    </pre>
+  </div>
+);
+
+const WhatsAppSystemDesignLab: React.FC<WhatsAppSystemDesignLabProps> = ({ onClose, onOpenPlayground }) => {
   const [activeMode, setActiveMode] = useState<LabMode>('websocket');
   const [isConnected, setIsConnected] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [offlineQueue, setOfflineQueue] = useState<Message[]>([]);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [messageInput, setMessageInput] = useState('');
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [showModeHelp, setShowModeHelp] = useState<string | null>(null);
+  const [isCodeExpanded, setIsCodeExpanded] = useState(false);
+  const [events, setEvents] = useState<{ id: string; type: string; payload: string; timestamp: number }[]>([]);
+  const [checklist, setChecklist] = useState({
+    sendRealtime: false,
+    simulateOffline: false,
+    queueMessage: false,
+    syncQueue: false,
+    exploreArch: false
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const eventLogRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollTo({ top: ref.current.scrollHeight, behavior: 'smooth' });
   };
 
   useEffect(() => {
-    scrollToBottom();
+    scrollToBottom(messagesEndRef);
   }, [messages]);
 
-  // Simulate WebSocket connection
   useEffect(() => {
-    if (isPlaying && isConnected && activeMode === 'websocket') {
-      const interval = setInterval(() => {
-        // Simulate receiving a message
-        const newMessage: Message = {
-          id: `msg-${Date.now()}`,
-          content: `Message ${messages.length + 1}`,
-          sender: 'Alice',
-          timestamp: Date.now(),
-          status: 'delivered',
-        };
-        setMessages(prev => [...prev, newMessage]);
-      }, 3000);
+    scrollToBottom(eventLogRef);
+  }, [events]);
 
-      return () => clearInterval(interval);
+  const addEvent = (type: string, payload: string) => {
+    setEvents(prev => [...prev.slice(-19), {
+      id: Math.random().toString(36).substr(2, 9),
+      type,
+      payload,
+      timestamp: Date.now()
+    }]);
+  };
+
+  // Simulate Alice responding
+  useEffect(() => {
+    if (isConnected && messages.length > 0 && messages[messages.length - 1].sender === 'You') {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.status === 'delivered' || lastMsg.status === 'read') {
+        const timeout = setTimeout(() => {
+          const aliceMsg: Message = {
+            id: `alice-${Date.now()}`,
+            content: "Got it! Real-time messaging is smooth.",
+            sender: 'Alice',
+            timestamp: Date.now(),
+            status: 'delivered'
+          };
+          setMessages(prev => [...prev, aliceMsg]);
+          addEvent('WS_RECV', JSON.stringify({ from: 'Alice', msg: aliceMsg.content }));
+        }, 2000);
+        return () => clearTimeout(timeout);
+      }
     }
-  }, [isPlaying, isConnected, activeMode, messages.length]);
+  }, [isConnected, messages]);
 
   const sendMessage = () => {
     if (!messageInput.trim()) return;
@@ -71,776 +121,606 @@ const WhatsAppSystemDesignLab: React.FC<WhatsAppSystemDesignLabProps> = ({ onClo
 
     if (isConnected) {
       setMessages(prev => [...prev, newMessage]);
-      // Simulate delivery after 1s
+      addEvent('WS_SEND', JSON.stringify({ type: 'CHAT_MSG', content: messageInput }));
+      setChecklist(prev => ({ ...prev, sendRealtime: true }));
+      
+      // Simulate lifecycle
       setTimeout(() => {
-        setMessages(prev =>
-          prev.map(msg =>
-            msg.id === newMessage.id ? { ...msg, status: 'delivered' } : msg
-          )
-        );
-      }, 1000);
+        setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...m, status: 'delivered' } : m));
+        addEvent('WS_ACK', JSON.stringify({ msgId: newMessage.id, status: 'delivered' }));
+      }, 800);
+
+      setTimeout(() => {
+        setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...m, status: 'read' } : m));
+        addEvent('WS_ACK', JSON.stringify({ msgId: newMessage.id, status: 'read' }));
+      }, 1500);
     } else {
       setOfflineQueue(prev => [...prev, newMessage]);
+      addEvent('LOCAL_QUEUE', `Queued: ${messageInput}`);
+      setChecklist(prev => ({ ...prev, queueMessage: true }));
     }
 
     setMessageInput('');
   };
 
   const toggleConnection = () => {
-    setIsConnected(prev => !prev);
-    if (!isConnected && offlineQueue.length > 0) {
-      // Simulate syncing offline queue
+    const newState = !isConnected;
+    setIsConnected(newState);
+    addEvent('WS_STATUS', newState ? 'CONNECTED' : 'DISCONNECTED');
+    if (!newState) setChecklist(prev => ({ ...prev, simulateOffline: true }));
+    
+    if (newState && offlineQueue.length > 0) {
+      addEvent('WS_SYNC', `Syncing ${offlineQueue.length} messages...`);
       setTimeout(() => {
-        setMessages(prev => [...prev, ...offlineQueue]);
+        setMessages(prev => [...prev, ...offlineQueue.map(m => ({ ...m, status: 'sent' as const }))]);
         setOfflineQueue([]);
-      }, 1000);
+        setChecklist(prev => ({ ...prev, syncQueue: true }));
+        addEvent('WS_SYNC_COMPLETE', 'All messages flushed to server');
+      }, 1500);
     }
   };
 
   const resetLab = () => {
     setMessages([]);
     setOfflineQueue([]);
-    setIsPlaying(false);
     setMessageInput('');
     setIsConnected(true);
+    setEvents([]);
+    setChecklist({
+      sendRealtime: false,
+      simulateOffline: false,
+      queueMessage: false,
+      syncQueue: false,
+      exploreArch: false
+    });
   };
 
-  const architectureComponents = [
-    { id: 'client', name: 'Browser Client', icon: MessageSquare, color: 'bg-blue-500', description: 'React frontend, WebSocket client, local storage', details: 'Handles UI rendering, WebSocket connections, and local message caching. Implements optimistic UI updates for better UX.' },
-    { id: 'websocket', name: 'WebSocket Server', icon: Server, color: 'bg-green-500', description: 'Real-time bidirectional communication', details: 'Maintains persistent connections with clients. Handles message routing, connection management, and heartbeat monitoring. Scales horizontally using connection sharding.' },
-    { id: 'api', name: 'API Gateway', icon: Server, color: 'bg-purple-500', description: 'REST endpoints for auth, contacts, media', details: 'Provides RESTful APIs for authentication, contact management, media uploads, and profile updates. Acts as a single entry point for HTTP requests.' },
-    { id: 'message', name: 'Message Service', icon: Database, color: 'bg-yellow-500', description: 'Message storage, delivery, ordering', details: 'Processes and stores messages. Ensures message ordering, deduplication, and delivery guarantees. Handles message persistence and retrieval.' },
-    { id: 'presence', name: 'Presence Service', icon: Users, color: 'bg-pink-500', description: 'Online status, last seen, typing indicators', details: 'Tracks user online/offline status, last seen timestamps, and typing indicators. Uses Redis for fast lookups and pub/sub for real-time updates.' },
-    { id: 'media', name: 'Media Service', icon: Database, color: 'bg-orange-500', description: 'Image/video uploads, CDN integration', details: 'Handles media file uploads, processing, and storage. Integrates with CDN for fast global delivery. Supports image compression and video transcoding.' },
-    { id: 'db', name: 'Database Cluster', icon: Database, color: 'bg-red-500', description: 'Sharded database for messages and user data', details: 'Sharded MySQL/PostgreSQL cluster for horizontal scaling. Uses consistent hashing for message distribution. Implements read replicas for better performance.' },
+  const codeSnippets = {
+    websocket: `// WebSocket Client Implementation
+const socket = new WebSocket('wss://api.whatsapp.com/v1');
+
+socket.onopen = () => {
+  console.log('Connected to gateway');
+  syncOfflineQueue();
+};
+
+socket.onmessage = (event) => {
+  const { type, payload } = JSON.parse(event.data);
+  if (type === 'MESSAGE') {
+    handleIncomingMessage(payload);
+    sendAck(payload.id, 'DELIVERED');
+  }
+};
+
+const sendMessage = (content) => {
+  const msg = { id: uuid(), content, timestamp: Date.now() };
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(msg));
+  } else {
+    queueLocally(msg);
+  }
+};`,
+    'offline-queue': `// Persistent Queue Manager
+const db = new IndexedDB('whatsapp_store');
+
+const queueLocally = async (message) => {
+  await db.add('pending_messages', {
+    ...message,
+    status: 'PENDING'
+  });
+  notifyUI('Message queued offline');
+};
+
+const syncOfflineQueue = async () => {
+  const pending = await db.getAll('pending_messages');
+  for (const msg of pending) {
+    try {
+      await socket.send(JSON.stringify(msg));
+      await db.delete('pending_messages', msg.id);
+    } catch (e) {
+      break; // Stop sync if connection drops
+    }
+  }
+};`,
+    architecture: `// Microservices Overview
+// 1. WebSocket Gateway: Handles long-lived connections
+// 2. Presence Service: Manages online/offline status
+// 3. Message Service: Handles persistence and delivery
+// 4. Media Service: CDN-backed blob storage
+// 5. API Gateway: Auth, Profile, and Settings REST APIs`
+  };
+
+  const architectureNodes = [
+    { id: 'client', name: 'Browser Client', icon: MessageSquare, color: 'from-cyan-500 to-blue-500', x: 50, y: 50 },
+    { id: 'gateway', name: 'WS Gateway', icon: Server, color: 'from-blue-600 to-indigo-600', x: 250, y: 50 },
+    { id: 'presence', name: 'Presence Service', icon: Users, color: 'from-pink-500 to-rose-500', x: 450, y: 50 },
+    { id: 'msg-service', name: 'Message Service', icon: Database, color: 'from-emerald-500 to-teal-500', x: 250, y: 150 },
+    { id: 'db', name: 'Cassandra Cluster', icon: Database, color: 'from-slate-700 to-slate-900', x: 450, y: 150 },
   ];
 
-  const modeDescriptions = {
-    websocket: {
-      title: 'WebSocket Flow',
-      icon: Zap,
-      description: 'Experience real-time messaging with WebSocket connections',
-      instructions: [
-        'Type a message and click Send to see real-time delivery',
-        'Toggle connection to see how messages behave when offline',
-        'Watch message status indicators (sent → delivered → read)',
-        'Observe the low-latency communication in action'
-      ],
-      learningPoints: [
-        'WebSocket provides full-duplex communication',
-        'Messages are delivered instantly without polling',
-        'Connection status affects message delivery',
-        'Status indicators show message lifecycle'
-      ]
+  const nodeDetails = {
+    client: {
+      title: 'Browser Client',
+      desc: 'Handles real-time UI, local message queuing (IndexedDB), and WebSocket lifecycle.',
+      tech: ['React', 'Framer Motion', 'IndexedDB']
     },
-    'offline-queue': {
-      title: 'Offline Queue',
-      icon: Database,
-      description: 'Learn how messages are queued and synced when offline',
-      instructions: [
-        'Click "Simulate Offline" to disconnect',
-        'Add messages while offline - they\'ll be queued locally',
-        'Click "Sync Queue" to restore connection and sync',
-        'Watch how queued messages are sent automatically'
-      ],
-      learningPoints: [
-        'Messages are stored locally when offline',
-        'Queue persists across page refreshes',
-        'Automatic sync when connection is restored',
-        'No message loss during network interruptions'
-      ]
+    gateway: {
+      title: 'WebSocket Gateway',
+      desc: 'Maintains persistent connections. Acts as a router between clients and backend services.',
+      tech: ['Go', 'Node.js', 'Redis']
     },
-    architecture: {
-      title: 'Architecture Explorer',
-      icon: Server,
-      description: 'Explore the system architecture and component interactions',
-      instructions: [
-        'Click on any component to learn more about it',
-        'Read detailed descriptions of each system component',
-        'Understand how components interact with each other',
-        'See the data flow through the system'
-      ],
-      learningPoints: [
-        'System is built with microservices architecture',
-        'Each component has a specific responsibility',
-        'Components communicate via APIs and message queues',
-        'Scalability is achieved through horizontal scaling'
-      ]
+    presence: {
+      title: 'Presence Service',
+      desc: 'Tracks online/offline status and "last seen" using heartbeat mechanisms.',
+      tech: ['Redis', 'Pub/Sub']
+    },
+    'msg-service': {
+      title: 'Message Service',
+      desc: 'Handles message persistence, deduplication, and ordering guarantees.',
+      tech: ['Java/Spring', 'Kafka']
+    },
+    db: {
+      title: 'Database Cluster',
+      desc: 'Sharded NoSQL storage for high-volume message persistence.',
+      tech: ['Cassandra', 'ScallyDB']
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-8 relative rounded-2xl border-2 border-cyan-500/30 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-900 p-6 shadow-2xl shadow-cyan-500/10"
-    >
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 rounded-2xl pointer-events-none"></div>
-      
-      <div className="relative z-10 mb-6 flex items-center justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyan-400 rounded-lg blur-lg opacity-50 animate-pulse"></div>
-              <div className="relative w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-white" />
-              </div>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Lab Header */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+          <Globe className="w-32 h-32 text-cyan-500 rotate-12" />
+        </div>
+        
+        <div className="relative z-10 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+            <Zap className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-xl font-bold text-white tracking-tight">System Design Lab</h1>
+              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1.5 py-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live Simulation
+              </Badge>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-white">WhatsApp Web System Design Lab</h3>
-              <p className="text-sm text-slate-400">Interactive simulation of real-time messaging architecture</p>
-            </div>
+            <p className="text-sm text-slate-400 font-medium">WhatsApp Real-time Messaging & Persistence</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          {!showWelcome && (
-            <button
-              onClick={() => setShowWelcome(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
-              title="Show welcome guide"
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Help</span>
-            </button>
-          )}
+
+        <div className="flex items-center gap-3 relative z-10">
           <button
             onClick={resetLab}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
-            title="Reset lab to initial state"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all text-sm font-semibold border border-slate-700"
           >
             <RotateCcw className="w-4 h-4" />
-            <span className="hidden sm:inline">Reset</span>
+            Reset
           </button>
           {onClose && (
             <button
               onClick={onClose}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+              className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors border border-slate-700"
             >
-              <X className="w-4 h-4" />
-              <span className="hidden sm:inline">Close</span>
+              <X className="w-5 h-5" />
             </button>
           )}
         </div>
       </div>
 
-      {/* Welcome Screen */}
-      <AnimatePresence>
-        {showWelcome && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-6 p-6 rounded-xl bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 border-2 border-cyan-500/30"
+      {/* Mode Selector */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {(['websocket', 'offline-queue', 'architecture'] as LabMode[]).map((mode) => (
+          <button
+            key={mode}
+            onClick={() => {
+              setActiveMode(mode);
+              if (mode === 'architecture') setChecklist(prev => ({ ...prev, exploreArch: true }));
+            }}
+            className={`group p-4 rounded-xl border-2 transition-all text-left relative overflow-hidden ${
+              activeMode === mode 
+                ? 'bg-slate-900 border-cyan-500/50 shadow-xl shadow-cyan-500/5' 
+                : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+            }`}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                    <Lightbulb className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-bold text-white mb-1">Welcome to the System Design Lab!</h4>
-                    <p className="text-sm text-slate-300">Learn how WhatsApp Web's architecture works through interactive simulations</p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <ArrowRight className="w-3 h-3 text-cyan-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-white mb-1">What You'll Learn</div>
-                      <div className="text-xs text-slate-400">
-                        Real-time messaging, offline queuing, system architecture, and how components interact in a scalable chat application
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Zap className="w-3 h-3 text-blue-400" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-white mb-1">How to Use</div>
-                      <div className="text-xs text-slate-400">
-                        Select a mode above to explore different aspects. Each mode has interactive features you can experiment with. Click the help icon (?) for mode-specific guidance.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowWelcome(false)}
-                className="ml-4 p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            <div className={`absolute top-0 right-0 p-4 transition-transform duration-500 ${activeMode === mode ? 'scale-110' : 'scale-100 opacity-20'}`}>
+              {mode === 'websocket' && <Activity className="w-8 h-8 text-cyan-500" />}
+              {mode === 'offline-queue' && <Database className="w-8 h-8 text-blue-500" />}
+              {mode === 'architecture' && <Layers className="w-8 h-8 text-indigo-500" />}
             </div>
-            <button
-              onClick={() => setShowWelcome(false)}
-              className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium hover:from-cyan-600 hover:to-blue-600 transition-all flex items-center justify-center gap-2"
-            >
-              Get Started
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Mode Selector with Descriptions */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <h4 className="text-sm font-medium text-slate-300">Explore Modes</h4>
-            <button
-              onClick={() => setShowModeHelp(showModeHelp === activeMode ? null : activeMode)}
-              className="p-1.5 rounded-lg bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 transition-colors"
-              title="Show mode help"
-            >
-              <HelpCircle className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {(['websocket', 'offline-queue', 'architecture'] as LabMode[]).map((mode) => {
-            const modeInfo = modeDescriptions[mode];
-            const ModeIcon = modeInfo.icon;
-            return (
-              <div key={mode} className="flex-1 min-w-[200px]">
-                <button
-                  onClick={() => {
-                    setActiveMode(mode);
-                    resetLab();
-                    setShowModeHelp(null);
-                  }}
-                  className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                    activeMode === mode
-                      ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30'
-                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <ModeIcon className="w-4 h-4" />
-                    <span>{modeInfo.title}</span>
-                  </div>
-                </button>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Mode Help Panel */}
-        <AnimatePresence>
-          {showModeHelp === activeMode && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-4 p-4 rounded-lg bg-slate-800/50 border border-slate-700 overflow-hidden"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm font-medium text-white">{modeDescriptions[activeMode].title} Guide</span>
-                </div>
-                <button
-                  onClick={() => setShowModeHelp(null)}
-                  className="text-slate-400 hover:text-white"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <p className="text-xs text-slate-400 mb-4">{modeDescriptions[activeMode].description}</p>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <div className="text-xs font-medium text-cyan-400 mb-2 flex items-center gap-1">
-                    <BookOpen className="w-3 h-3" />
-                    Step-by-Step Instructions
-                  </div>
-                  <ul className="space-y-2">
-                    {modeDescriptions[activeMode].instructions.map((instruction, idx) => (
-                      <li key={idx} className="text-xs text-slate-300 flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">•</span>
-                        <span>{instruction}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-blue-400 mb-2 flex items-center gap-1">
-                    <Lightbulb className="w-3 h-3" />
-                    Key Learning Points
-                  </div>
-                  <ul className="space-y-2">
-                    {modeDescriptions[activeMode].learningPoints.map((point, idx) => (
-                      <li key={idx} className="text-xs text-slate-300 flex items-start gap-2">
-                        <span className="text-blue-400 mt-0.5">→</span>
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            <div className="relative z-10">
+              <h3 className={`text-sm font-bold mb-1 transition-colors ${activeMode === mode ? 'text-white' : 'text-slate-400'}`}>
+                {mode === 'websocket' ? 'WebSockets & Real-time' : mode === 'offline-queue' ? 'Offline Persistence' : 'Global Architecture'}
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed max-w-[80%]">
+                {mode === 'websocket' ? 'Full-duplex communication flows.' : mode === 'offline-queue' ? 'IndexedDB queuing & syncing.' : 'Distributed microservices layout.'}
+              </p>
+            </div>
+          </button>
+        ))}
       </div>
 
-      {/* WebSocket Mode */}
-      {activeMode === 'websocket' && (
-        <div className="space-y-4">
-          {/* Quick Info Banner */}
-          <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
-            <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-              <div className="text-xs text-blue-300">
-                <span className="font-medium">Tip:</span> Try sending messages and toggling the connection to see how WebSocket handles real-time communication. Watch the message status indicators change from sent → delivered → read.
-              </div>
-            </div>
-          </div>
-
-          {/* Connection Status */}
-          <div className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700">
-            <div className="flex items-center gap-3">
-              {isConnected ? (
-                <Wifi className="w-5 h-5 text-green-400" />
-              ) : (
-                <WifiOff className="w-5 h-5 text-red-400" />
-              )}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Main Lab Area */}
+        <div className="lg:col-span-8 space-y-6">
+          <Card className="bg-slate-900 border-slate-800 overflow-hidden min-h-[500px] flex flex-col">
+            <CardHeader className="border-b border-slate-800 py-4 flex flex-row items-center justify-between">
               <div>
-                <div className="text-sm font-medium text-white">
-                  {isConnected ? 'Connected' : 'Disconnected'}
-                </div>
-                <div className="text-xs text-slate-400">
-                  {isConnected ? 'WebSocket active' : 'Offline mode'}
-                </div>
+                <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-cyan-500" />
+                  Interactive Workspace
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {activeMode === 'websocket' ? 'Simulate bidirectional message flow' : activeMode === 'offline-queue' ? 'Test local storage and synchronization' : 'Explore infrastructure components'}
+                </CardDescription>
               </div>
-            </div>
-            <button
-              onClick={toggleConnection}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isConnected
-                  ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                  : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-              }`}
-            >
-              {isConnected ? 'Disconnect' : 'Connect'}
-            </button>
-          </div>
-
-          {/* Message List */}
-          <div className="h-64 overflow-y-auto rounded-lg bg-slate-900 border border-slate-800 p-4 space-y-3">
-            {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-8">
-                <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center mb-4">
-                  <MessageSquare className="w-8 h-8 text-slate-600" />
-                </div>
-                <div className="text-sm font-medium text-slate-400 mb-2">No messages yet</div>
-                <div className="text-xs text-slate-500 max-w-xs">
-                  Start by typing a message below. You'll see real-time delivery status indicators.
-                </div>
-              </div>
-            ) : (
-              <AnimatePresence>
-                {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className={`flex flex-col gap-1 ${
-                    msg.sender === 'You' ? 'items-end' : 'items-start'
-                  }`}
-                >
-                  <div
-                    className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                      msg.sender === 'You'
-                        ? 'bg-brand-500 text-white'
-                        : 'bg-slate-800 text-slate-200'
-                    }`}
-                  >
-                    <div className="text-sm">{msg.content}</div>
-                    <div className="flex items-center gap-1 mt-1 text-xs opacity-70">
-                      {msg.status === 'pending' && <Loader2 className="w-3 h-3 animate-spin" />}
-                      {msg.status === 'sent' && <CheckCircle2 className="w-3 h-3" />}
-                      {msg.status === 'delivered' && (
-                        <>
-                          <CheckCircle2 className="w-3 h-3" />
-                          <CheckCircle2 className="w-3 h-3 -ml-1" />
-                        </>
-                      )}
-                      {msg.status === 'read' && (
-                        <>
-                          <CheckCircle2 className="w-3 h-3 text-blue-400" />
-                          <CheckCircle2 className="w-3 h-3 text-blue-400 -ml-1" />
-                        </>
-                      )}
-                      <span className="ml-1">
-                        {new Date(msg.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
+              {activeMode !== 'architecture' && (
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                    isConnected ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                  }`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                    {isConnected ? 'Connected' : 'Disconnected'}
                   </div>
-                </motion.div>
-                ))}
-              </AnimatePresence>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Message Input */}
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Type a message..."
-                className="flex-1 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
-              />
-              <button
-                onClick={sendMessage}
-                disabled={!messageInput.trim()}
-                className="px-6 py-2 rounded-lg bg-brand-500 text-white hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-              >
-                <Send className="w-4 h-4" />
-                Send
-              </button>
-            </div>
-            <div className="text-xs text-slate-500 flex items-center gap-1">
-              <span>Press</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">Enter</kbd>
-              <span>to send</span>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-              <div className="text-xs text-slate-400 mb-1">Messages Sent</div>
-              <div className="text-lg font-bold text-white">{messages.length}</div>
-            </div>
-            <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-              <div className="text-xs text-slate-400 mb-1">Connection</div>
-              <div className={`text-lg font-bold flex items-center gap-2 ${isConnected ? 'text-green-400' : 'text-red-400'}`}>
-                {isConnected ? (
-                  <>
-                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                    Active
-                  </>
-                ) : (
-                  <>
-                    <div className="w-2 h-2 rounded-full bg-red-400"></div>
-                    Offline
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-              <div className="text-xs text-slate-400 mb-1">Latency</div>
-              <div className="text-lg font-bold text-white flex items-center gap-1">
-                {isConnected ? (
-                  <>
-                    <Zap className="w-3 h-3 text-green-400" />
-                    ~50ms
-                  </>
-                ) : (
-                  'N/A'
-                )}
-              </div>
-            </div>
-            <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-              <div className="text-xs text-slate-400 mb-1">Queue Size</div>
-              <div className="text-lg font-bold text-white">{offlineQueue.length}</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Offline Queue Mode */}
-      {activeMode === 'offline-queue' && (
-        <div className="space-y-4">
-          {/* Info Banner */}
-          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
-            <div className="flex items-start gap-3">
-              <WifiOff className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-amber-400 mb-2">Offline Queue System</div>
-                <p className="text-xs text-amber-300/80 mb-2">
-                  When you're offline, messages are stored locally in your browser. This ensures no messages are lost even when the network is unavailable.
-                </p>
-                <div className="text-xs text-amber-300/70">
-                  <span className="font-medium">How it works:</span> Messages are queued in IndexedDB/LocalStorage → Connection restored → Automatic sync → Messages delivered in order
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Offline Queue */}
-          <div className="space-y-2">
-            <div className="text-sm font-medium text-slate-300 mb-2">
-              Offline Queue ({offlineQueue.length} messages)
-            </div>
-            <div className="h-48 overflow-y-auto rounded-lg bg-slate-900 border border-slate-800 p-4 space-y-2">
-              {offlineQueue.length === 0 ? (
-                <div className="text-center text-slate-500 py-8">
-                  <Database className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <div className="text-sm">No messages in queue</div>
-                </div>
-              ) : (
-                offlineQueue.map((msg) => (
-                  <motion.div
-                    key={msg.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center justify-between p-3 rounded-lg bg-slate-800 border border-slate-700"
+                  <button
+                    onClick={toggleConnection}
+                    className={`p-2 rounded-lg transition-all ${
+                      isConnected ? 'bg-rose-500/10 text-rose-400 hover:bg-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                    }`}
+                    title={isConnected ? "Simulate network drop" : "Restore connection"}
                   >
-                    <div className="flex-1">
-                      <div className="text-sm text-white">{msg.content}</div>
-                      <div className="text-xs text-slate-400 mt-1">
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                    {isConnected ? <WifiOff className="w-4 h-4" /> : <Wifi className="w-4 h-4" />}
+                  </button>
+                </div>
+              )}
+            </CardHeader>
+            <CardContent className="p-0 flex-1 flex flex-col">
+              {activeMode === 'websocket' || activeMode === 'offline-queue' ? (
+                <div className="flex-1 flex flex-col h-full bg-[#0b0e14]">
+                  {/* Message Area */}
+                  <div ref={messagesEndRef} className="flex-1 p-6 space-y-4 overflow-y-auto max-h-[350px]">
+                    <AnimatePresence initial={false}>
+                      {messages.length === 0 && offlineQueue.length === 0 && (
+                        <div className="h-full flex flex-col items-center justify-center text-slate-600 opacity-50 space-y-4 mt-12">
+                          <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center">
+                            <MessageSquare className="w-8 h-8" />
+                          </div>
+                          <p className="text-xs font-mono">WAITING_FOR_INTERACTION</p>
+                        </div>
+                      )}
+                      {messages.map((msg) => (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          className={`flex ${msg.sender === 'You' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div className={`group relative max-w-[80%] p-3 rounded-2xl text-sm ${
+                            msg.sender === 'You' 
+                              ? 'bg-cyan-600 text-white rounded-tr-none shadow-lg shadow-cyan-900/20' 
+                              : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'
+                          }`}>
+                            {msg.content}
+                            <div className={`flex items-center gap-1.5 mt-1.5 text-[10px] opacity-60 font-mono ${msg.sender === 'You' ? 'justify-end' : 'justify-start'}`}>
+                              {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {msg.sender === 'You' && (
+                                <div className="flex items-center">
+                                  {msg.status === 'pending' && <Clock className="w-2.5 h-2.5 animate-pulse" />}
+                                  {msg.status === 'sent' && <Check className="w-2.5 h-2.5" />}
+                                  {msg.status === 'delivered' && (
+                                    <div className="flex">
+                                      <Check className="w-2.5 h-2.5" />
+                                      <Check className="w-2.5 h-2.5 -ml-1.5" />
+                                    </div>
+                                  )}
+                                  {msg.status === 'read' && (
+                                    <div className="flex text-cyan-300">
+                                      <Check className="w-2.5 h-2.5" />
+                                      <Check className="w-2.5 h-2.5 -ml-1.5" />
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                      {activeMode === 'offline-queue' && offlineQueue.map((msg) => (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex justify-end"
+                        >
+                          <div className="bg-slate-800/50 border-2 border-amber-500/30 text-slate-400 p-3 rounded-2xl rounded-tr-none text-sm italic flex items-center gap-3">
+                            <Clock className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                            {msg.content}
+                            <Badge variant="outline" className="text-[9px] bg-amber-500/10 text-amber-500 border-amber-500/20 py-0">Queued Offline</Badge>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Input Area */}
+                  <div className="p-4 bg-slate-900 border-t border-slate-800">
+                    <div className="flex gap-3 bg-slate-950 p-2 rounded-xl border border-slate-800 ring-1 ring-slate-800 focus-within:ring-cyan-500/50 transition-all shadow-inner">
+                      <input
+                        type="text"
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                        placeholder={isConnected ? "Send message via WebSocket..." : "Network down. Message will be queued..."}
+                        className="flex-1 bg-transparent border-none text-white text-sm px-3 focus:outline-none placeholder:text-slate-600 font-medium"
+                      />
+                      <button
+                        onClick={sendMessage}
+                        disabled={!messageInput.trim()}
+                        className="p-2.5 rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 disabled:opacity-20 disabled:grayscale transition-all shadow-lg"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="mt-2 px-1 flex items-center justify-between">
+                      <div className="text-[10px] text-slate-500 font-mono">
+                        {activeMode === 'websocket' ? 'REALTIME_PROTOCOL: V3' : 'PERSISTENCE: INDEXED_DB_LOCAL'}
+                      </div>
+                      <div className="text-[10px] text-slate-500">
+                        Press <kbd className="bg-slate-800 px-1 rounded text-slate-400">Enter</kbd> to execute
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-amber-400" />
-                      <span className="text-xs text-amber-400">Pending</span>
-                    </div>
-                  </motion.div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex-1 p-8 bg-slate-950/50 relative">
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                    <defs>
+                      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155" />
+                      </marker>
+                    </defs>
+                    {/* Connections */}
+                    <motion.path d="M 100 50 L 250 50" stroke="#334155" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
+                    <motion.path d="M 250 50 L 450 50" stroke="#334155" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
+                    <motion.path d="M 250 50 L 250 150" stroke="#334155" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
+                    <motion.path d="M 250 150 L 450 150" stroke="#334155" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
+                    
+                    {/* Data Packets */}
+                    <AnimatePresence>
+                      {isConnected && (
+                        <>
+                          <motion.circle r="3" fill="#06b6d4"
+                            animate={{ cx: [100, 250], cy: [50, 50] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          />
+                          <motion.circle r="3" fill="#6366f1"
+                            animate={{ cx: [250, 450], cy: [50, 50] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "linear", delay: 0.5 }}
+                          />
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </svg>
+
+                  <div className="relative z-10 grid grid-cols-2 gap-x-24 gap-y-16">
+                    {architectureNodes.map((node) => {
+                      const Icon = node.icon;
+                      const isSelected = selectedComponent === node.id;
+                      return (
+                        <div key={node.id} className="relative group" style={{ left: node.x / 5, top: node.y / 2 }}>
+                          <motion.button
+                            onClick={() => {
+                              setSelectedComponent(node.id);
+                              setChecklist(prev => ({ ...prev, exploreArch: true }));
+                            }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all w-40 ${
+                              isSelected 
+                                ? 'bg-slate-900 border-cyan-500 shadow-2xl shadow-cyan-500/20' 
+                                : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+                            }`}
+                          >
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${node.color} flex items-center justify-center shadow-lg`}>
+                              <Icon className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="text-center">
+                              <div className="text-[11px] font-bold text-white uppercase tracking-wider">{node.name}</div>
+                              <div className="text-[9px] text-slate-500 font-medium">Node: 10.0.0.{Math.floor(Math.random() * 255)}</div>
+                            </div>
+                          </motion.button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {selectedComponent && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="absolute top-8 right-8 w-64 p-5 rounded-2xl bg-slate-900 border border-cyan-500/30 shadow-2xl z-20"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-bold text-white text-sm">{nodeDetails[selectedComponent as keyof typeof nodeDetails].title}</h4>
+                        <button onClick={() => setSelectedComponent(null)} className="text-slate-500 hover:text-white"><X className="w-4 h-4" /></button>
+                      </div>
+                      <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                        {nodeDetails[selectedComponent as keyof typeof nodeDetails].desc}
+                      </p>
+                      <div className="space-y-2">
+                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tech Stack</div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {nodeDetails[selectedComponent as keyof typeof nodeDetails].tech.map(t => (
+                            <Badge key={t} variant="outline" className="text-[9px] bg-slate-800 border-slate-700 text-slate-300 py-0">{t}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Dev Console / Event Log */}
+          <Card className="bg-slate-900 border-slate-800 overflow-hidden">
+            <CardHeader className="py-3 px-6 border-b border-slate-800 flex flex-row items-center justify-between">
+              <CardTitle className="text-xs font-bold text-slate-400 flex items-center gap-2 uppercase tracking-widest">
+                <Terminal className="w-3.5 h-3.5" />
+                Network Events
+              </CardTitle>
+              <div className="flex gap-1">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                <div className="w-2 h-2 rounded-full bg-rose-500" />
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 bg-black/50 font-mono text-[10px] h-40 overflow-y-auto" ref={eventLogRef}>
+              {events.length === 0 ? (
+                <div className="text-slate-700">Waiting for events...</div>
+              ) : (
+                events.map((ev) => (
+                  <div key={ev.id} className="flex gap-4 mb-1 group">
+                    <span className="text-slate-600 opacity-50 select-none">[{new Date(ev.timestamp).toLocaleTimeString()}]</span>
+                    <span className={`font-bold ${
+                      ev.type.includes('RECV') ? 'text-emerald-400' : 
+                      ev.type.includes('SEND') ? 'text-cyan-400' : 
+                      ev.type.includes('STATUS') ? 'text-amber-400' : 'text-slate-400'
+                    }`}>{ev.type}</span>
+                    <span className="text-slate-500 group-hover:text-slate-300 transition-colors truncate">{ev.payload}</span>
+                  </div>
                 ))
               )}
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => setIsConnected(false)}
-              className="flex-1 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
-            >
-              Simulate Offline
-            </button>
-            <button
-              onClick={() => {
-                const newMsg: Message = {
-                  id: `offline-${Date.now()}`,
-                  content: `Queued message ${offlineQueue.length + 1}`,
-                  sender: 'You',
-                  timestamp: Date.now(),
-                  status: 'pending',
-                  isOffline: true,
-                };
-                setOfflineQueue(prev => [...prev, newMsg]);
-              }}
-              className="flex-1 px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-colors"
-            >
-              Add to Queue
-            </button>
-            <button
-              onClick={() => {
-                setIsConnected(true);
-                setTimeout(() => {
-                  setMessages(prev => [...prev, ...offlineQueue]);
-                  setOfflineQueue([]);
-                }, 1000);
-              }}
-              className="flex-1 px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
-            >
-              Sync Queue
-            </button>
-          </div>
-
-          {/* Sync Animation */}
-          {isConnected && offlineQueue.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="p-4 rounded-lg bg-green-500/10 border border-green-500/30"
-            >
-              <div className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 text-green-400 animate-spin" />
-                <span className="text-sm text-green-400">Syncing {offlineQueue.length} messages...</span>
-              </div>
-            </motion.div>
-          )}
+            </CardContent>
+          </Card>
         </div>
-      )}
 
-      {/* Architecture Explorer Mode */}
-      {activeMode === 'architecture' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {architectureComponents.map((component) => {
-              const Icon = component.icon;
-              return (
-                <motion.button
-                  key={component.id}
-                  onClick={() => setSelectedComponent(component.id)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedComponent === component.id
-                      ? 'border-brand-500 bg-brand-500/10'
-                      : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
-                  }`}
-                >
-                  <div className={`w-12 h-12 rounded-lg ${component.color} flex items-center justify-center mb-3 mx-auto`}>
-                    <Icon className="w-6 h-6 text-white" />
+        {/* Sidebar Panel */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Learning Center */}
+          <Card className="bg-slate-900 border-slate-800">
+            <CardHeader className="py-4 border-b border-slate-800">
+              <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-brand-500" />
+                Learning Goals
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-5 space-y-4">
+              <div className="space-y-3">
+                {[
+                  { id: 'sendRealtime', label: 'Send a real-time message' },
+                  { id: 'simulateOffline', label: 'Simulate network interruption' },
+                  { id: 'queueMessage', label: 'Queue message while offline' },
+                  { id: 'syncQueue', label: 'Restore and sync local queue' },
+                  { id: 'exploreArch', label: 'Explore 3+ system nodes' }
+                ].map((item) => (
+                  <div key={item.id} className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 transition-all ${
+                      checklist[item.id as keyof typeof checklist] 
+                        ? 'bg-emerald-500 border-emerald-500 text-white' 
+                        : 'border-slate-700 bg-slate-800 text-transparent'
+                    }`}>
+                      <Check className="w-3 h-3 stroke-[3]" />
+                    </div>
+                    <span className={`text-xs font-medium ${checklist[item.id as keyof typeof checklist] ? 'text-slate-300' : 'text-slate-500'}`}>
+                      {item.label}
+                    </span>
                   </div>
-                  <div className="text-sm font-medium text-white text-center mb-1">
-                    {component.name}
-                  </div>
-                </motion.button>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+              
+              <div className="pt-4 border-t border-slate-800">
+                <div className="flex items-center gap-2 mb-2 text-cyan-400">
+                  <Lightbulb className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Key Concept</span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed italic">
+                  {activeMode === 'websocket' 
+                    ? "WebSockets provide full-duplex communication over a single TCP connection, reducing HTTP overhead."
+                    : activeMode === 'offline-queue'
+                    ? "Optimistic UI combined with IndexedDB persistence ensures a 'never-fail' user experience."
+                    : "Horizontal scaling is achieved via sharding and a gateway layer that routes connections."}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-          {selectedComponent && (
+          {/* Code Preview */}
+          <Card className="bg-slate-900 border-slate-800 overflow-hidden">
+            <CardHeader className="py-4 border-b border-slate-800 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
+                <Code className="w-4 h-4 text-brand-500" />
+                System Logic
+              </CardTitle>
+              <Maximize2 
+                className="w-3.5 h-3.5 text-slate-600 hover:text-white cursor-pointer transition-colors" 
+                onClick={() => setIsCodeExpanded(true)}
+              />
+            </CardHeader>
+            <CardContent className="p-0 bg-black/20">
+              <CodeBlock code={codeSnippets[activeMode]} />
+            </CardContent>
+            <div className="p-3 bg-slate-800/30 text-center">
+              <button 
+                onClick={() => onOpenPlayground?.(codeSnippets[activeMode])}
+                className="text-[10px] font-black text-cyan-500 hover:text-cyan-400 uppercase tracking-widest flex items-center justify-center gap-1.5 mx-auto transition-colors"
+              >
+                Open in Playground
+                <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Expanded Code Modal */}
+      <AnimatePresence>
+        {isCodeExpanded && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-5 rounded-lg bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-cyan-500/30 shadow-lg"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden"
             >
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
                 <div className="flex items-center gap-3">
-                  {(() => {
-                    const comp = architectureComponents.find(c => c.id === selectedComponent);
-                    const Icon = comp?.icon;
-                    return (
-                      <div className={`w-12 h-12 rounded-lg ${comp?.color} flex items-center justify-center`}>
-                        {Icon && <Icon className="w-6 h-6 text-white" />}
-                      </div>
-                    );
-                  })()}
-                  <div>
-                    <div className="text-lg font-bold text-white">
-                      {architectureComponents.find(c => c.id === selectedComponent)?.name}
-                    </div>
-                    <div className="text-xs text-slate-400 mt-0.5">
-                      System Component
-                    </div>
-                  </div>
+                  <Code className="w-5 h-5 text-brand-500" />
+                  <h2 className="text-lg font-bold text-white">System Logic Explorer</h2>
                 </div>
                 <button
-                  onClick={() => setSelectedComponent(null)}
-                  className="p-1.5 rounded-lg bg-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+                  onClick={() => setIsCodeExpanded(false)}
+                  className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors"
                 >
-                  <XCircle className="w-5 h-5" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="space-y-3">
-                <div>
-                  <div className="text-xs font-medium text-cyan-400 mb-1.5">Overview</div>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    {architectureComponents.find(c => c.id === selectedComponent)?.description}
-                  </p>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-blue-400 mb-1.5">Technical Details</div>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    {architectureComponents.find(c => c.id === selectedComponent)?.details}
-                  </p>
-                </div>
+              <div className="p-6 overflow-y-auto max-h-[70vh]">
+                <CodeBlock code={codeSnippets[activeMode]} />
+              </div>
+              <div className="p-4 bg-slate-800/30 border-t border-slate-800 flex justify-end gap-3">
+                <button
+                  onClick={() => setIsCodeExpanded(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all text-sm font-semibold"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    onOpenPlayground?.(codeSnippets[activeMode]);
+                    setIsCodeExpanded(false);
+                  }}
+                  className="px-4 py-2 rounded-lg bg-cyan-600 text-white hover:bg-cyan-500 transition-all text-sm font-semibold shadow-lg shadow-cyan-900/20"
+                >
+                  Open in Playground
+                </button>
               </div>
             </motion.div>
-          )}
-
-          {/* Architecture Diagram */}
-          <div className="p-6 rounded-lg bg-slate-900 border border-slate-800">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm font-medium text-slate-300">System Architecture Flow</div>
-              <div className="text-xs text-slate-500">Click components above to learn more</div>
-            </div>
-            <div className="space-y-6">
-              {/* Client Layer */}
-              <div>
-                <div className="text-xs text-slate-500 mb-2 uppercase tracking-wide">Client Layer</div>
-                <div className="flex items-center gap-4">
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="flex-1 p-4 rounded-lg bg-blue-500/20 border-2 border-blue-500/30 text-center cursor-pointer hover:bg-blue-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('client')}
-                  >
-                    <MessageSquare className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                    <div className="text-xs text-blue-400 font-medium">Browser Client</div>
-                    <div className="text-xs text-slate-500 mt-1">React, WebSocket, LocalStorage</div>
-                  </motion.div>
-                  <div className="text-slate-500 text-xl">→</div>
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="flex-1 p-4 rounded-lg bg-green-500/20 border-2 border-green-500/30 text-center cursor-pointer hover:bg-green-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('websocket')}
-                  >
-                    <Server className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                    <div className="text-xs text-green-400 font-medium">WebSocket Server</div>
-                    <div className="text-xs text-slate-500 mt-1">Real-time Communication</div>
-                  </motion.div>
-                </div>
-              </div>
-
-              {/* Service Layer */}
-              <div>
-                <div className="text-xs text-slate-500 mb-2 uppercase tracking-wide">Service Layer</div>
-                <div className="grid grid-cols-3 gap-4">
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="p-4 rounded-lg bg-purple-500/20 border-2 border-purple-500/30 text-center cursor-pointer hover:bg-purple-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('api')}
-                  >
-                    <Server className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                    <div className="text-xs text-purple-400 font-medium">API Gateway</div>
-                    <div className="text-xs text-slate-500 mt-1">REST Endpoints</div>
-                  </motion.div>
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="p-4 rounded-lg bg-yellow-500/20 border-2 border-yellow-500/30 text-center cursor-pointer hover:bg-yellow-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('message')}
-                  >
-                    <Database className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-                    <div className="text-xs text-yellow-400 font-medium">Message Service</div>
-                    <div className="text-xs text-slate-500 mt-1">Message Processing</div>
-                  </motion.div>
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="p-4 rounded-lg bg-pink-500/20 border-2 border-pink-500/30 text-center cursor-pointer hover:bg-pink-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('presence')}
-                  >
-                    <Users className="w-6 h-6 text-pink-400 mx-auto mb-2" />
-                    <div className="text-xs text-pink-400 font-medium">Presence Service</div>
-                    <div className="text-xs text-slate-500 mt-1">User Status</div>
-                  </motion.div>
-                </div>
-              </div>
-
-              {/* Data Layer */}
-              <div>
-                <div className="text-xs text-slate-500 mb-2 uppercase tracking-wide">Data Layer</div>
-                <div className="flex items-center gap-4">
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="flex-1 p-4 rounded-lg bg-orange-500/20 border-2 border-orange-500/30 text-center cursor-pointer hover:bg-orange-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('media')}
-                  >
-                    <Database className="w-6 h-6 text-orange-400 mx-auto mb-2" />
-                    <div className="text-xs text-orange-400 font-medium">Media Service</div>
-                    <div className="text-xs text-slate-500 mt-1">CDN Integration</div>
-                  </motion.div>
-                  <div className="text-slate-500 text-xl">→</div>
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="flex-1 p-4 rounded-lg bg-red-500/20 border-2 border-red-500/30 text-center cursor-pointer hover:bg-red-500/30 transition-colors"
-                    onClick={() => setSelectedComponent('db')}
-                  >
-                    <Database className="w-6 h-6 text-red-400 mx-auto mb-2" />
-                    <div className="text-xs text-red-400 font-medium">Database Cluster</div>
-                    <div className="text-xs text-slate-500 mt-1">Sharded Storage</div>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-      )}
-    </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { studyPlans, StudyPlan, DayPlan } from '../ebookContent';
+import { db } from '@/firebase/firebase';
 
 const STORAGE_KEY = 'ebook_study_progress';
 
@@ -21,85 +22,175 @@ interface UseStudyPlanReturn {
   goToNextDay: () => void;
   goToPreviousDay: () => void;
   setCurrentDay: (day: number) => void;
+  isLoading: boolean;
 }
 
-export function useStudyPlan(): UseStudyPlanReturn {
+export function useStudyPlan(userId?: string | null): UseStudyPlanReturn {
   const [activePlan, setActivePlan] = useState<StudyPlan | null>(null);
   const [currentDay, setCurrentDay] = useState(1);
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
   const [isPlanDropdownOpen, setIsPlanDropdownOpen] = useState(false);
   const [showTodayPanel, setShowTodayPanel] = useState(false);
   const [planStartDate, setPlanStartDate] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Track if we've initialised to avoid overwriting with empty local state
+  const isInitialised = useRef(false);
 
-  // Load study plan progress from localStorage
+  // Load study plan progress from Firebase or localStorage
   useEffect(() => {
-    try {
-      const savedProgress = localStorage.getItem(STORAGE_KEY);
-      if (savedProgress) {
-        const { planId, day, completed, startDate } = JSON.parse(savedProgress);
-        const plan = studyPlans.find((p) => p.id === planId);
-        if (plan) {
-          setActivePlan(plan);
-          setCurrentDay(day);
-          setCompletedTasks(new Set(completed || []));
-          setPlanStartDate(startDate ? new Date(startDate) : new Date());
+    const loadProgress = async () => {
+      setIsLoading(true);
+      
+      // 1. Try Firebase if userId is provided
+      if (userId) {
+        try {
+          const doc = await db.collection('studyProgress').doc(userId).get();
+          if (doc.exists) {
+            const data = doc.data();
+            if (data && data.activePlanId) {
+              const plan = studyPlans.find((p) => p.id === data.activePlanId);
+              if (plan) {
+                setActivePlan(plan);
+                setCurrentDay(data.currentDay || 1);
+                setCompletedTasks(new Set(data.completedTasks || []));
+                setPlanStartDate(data.planStartDate ? new Date(data.planStartDate) : new Date());
+                isInitialised.current = true;
+                setIsLoading(false);
+                return;
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error loading progress from Firebase:', error);
         }
       }
-    } catch (e) {
-      // Ignore parse errors
-    }
-  }, []);
 
-  // Save study plan progress to localStorage
+      // 2. Fallback to localStorage
+      try {
+        const savedProgress = localStorage.getItem(STORAGE_KEY);
+        if (savedProgress) {
+          const { planId, day, completed, startDate } = JSON.parse(savedProgress);
+          const plan = studyPlans.find((p) => p.id === planId);
+          if (plan) {
+            setActivePlan(plan);
+            setCurrentDay(day);
+            setCompletedTasks(new Set(completed || []));
+            setPlanStartDate(startDate ? new Date(startDate) : new Date());
+          }
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+      
+      isInitialised.current = true;
+      setIsLoading(false);
+    };
+
+    loadProgress();
+  }, [userId]);
+
+  // Save study plan progress to Firebase and localStorage
   const savePlanProgress = useCallback(
-    (plan: StudyPlan | null, day: number, completed: Set<string>) => {
+    async (plan: StudyPlan | null, day: number, completed: Set<string>) => {
+      if (!isInitialised.current) return;
+
+      const progressData = {
+        planId: plan?.id || null,
+        day,
+        completed: Array.from(completed),
+        startDate: planStartDate || new Date(),
+      };
+
+      // 1. Save to localStorage
       if (plan) {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({
-            planId: plan.id,
-            day,
-            completed: Array.from(completed),
-            startDate: planStartDate || new Date(),
-          })
-        );
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progressData));
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
+
+      // 2. Save to Firebase if userId is provided
+      if (userId) {
+        try {
+          if (plan) {
+            await db.collection('studyProgress').doc(userId).set({
+              activePlanId: plan.id,
+              currentDay: day,
+              completedTasks: Array.from(completed),
+              planStartDate: (planStartDate || new Date()).toISOString(),
+              lastUpdated: new Date().toISOString(),
+            }, { merge: true });
+          } else {
+            await db.collection('studyProgress').doc(userId).set({
+              activePlanId: null,
+              lastUpdated: new Date().toISOString(),
+            }, { merge: true });
+          }
+        } catch (error) {
+          console.error('Error saving progress to Firebase:', error);
+        }
+      }
     },
-    [planStartDate]
+    [userId, planStartDate]
   );
 
   // Select a study plan
-  const selectPlan = useCallback((plan: StudyPlan) => {
+  const selectPlan = useCallback(async (plan: StudyPlan) => {
+    const now = new Date();
     setActivePlan(plan);
     setCurrentDay(1);
     setCompletedTasks(new Set());
-    setPlanStartDate(new Date());
+    setPlanStartDate(now);
     setIsPlanDropdownOpen(false);
     setShowTodayPanel(true);
     
-    // Save immediately
+    // Save to localStorage
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
         planId: plan.id,
         day: 1,
         completed: [],
-        startDate: new Date(),
+        startDate: now,
       })
     );
-  }, []);
+
+    // Save to Firebase
+    if (userId) {
+      try {
+        await db.collection('studyProgress').doc(userId).set({
+          activePlanId: plan.id,
+          currentDay: 1,
+          completedTasks: [],
+          planStartDate: now.toISOString(),
+          lastUpdated: now.toISOString(),
+        }, { merge: true });
+      } catch (error) {
+        console.error('Error selecting plan in Firebase:', error);
+      }
+    }
+  }, [userId]);
 
   // Clear active plan
-  const clearPlan = useCallback(() => {
+  const clearPlan = useCallback(async () => {
     setActivePlan(null);
     setCurrentDay(1);
     setCompletedTasks(new Set());
     setPlanStartDate(null);
     setShowTodayPanel(false);
     localStorage.removeItem(STORAGE_KEY);
-  }, []);
+
+    if (userId) {
+      try {
+        await db.collection('studyProgress').doc(userId).set({
+          activePlanId: null,
+          lastUpdated: new Date().toISOString(),
+        }, { merge: true });
+      } catch (error) {
+        console.error('Error clearing plan in Firebase:', error);
+      }
+    }
+  }, [userId]);
 
   // Toggle task completion
   const toggleTaskCompletion = useCallback(
@@ -202,6 +293,6 @@ export function useStudyPlan(): UseStudyPlanReturn {
     goToNextDay,
     goToPreviousDay,
     setCurrentDay: handleSetCurrentDay,
+    isLoading,
   };
 }
-

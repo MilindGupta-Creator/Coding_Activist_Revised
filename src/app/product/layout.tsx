@@ -1,20 +1,25 @@
 import { Metadata } from 'next';
 
+const PAGE_TITLE = 'Frontend Interview Preparation Course | Advanced React & System Design';
+const PAGE_DESCRIPTION =
+  'Master frontend interviews with Coding Activist: event loop, advanced React & Next.js, system design, and machine coding practice. Learn like a Staff Engineer.';
+
 export const metadata: Metadata = {
-  title: 'Coding Activist - Ultimate Guide to Next.js & React',
-  description: 'Master Next.js 14 App Router, React Server Components, Machine Coding, and System Design. The Ultimate Guide (Vol 2) - Transform your frontend career with comprehensive tutorials and real-world projects.',
-  keywords: 'Next.js, React, Frontend Development, App Router, Server Components, Machine Coding, System Design, Web Development, Coding Tutorials',
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  keywords:
+    'Frontend Interview Preparation Course, Advanced React, Next.js, JavaScript Event Loop, Frontend System Design, Machine Coding Interview Practice, Web Development, Coding Tutorials',
   openGraph: {
-    title: 'Coding Activist - Ultimate Guide to Next.js & React',
-    description: 'Master Next.js 14 App Router, React Server Components, Machine Coding, and System Design. Transform your frontend career with comprehensive tutorials.',
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
     type: 'website',
     url: 'https://codingactivist.com/product',
     siteName: 'Coding Activist',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Coding Activist - Ultimate Guide to Next.js & React',
-    description: 'Master Next.js 14 App Router, React Server Components, Machine Coding, and System Design.',
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
   },
   robots: {
     index: true,

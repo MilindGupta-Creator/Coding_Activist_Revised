@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from 'firebase/auth';
 import { motion } from 'framer-motion';
-  import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle, Link2, ExternalLink, BarChart3, Code, Sparkles, Shield, Activity } from 'lucide-react';
+  import { MessageSquare, Wifi, Database, Server, Play, Sun, Moon, Search, X, Clock, Hash, Tag, FileText, ArrowRight, Briefcase, Shuffle, Link2, ExternalLink, BarChart3, Code, Sparkles, Shield, Activity, ChevronLeft, ChevronRight, LogOut, Bookmark as BookmarkIcon, LayoutDashboard, Navigation, Layout } from 'lucide-react';
 import { ebookContent, studyPlans } from './ebookContent';
 import { LockIcon, TerminalIcon, XIcon } from './Icons';
 import { productAuth } from './firebaseProduct';
@@ -151,14 +151,31 @@ interface ReaderProps {
 }
 
 const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
+  // Get user session data
+  const sessionData = useMemo(() => {
+    try {
+      const session = localStorage.getItem("frontend_mastery_active_session");
+      if (session) {
+        return JSON.parse(session);
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return null;
+  }, []);
+
+  const userId = sessionData?.uid || null;
+  const userEmail = sessionData?.user || "milindgupta578@gmail.com";
+
   // ==================== CUSTOM HOOKS ====================
   const search = useSearch();
-  const studyPlan = useStudyPlan();
+  const studyPlan = useStudyPlan(userId);
   const timedQuiz = useTimedQuiz();
 
   // ==================== LOCAL STATE ====================
   const [activeModule, setActiveModule] = useState(ebookContent[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
   const [sessionExpiryMsg, setSessionExpiryMsg] = useState<string | null>(null);
   const [logoutReason, setLogoutReason] = useState<string | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -176,6 +193,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const [showCodeChallenges, setShowCodeChallenges] = useState(false);
   const [showCSSBattle, setShowCSSBattle] = useState(false);
   const [showLiveDebuggingLab, setShowLiveDebuggingLab] = useState(false);
+  const [playgroundCode, setPlaygroundCode] = useState<string | null>(null);
 
   const contentRef = useRef<HTMLElement | null>(null);
 
@@ -800,20 +818,6 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
   const isURLShortenerModule = activeModule === 'system-design-url-shortener';
   const isXSSModule = activeModule === 'xss-attacks';
 
-  // Get user email from session
-  const userEmail = (() => {
-    try {
-      const session = localStorage.getItem("frontend_mastery_active_session");
-      if (session) {
-        const sessionData = JSON.parse(session);
-        return sessionData.user || "milindgupta578@gmail.com";
-      }
-    } catch (e) {
-      // Ignore
-    }
-    return "milindgupta578@gmail.com";
-  })();
-
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev);
   };
@@ -1111,7 +1115,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
             </div>
             <div className="p-6">
               <CodePlayground
-                initialCode={`// Write your JavaScript code here\nconsole.log("Hello, World!");\n\n// Try some examples:\nconst arr = [1, 2, 3, 4, 5];\nconsole.log("Sum:", arr.reduce((a, b) => a + b, 0));\n\n// Test closures\nfunction counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst inc = counter();\nconsole.log(inc(), inc(), inc());`}
+                initialCode={playgroundCode || `// Write your JavaScript code here\nconsole.log("Hello, World!");`}
                 isDarkMode={isDarkMode}
               />
             </div>
@@ -1247,9 +1251,91 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
       {/* Sidebar Navigation */}
       {!isFocusMode && (
         <aside className={`
-        fixed md:relative z-30 w-full md:w-80 h-[calc(100%-60px)] md:h-full ${themeClasses.bgSecondary} border-r ${themeClasses.border} flex flex-col transition-transform duration-300
+        fixed md:relative z-30 w-full h-[calc(100%-60px)] md:h-full ${themeClasses.bgSecondary} border-r ${themeClasses.border} flex flex-col transition-all duration-300 overflow-hidden
+        ${isSidebarMinimized ? 'md:w-14' : 'md:w-80'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
+          {/* Sidebar collapse toggle — desktop only */}
+          <div className={`hidden md:flex items-center justify-end px-2 py-2 border-b ${themeClasses.border} shrink-0`}>
+            <button
+              onClick={() => setIsSidebarMinimized(prev => !prev)}
+              className={`p-1.5 rounded-md ${themeClasses.bgTertiary} ${themeClasses.textSecondary} ${themeClasses.bgHover} transition-colors`}
+              aria-label={isSidebarMinimized ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={isSidebarMinimized ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {isSidebarMinimized
+                ? <ChevronRight className="w-4 h-4" />
+                : <ChevronLeft className="w-4 h-4" />}
+            </button>
+          </div>
+
+          {/* ── Minimized icon strip — desktop only, shown when sidebar is collapsed ── */}
+          {isSidebarMinimized && (
+            <div className="hidden md:flex flex-col items-center flex-1 overflow-hidden">
+
+              {/* Brand + controls */}
+              <div className={`w-full flex flex-col items-center gap-2.5 py-3 border-b ${themeClasses.border}`}>
+                <Link href="/" title="Coding Activist">
+                  <Image
+                    src={Logo}
+                    alt="Coding Activist"
+                    width={32}
+                    height={32}
+                    className="bg-white rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-blue-500/40"
+                    loading="lazy"
+                  />
+                </Link>
+                <div
+                  className="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                  title="Secure Connection"
+                />
+                <button
+                  onClick={toggleTheme}
+                  className={`p-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} ${themeClasses.bgHover} transition-colors`}
+                  aria-label="Toggle theme"
+                  title="Toggle theme"
+                >
+                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {/* Module navigation dots */}
+              <div className="flex-1 overflow-y-auto w-full flex flex-col items-center gap-1 py-2">
+                <div className={`text-[8px] font-bold ${themeClasses.textDim} uppercase tracking-widest mb-1`}>CH</div>
+                {ebookContent.map((chapter, idx) => (
+                  <button
+                    key={chapter.id}
+                    onClick={() => goToModule(chapter.id)}
+                    title={chapter.title}
+                    className={`w-8 h-8 rounded-md flex items-center justify-center text-[11px] font-bold transition-all duration-200 shrink-0 ${
+                      activeModule === chapter.id && !studyPlan.showTodayPanel
+                        ? 'bg-brand-500/20 text-brand-400 border border-brand-500/30'
+                        : `${themeClasses.textDim} ${themeClasses.bgHover}`
+                    }`}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+              </div>
+
+              {/* Logout */}
+              <div className={`w-full border-t ${themeClasses.border} flex justify-center py-3`}>
+                <button
+                  onClick={handleLogout}
+                  title="Log Out"
+                  aria-label="Log Out"
+                  className={`p-1.5 rounded-lg ${themeClasses.bgTertiary} ${themeClasses.textSecondary} ${themeClasses.bgHover} hover:text-red-400 transition-colors`}
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+
+            </div>
+          )}
+
+          {/* ── Full sidebar content — always on mobile, hidden on desktop when minimized ── */}
+          <div className={`${isSidebarMinimized ? 'md:hidden' : ''} flex flex-col flex-1 min-h-0`}>
+
           <div className={`p-6 border-b ${themeClasses.border} hidden md:block`}>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -1286,18 +1372,23 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               <div className="relative">
                 <button
                   onClick={() => studyPlan.setIsPlanDropdownOpen(!studyPlan.isPlanDropdownOpen)}
+                  disabled={studyPlan.isLoading}
                   className={`w-full flex items-center justify-between gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border ${studyPlan.activePlan
                     ? 'bg-gradient-to-r from-brand-500/20 to-purple-500/20 border-brand-500/30 text-brand-300'
                     : `${themeClasses.bgTertiary}/50 ${themeClasses.borderSecondary} ${themeClasses.textSecondary} ${themeClasses.bgHover}`
-                    }`}
+                    } ${studyPlan.isLoading ? 'opacity-50 cursor-wait' : ''}`}
                 >
                   <div className="flex items-center gap-2">
-                    <CalendarIcon className="w-4 h-4" />
+                    {studyPlan.isLoading ? (
+                      <Activity className="w-4 h-4 animate-pulse text-brand-400" />
+                    ) : (
+                      <CalendarIcon className="w-4 h-4" />
+                    )}
                     <span className="truncate">
-                      {studyPlan.activePlan ? studyPlan.activePlan.name : 'Choose Study Plan'}
+                      {studyPlan.isLoading ? 'Syncing Progress...' : studyPlan.activePlan ? studyPlan.activePlan.name : 'Choose Study Plan'}
                     </span>
                   </div>
-                  <ChevronDownIcon className={`w-4 h-4 transition-transform ${studyPlan.isPlanDropdownOpen ? 'rotate-180' : ''}`} />
+                  {!studyPlan.isLoading && <ChevronDownIcon className={`w-4 h-4 transition-transform ${studyPlan.isPlanDropdownOpen ? 'rotate-180' : ''}`} />}
                 </button>
 
                 {/* Dropdown */}
@@ -1409,6 +1500,7 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               Log Out
             </button>
           </div>
+          </div>{/* end full sidebar content wrapper */}
         </aside>
       )}
 
@@ -1452,7 +1544,10 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
               </button>
               {/* Code Playground Button */}
               <button
-                onClick={() => setShowCodePlayground(true)}
+                onClick={() => {
+                  setPlaygroundCode(`// Write your JavaScript code here\nconsole.log("Hello, World!");\n\n// Try some examples:\nconst arr = [1, 2, 3, 4, 5];\nconsole.log("Sum:", arr.reduce((a, b) => a + b, 0));\n\n// Test closures\nfunction counter() {\n  let count = 0;\n  return () => ++count;\n}\nconst inc = counter();\nconsole.log(inc(), inc(), inc());`);
+                  setShowCodePlayground(true);
+                }}
                 className={`inline-flex items-center gap-2 rounded-full border ${themeClasses.borderSecondary} ${themeClasses.bgSecondary} px-3 py-1.5 text-[11px] font-medium ${themeClasses.textSecondary} hover:border-green-500 hover:text-green-300 transition-colors`}
                 title="Open Code Playground"
               >
@@ -1925,7 +2020,13 @@ const Reader: React.FC<ReaderProps> = ({ onLogout }) => {
                         <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
                       </motion.div>
                     ) : (
-                      <WhatsAppSystemDesignLab onClose={() => setShowWhatsAppLab(false)} />
+                      <WhatsAppSystemDesignLab 
+                        onClose={() => setShowWhatsAppLab(false)} 
+                        onOpenPlayground={(code) => {
+                          setPlaygroundCode(code);
+                          setShowCodePlayground(true);
+                        }}
+                      />
                     )}
                   </div>
                 )}

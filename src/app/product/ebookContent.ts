@@ -386,7 +386,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q2. What are the 3 different types to create an object in JavaScript?",
-        a: "**1. Object Literal (Most Common)**: Simple objects, quick setup.\n**2. Constructor Function**: When you need multiple similar objects.\n**3. Object.create() Method**: When you want to inherit specific prototypes.",
+        a: "1. Object Literal (Most Common): Simple objects, quick setup.\n2. Constructor Function: When you need multiple similar objects.\n3. Object.create() Method: When you want to inherit specific prototypes.",
         code: `// 1. Literal\nlet p1 = { name: "John" };\n\n// 2. Constructor\nfunction Person(n) { this.name = n; }\nlet p2 = new Person("John");\n\n// 3. Object.create\nlet p3 = Object.create({ greet: () => "Hi" });`
       },
       {
@@ -409,7 +409,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q12. How do you lower the load time of your page in Javascript?",
-        a: "**Optimize Performance:**\n- **Minify code**: Remove spaces, comments.\n- **Compress files**: Gzip/Brotli.\n- **Lazy loading**: Load JS only when needed.\n- **Code splitting**: Split large bundles.\n- **Tree shaking**: Remove unused code.\n- **CDN**: Use Content Delivery Networks.\n- **Async/Defer**: Load scripts without blocking rendering."
+        a: "Optimize Performance:\n- Minify code: Remove spaces, comments.\n- Compress files: Gzip/Brotli.\n- Lazy loading: Load JS only when needed.\n- Code splitting: Split large bundles.\n- Tree shaking: Remove unused code.\n- CDN: Use Content Delivery Networks.\n- Async/Defer: Load scripts without blocking rendering."
       },
       {
         q: "Q13. What is prototype inheritance?",
@@ -457,7 +457,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q43. Explain Promise.all vs Promise.allSettled vs Promise.race",
-        a: "- **Promise.all**: Waits for all promises. Rejects if ANY promise rejects (fail-fast).\n- **Promise.allSettled**: Waits for all promises. Returns results for both fulfilled and rejected.\n- **Promise.race**: Returns the first promise that settles (fulfills OR rejects).",
+        a: "- Promise.all: Waits for all promises. Rejects if ANY promise rejects (fail-fast).\n- Promise.allSettled: Waits for all promises. Returns results for both fulfilled and rejected.\n- Promise.race: Returns the first promise that settles (fulfills OR rejects).",
         code: `Promise.all([p1, p2, p3]).then(console.log); // [val1, val2, val3] or rejects\nPromise.allSettled([p1, p2, p3]).then(console.log); // [{status: 'fulfilled', value: ...}, ...]\nPromise.race([p1, p2, p3]).then(console.log); // First to settle`,
         tags: ["Google", "Meta", "Core JS"],
         followUps: [
@@ -468,7 +468,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q44. What is the difference between var, let, and const?",
-        a: "- **var**: Function-scoped, hoisted (initialized as undefined), can be redeclared.\n- **let**: Block-scoped, hoisted but in TDZ (Temporal Dead Zone), cannot be redeclared.\n- **const**: Block-scoped, must be initialized, cannot be reassigned (but object properties can change).",
+        a: "- var: Function-scoped, hoisted (initialized as undefined), can be redeclared.\n- let: Block-scoped, hoisted but in TDZ (Temporal Dead Zone), cannot be redeclared.\n- const: Block-scoped, must be initialized, cannot be reassigned (but object properties can change).",
         code: `// var\nif (true) { var x = 1; }\nconsole.log(x); // 1 (accessible)\n\n// let\nif (true) { let y = 1; }\nconsole.log(y); // ReferenceError\n\n// const\nconst obj = { a: 1 };\nobj.a = 2; // OK\nobj = {}; // TypeError`,
         playground: true,
         tags: ["Core JS", "Interview"],
@@ -494,7 +494,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q47. Explain WeakMap and WeakSet vs Map and Set",
-        a: "- **WeakMap/WeakSet**: Keys must be objects, weakly referenced (garbage collected if no other references), not iterable.\n- **Map/Set**: Any keys, strongly referenced, iterable.\n\nUse WeakMap for metadata that shouldn't prevent garbage collection.",
+        a: "- WeakMap/WeakSet: Keys must be objects, weakly referenced (garbage collected if no other references), not iterable.\n- Map/Set: Any keys, strongly referenced, iterable.\n\nUse WeakMap for metadata that shouldn't prevent garbage collection.",
         code: `const wm = new WeakMap();\nconst obj = {};\nwm.set(obj, 'metadata');\n// If obj is garbage collected, entry is removed automatically`,
         tags: ["Advanced JS", "Memory"],
       },
@@ -525,14 +525,14 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q51. What is the difference between == and ===?",
-        a: "- **== (loose equality)**: Performs type coercion before comparison.\n- **=== (strict equality)**: No type coercion, compares type and value.\n\nAlways use === unless you specifically need coercion.",
+        a: "== (loose equality): Performs type coercion before comparison.\n=== (strict equality): No type coercion, compares type and value.\n\nAlways use === unless you specifically need coercion.",
         code: `console.log(5 == "5"); // true (coercion)\nconsole.log(5 === "5"); // false (different types)\nconsole.log(null == undefined); // true\nconsole.log(null === undefined); // false`,
         playground: true,
         tags: ["Core JS", "Interview"],
       },
       {
         q: "Q52. Explain the difference between null, undefined, and undeclared",
-        a: "- **null**: Intentional absence of value (assigned by developer).\n- **undefined**: Variable declared but not assigned, or missing property.\n- **undeclared**: Variable never declared (ReferenceError if accessed).",
+        a: "null: Intentional absence of value (assigned by developer).\nundefined: Variable declared but not assigned, or missing property.\nundeclared: Variable never declared (ReferenceError if accessed).",
         code: `let a = null; // Explicitly set to null\nlet b; // undefined\nconsole.log(c); // ReferenceError (undeclared)`,
         tags: ["Core JS"],
       }
@@ -544,7 +544,7 @@ export const ebookContent: ChapterContent[] = [
     items: [
       {
         q: "Q4. Difference between HTML5 and HTML?",
-        a: "**HTML5** is the enhanced version.\n- **Media**: Native `<video>` and `<audio>`.\n- **Storage**: localStorage/sessionStorage.\n- **Semantics**: `<header>`, `<nav>`, `<article>`.\n- **APIs**: Geolocation, Drag & Drop, Canvas."
+        a: "HTML5 is the enhanced version.\n- Media: Native `<video>` and `<audio>`.\n- Storage: localStorage/sessionStorage.\n- Semantics: `<header>`, `<nav>`, `<article>`.\n- APIs: Geolocation, Drag & Drop, Canvas."
       },
       {
         q: "Q5. What does !DOCTYPE do?",
@@ -553,24 +553,24 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q9. What is inline and inline-block in CSS?",
-        a: "- **Inline**: Respects left/right margins/padding, but ignores top/bottom and width/height. Example: `<span>`.\n- **Inline-block**: Flows like text (inline) but respects width/height/margins (block). Example: `<button>`."
+        a: "Inline: Respects left/right margins/padding, but ignores top/bottom and width/height. Example: `<span>`.\nInline-block: Flows like text (inline) but respects width/height/margins (block). Example: `<button>`."
       },
       {
         q: "Q10. What is a span tag?",
         a: "A generic inline container for phrasing content, which does not inherently represent anything. It can be used to group elements for styling purposes (using class or id attributes)."
       },
       {
-        q: "Q15/Q23. List CSS positions.",
-        a: "1. **Static**: Default flow.\n2. **Relative**: Offset relative to itself.\n3. **Absolute**: Relative to nearest positioned ancestor.\n4. **Fixed**: Relative to viewport.\n5. **Sticky**: Toggles between relative and fixed based on scroll."
+        q: "List CSS positions.",
+        a: "1. Static: Default flow.\n2. Relative: Offset relative to itself.\n3. Absolute: Relative to nearest positioned ancestor.\n4. Fixed: Relative to viewport.\n5. Sticky: Toggles between relative and fixed based on scroll."
       },
       {
-        q: "Q16. List some pseudo classes and pseudo elements.",
-        a: "**Pseudo Classes (State)**: `:hover`, `:focus`, `:nth-child`.\n**Pseudo Elements (Content)**: `::before`, `::after`, `::first-line`.",
+        q: "List some pseudo classes and pseudo elements.",
+        a: "Pseudo Classes (State): `:hover`, `:focus`, `:nth-child`.\nPseudo Elements (Content): `::before`, `::after`, `::first-line`.",
         code: `a:hover { color: red; }\np::before { content: "Note: "; }`
       },
       {
         q: "Q19. When to use PUT and POST in REST Services?",
-        a: "- **POST**: Create a new resource. Not idempotent (sending twice creates duplicates).\n- **PUT**: Update/Replace a resource. Idempotent (sending twice has same effect)."
+        a: "POST: Create a new resource. Not idempotent (sending twice creates duplicates).\nPUT: Update/Replace a resource. Idempotent (sending twice has same effect)."
       },
       {
         q: "Q24. What will be the color of the text?",
@@ -598,7 +598,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q43. Explain Flexbox vs CSS Grid - when to use each?",
-        a: "- **Flexbox**: 1D layout (row OR column). Perfect for navigation bars, centering content, distributing space.\n- **Grid**: 2D layout (rows AND columns). Perfect for page layouts, card grids, complex designs.\n\nUse Flexbox for components, Grid for layouts.",
+        a: "Flexbox: 1D layout (row OR column). Perfect for navigation bars, centering content, distributing space.\nGrid: 2D layout (rows AND columns). Perfect for page layouts, card grids, complex designs.\n\nUse Flexbox for components, Grid for layouts.",
         code: `/* Flexbox - horizontal nav */\n.nav { display: flex; justify-content: space-between; }\n\n/* Grid - card layout */\n.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }`,
         tags: ["HTML & CSS", "Layout"],
         followUps: [
@@ -615,31 +615,31 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q45. Explain CSS BEM Methodology",
-        a: "BEM (Block Element Modifier) is a naming convention:\n- **Block**: Standalone component (`button`, `card`)\n- **Element**: Part of block (`button__icon`, `card__title`)\n- **Modifier**: Variation (`button--primary`, `card--featured`)",
+        a: "BEM (Block Element Modifier) is a naming convention:\n- Block: Standalone component (`button`, `card`)\n- Element: Part of block (`button__icon`, `card__title`)\n- Modifier: Variation (`button--primary`, `card--featured`)",
         code: `/* Block */\n.card { }\n\n/* Element */\n.card__title { }\n.card__body { }\n\n/* Modifier */\n.card--featured { }\n.card__title--large { }`,
         tags: ["HTML & CSS", "Architecture"],
       },
       {
         q: "Q46. What is the difference between display: none, visibility: hidden, and opacity: 0?",
-        a: "- **display: none**: Removes element from layout (no space taken, not accessible).\n- **visibility: hidden**: Element takes space but invisible (not accessible).\n- **opacity: 0**: Element fully transparent but takes space and remains accessible/interactive.",
+        a: "display: none: Removes element from layout (no space taken, not accessible).\nvisibility: hidden: Element takes space but invisible (not accessible).\nopacity: 0: Element fully transparent but takes space and remains accessible/interactive.",
         code: `/* Removed from layout */\n.hidden { display: none; }\n\n/* Invisible but takes space */\n.invisible { visibility: hidden; }\n\n/* Transparent but interactive */\n.transparent { opacity: 0; }`,
         tags: ["HTML & CSS", "Interview"],
       },
       {
         q: "Q47. How do you center a div horizontally and vertically?",
-        a: "Multiple methods:\n1. **Flexbox** (modern, recommended)\n2. **Grid** (modern)\n3. **Absolute + Transform** (legacy)\n4. **Margin auto** (horizontal only)",
+        a: "Multiple methods:\n1. Flexbox (modern, recommended)\n2. Grid (modern)\n3. Absolute + Transform (legacy)\n4. Margin auto (horizontal only)",
         code: `/* Method 1: Flexbox */\n.parent {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n/* Method 2: Grid */\n.parent {\n  display: grid;\n  place-items: center;\n}\n\n/* Method 3: Absolute */\n.child {\n  position: absolute;\n  top: 50%; left: 50%;\n  transform: translate(-50%, -50%);\n}`,
         tags: ["HTML & CSS", "Interview"],
       },
       {
         q: "Q48. Explain CSS Animations vs Transitions",
-        a: "- **Transitions**: Simple property changes over time (hover effects, state changes). Need a trigger.\n- **Animations**: Complex, multi-step animations. Can loop, reverse, pause. Defined with @keyframes.",
+        a: "Transitions: Simple property changes over time (hover effects, state changes). Need a trigger.\nAnimations: Complex, multi-step animations. Can loop, reverse, pause. Defined with @keyframes.",
         code: `/* Transition */\n.button {\n  transition: background 0.3s ease;\n}\n.button:hover { background: blue; }\n\n/* Animation */\n@keyframes slide {\n  from { transform: translateX(0); }\n  to { transform: translateX(100px); }\n}\n.box { animation: slide 1s infinite; }`,
         tags: ["HTML & CSS"],
       },
       {
         q: "Q49. What is the difference between rem, em, and px?",
-        a: "- **px**: Absolute unit (1px = 1/96 inch). Fixed size.\n- **em**: Relative to parent's font-size. Can compound.\n- **rem**: Relative to root (`<html>`) font-size. Consistent across the page.",
+        a: "px: Absolute unit (1px = 1/96 inch). Fixed size.\nem: Relative to parent's font-size. Can compound.\nrem: Relative to root (`<html>`) font-size. Consistent across the page.",
         code: `html { font-size: 16px; }\n.parent { font-size: 20px; }\n\n.child-px { font-size: 16px; } /* Always 16px */\n.child-em { font-size: 1.5em; } /* 30px (20px * 1.5) */\n.child-rem { font-size: 1.5rem; } /* 24px (16px * 1.5) */`,
         tags: ["HTML & CSS", "Typography"],
       },
@@ -657,7 +657,7 @@ export const ebookContent: ChapterContent[] = [
     items: [
       {
         q: "Q6. Why React instead of Javascript? Q7. Explain Virtual DOM.",
-        a: "Virtual DOM is a lightweight copy of the UI in memory.\n\n**Reconciliation**: React compares the new Virtual DOM with the old one (Diffing) and only updates the actual DOM nodes that changed. This is much faster than re-painting the whole page.",
+        a: "Virtual DOM is a lightweight copy of the UI in memory.\n\nReconciliation: React compares the new Virtual DOM with the old one (Diffing) and only updates the actual DOM nodes that changed. This is much faster than re-painting the whole page.",
         code: `// Virtual DOM change:\n// <div class="a"> -> <div class="b">\n// React only updates the className attribute.`
         ,
         diagram: `Component Tree (Virtual DOM)\n\n<App>\n ├─ <Header>\n │   └─ <Logo />\n └─ <Main>\n     ├─ <Sidebar />\n     └─ <Content>\n         ├─ <Article />\n         └─ <Comments />\n\nOnly the branch that changed is diffed and updated in the real DOM.`
@@ -674,11 +674,11 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q26. How do you optimize performance in React?",
-        a: "- **React.memo**: Avoid re-renders.\n- **useMemo/useCallback**: Memoize expensive values/functions.\n- **Virtualization**: react-window for long lists.\n- **Code Splitting**: React.lazy + Suspense.\n- **State Management**: Keep state local, avoid prop drilling."
+        a: "React.memo: Avoid re-renders.\nuseMemo/useCallback: Memoize expensive values/functions.\nVirtualization: react-window for long lists.\nCode Splitting: React.lazy + Suspense.\nState Management: Keep state local, avoid prop drilling."
       },
       {
         q: "Q29. How NextJS is different from other JavaScript frameworks?",
-        a: "Next.js is a meta-framework. It provides:\n- **SSR/SSG**: Server-side rendering out of the box.\n- **Routing**: File-system based routing.\n- **API Routes**: Backend endpoints.\n- **Optimizations**: Images, Fonts, Scripts handled automatically.\nStandard React (CRA/Vite) is usually Client-Side Rendering (CSR) only."
+        a: "Next.js is a meta-framework. It provides:\n- SSR/SSG: Server-side rendering out of the box.\n- Routing: File-system based routing.\n- API Routes: Backend endpoints.\n- Optimizations: Images, Fonts, Scripts handled automatically.\nStandard React (CRA/Vite) is usually Client-Side Rendering (CSR) only."
       },
       {
         q: "Q30. What do you mean by SSR?",
@@ -686,7 +686,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q31. CSR vs SSR?",
-        a: "**CSR (Client-Side)**: Browser downloads empty HTML + JS. JS runs and builds UI. Slower initial load, fast navigation.\n**SSR (Server-Side)**: Server sends full HTML. Browser renders immediately. JS 'hydrates' the page later for interactivity."
+        a: "CSR (Client-Side): Browser downloads empty HTML + JS. JS runs and builds UI. Slower initial load, fast navigation.\nSSR (Server-Side): Server sends full HTML. Browser renders immediately. JS 'hydrates' the page later for interactivity."
       },
       {
         q: "Q32. Explain Reconciliation.",
@@ -694,7 +694,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q33. What is an HOC? Q34. Example?",
-        a: "**HOC (Higher-Order Component)** is a function that takes a component and returns a new component with additional functionality (e.g., Auth, Logging).",
+        a: "HOC (Higher-Order Component) is a function that takes a component and returns a new component with additional functionality (e.g., Auth, Logging).",
         code: `function withAuth(WrappedComponent) {\n  return function(props) {\n    if (!isLoggedIn) return <div>Login required</div>;\n    return <WrappedComponent {...props} />;\n  };\n}`
       },
       {
@@ -704,7 +704,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q36. Difference b/w HOC and Custom Hooks.",
-        a: "- **HOC**: Wraps components, can cause 'wrapper hell', good for legacy or props injection.\n- **Hooks**: Used *inside* components, cleaner, no nesting, shares logic not UI."
+        a: "HOC: Wraps components, can cause 'wrapper hell', good for legacy or props injection.\nHooks: Used *inside* components, cleaner, no nesting, shares logic not UI."
       },
       {
         q: "Q37. How to handle side effects? (useEffect)",
@@ -717,7 +717,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q40. React Batching mechanism?",
-        a: "React groups multiple state updates into a single re-render.\nReact 18 introduces **Automatic Batching** which batches updates inside promises, timeouts, and event handlers automatically.",
+        a: "React groups multiple state updates into a single re-render.\nReact 18 introduces Automatic Batching which batches updates inside promises, timeouts, and event handlers automatically.",
         code: `// React 18\nsetTimeout(() => {\n  setCount(c => c + 1);\n  setFlag(f => !f);\n  // Triggers only 1 re-render\n}, 1000);`
       },
       {
@@ -733,7 +733,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q42. Explain useMemo vs useCallback",
-        a: "- **useMemo**: Memoizes a computed VALUE. Returns the cached value until dependencies change.\n- **useCallback**: Memoizes a FUNCTION. Returns the cached function reference until dependencies change.\n\nBoth prevent unnecessary recalculations/recreations.",
+        a: "useMemo: Memoizes a computed VALUE. Returns the cached value until dependencies change.\nuseCallback: Memoizes a FUNCTION. Returns the cached function reference until dependencies change.\n\nBoth prevent unnecessary recalculations/recreations.",
         code: `// useMemo - memoize value\nconst expensiveValue = useMemo(() => {\n  return computeExpensiveValue(a, b);\n}, [a, b]);\n\n// useCallback - memoize function\nconst memoizedCallback = useCallback(() => {\n  doSomething(a, b);\n}, [a, b]);`,
         playground: true,
         tags: ["React", "Performance"],
@@ -763,7 +763,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q46. What is the difference between controlled and uncontrolled components?",
-        a: "- **Controlled**: Form data is handled by React state. Input value is controlled by `value` prop.\n- **Uncontrolled**: Form data is handled by the DOM. Use `ref` to access values.\n\nControlled is preferred for React apps.",
+        a: "Controlled: Form data is handled by React state. Input value is controlled by `value` prop.\nUncontrolled: Form data is handled by the DOM. Use `ref` to access values.\n\nControlled is preferred for React apps.",
         code: `// Controlled\nconst [value, setValue] = useState('');\n<input value={value} onChange={(e) => setValue(e.target.value)} />\n\n// Uncontrolled\nconst inputRef = useRef();\n<input ref={inputRef} />\n// Access: inputRef.current.value`,
         tags: ["React", "Forms"],
       },
@@ -787,7 +787,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "Q50. Explain React's Concurrent Features (React 18)",
-        a: "Concurrent rendering allows React to interrupt rendering work. Features:\n- **startTransition**: Mark non-urgent updates\n- **useTransition**: Track transition state\n- **useDeferredValue**: Defer value updates\n- **Suspense**: Better loading states\n\nImproves perceived performance and responsiveness.",
+        a: "Concurrent rendering allows React to interrupt rendering work. Features:\n- startTransition: Mark non-urgent updates\n- useTransition: Track transition state\n- useDeferredValue: Defer value updates\n- Suspense: Better loading states\n\nImproves perceived performance and responsiveness.",
         code: `import { startTransition } from 'react';\n\nfunction App() {\n  const [isPending, startTransition] = useTransition();\n  \n  const handleChange = (e) => {\n    setInput(e.target.value); // Urgent\n    startTransition(() => {\n      setResults(filter(e.target.value)); // Non-urgent\n    });\n  };\n}`,
         tags: ["React", "Performance", "React 18"],
       }
@@ -887,7 +887,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "DSA H: Two Sum / Three Sum",
-        a: "**Two Sum**: Find two numbers that add up to target. Use HashMap for O(n) solution.\n**Three Sum**: Find three numbers that add up to zero. Sort array, fix one number, use two pointers for the rest.",
+        a: "Two Sum: Find two numbers that add up to target. Use HashMap for O(n) solution.\nThree Sum: Find three numbers that add up to zero. Sort array, fix one number, use two pointers for the rest.",
         code: `// Two Sum\nfunction twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n}\n\nconsole.log(twoSum([2,7,11,15], 9)); // [0,1]\n\n// Three Sum\nfunction threeSum(nums) {\n  nums.sort((a, b) => a - b);\n  const res = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i - 1]) continue;\n    let left = i + 1, right = nums.length - 1;\n    while (left < right) {\n      const sum = nums[i] + nums[left] + nums[right];\n      if (sum === 0) {\n        res.push([nums[i], nums[left], nums[right]]);\n        while (left < right && nums[left] === nums[left + 1]) left++;\n        while (left < right && nums[right] === nums[right - 1]) right--;\n        left++; right--;\n      } else if (sum < 0) left++;\n      else right--;\n    }\n  }\n  return res;\n}\n\nconsole.log(threeSum([-1,0,1,2,-1,-4])); // [[-1,-1,2],[-1,0,1]]`,
         playground: true,
         tags: ["Google", "Meta", "Amazon", "DSA", "Arrays"],
@@ -929,7 +929,7 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "DSA K: Binary Search",
-        a: "Search for a target in a sorted array in O(log n) time. Classic algorithm with many variations:\n- Find exact match\n- Find insertion point\n- Search in rotated array",
+        a: "Search for a target in a sorted array in O(log n) time. Classic algorithm with many variations:\nFind exact match\nFind insertion point\nSearch in rotated array",
         code: `function binarySearch(nums, target) {\n  let left = 0, right = nums.length - 1;\n  \n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}\n\nconst arr = [1, 3, 5, 7, 9, 11, 13];\nconsole.log(binarySearch(arr, 7)); // 3\nconsole.log(binarySearch(arr, 6)); // -1`,
         playground: true,
         tags: ["Google", "Microsoft", "DSA", "Binary Search"],
@@ -953,7 +953,7 @@ export const ebookContent: ChapterContent[] = [
         items: [
           {
             q: "Q1. High-Level Architecture: How would you design WhatsApp Web?",
-            a: "**Core Components:**\n\n1. **Client (Browser)**: React/Vue frontend, WebSocket client\n2. **WebSocket Server**: Real-time message relay\n3. **API Gateway**: REST endpoints for auth, contacts, media\n4. **Message Service**: Handles message storage, delivery\n5. **Presence Service**: Online/offline status, last seen\n6. **Media Service**: Handles image/video uploads, CDN\n7. **Notification Service**: Push notifications\n8. **Database**: Message history, user data (sharded)\n\n**Key Design Principles:**\n- Real-time bidirectional communication (WebSocket)\n- Offline-first architecture (local storage + sync)\n- End-to-end encryption (client-side)\n- Optimistic UI updates\n- Message ordering and deduplication\n\n💡 **Try the Interactive Lab**: Enable 'System Design Lab' in the toolbar above to experiment with WebSocket connections, offline queues, and explore the architecture interactively!",
+            a: "Core Components:\n\n1. Client (Browser): React/Vue frontend, WebSocket client\n2. WebSocket Server: Real-time message relay\n3. API Gateway: REST endpoints for auth, contacts, media\n4. Message Service: Handles message storage, delivery\n5. Presence Service: Online/offline status, last seen\n6. Media Service: Handles image/video uploads, CDN\n7. Notification Service: Push notifications\n8. Database: Message history, user data (sharded)\n\nKey Design Principles:\nReal-time bidirectional communication (WebSocket)\nOffline-first architecture (local storage + sync)\nEnd-to-end encryption (client-side)\nOptimistic UI updates\nMessage ordering and deduplication\n\n💡 Try the Interactive Lab: Enable 'System Design Lab' in the toolbar above to experiment with WebSocket connections, offline queues, and explore the architecture interactively!",
             diagram: `WhatsApp Web Architecture
 
 [Browser Client]
@@ -976,7 +976,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q2. Real-Time Messaging: WebSocket vs Server-Sent Events vs Polling",
-            a: "**WebSocket (Best for WhatsApp):**\n- Full-duplex, bidirectional\n- Low latency (~1ms)\n- Persistent connection\n- Efficient for high-frequency messages\n\n**Server-Sent Events (SSE):**\n- One-way (server → client)\n- Good for notifications, live feeds\n- Auto-reconnect built-in\n\n**Polling:**\n- Simple but inefficient\n- High latency, battery drain\n- Not suitable for real-time chat\n\n**Implementation:**\n```javascript\nconst ws = new WebSocket('wss://chat.whatsapp.com');\nws.onmessage = (event) => {\n  const message = JSON.parse(event.data);\n  handleIncomingMessage(message);\n};\n```",
+            a: "WebSocket (Best for WhatsApp):\nFull-duplex, bidirectional\nLow latency (~1ms)\nPersistent connection\nEfficient for high-frequency messages\n\nServer-Sent Events (SSE):\nOne-way (server → client)\nGood for notifications, live feeds\nAuto-reconnect built-in\n\nPolling:\nSimple but inefficient\nHigh latency, battery drain\nNot suitable for real-time chat\n\nImplementation:\n```javascript\nconst ws = new WebSocket('wss://chat.whatsapp.com');\nws.onmessage = (event) => {\n  const message = JSON.parse(event.data);\n  handleIncomingMessage(message);\n};\n```",
             code: `// WebSocket Connection Manager\nclass WebSocketManager {\n  constructor(url) {\n    this.url = url;\n    this.ws = null;\n    this.reconnectAttempts = 0;\n    this.maxReconnectAttempts = 5;\n  }\n\n  connect() {\n    this.ws = new WebSocket(this.url);\n    \n    this.ws.onopen = () => {\n      console.log('Connected');\n      this.reconnectAttempts = 0;\n      this.syncPendingMessages();\n    };\n    \n    this.ws.onmessage = (event) => {\n      const data = JSON.parse(event.data);\n      this.handleMessage(data);\n    };\n    \n    this.ws.onclose = () => {\n      this.handleReconnect();\n    };\n    \n    this.ws.onerror = (error) => {\n      console.error('WebSocket error:', error);\n    };\n  }\n\n  handleReconnect() {\n    if (this.reconnectAttempts < this.maxReconnectAttempts) {\n      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);\n      setTimeout(() => {\n        this.reconnectAttempts++;\n        this.connect();\n      }, delay);\n    }\n  }\n\n  send(message) {\n    if (this.ws?.readyState === WebSocket.OPEN) {\n      this.ws.send(JSON.stringify(message));\n    } else {\n      // Queue for later\n      this.queueMessage(message);\n    }\n  }\n}`,
             tags: ["System Design", "WebSocket", "Real-time", "Networking"],
             followUps: [
@@ -987,7 +987,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q3. State Management: How to manage chat state in the frontend?",
-            a: "**State Structure:**\n```javascript\n{\n  chats: { [chatId]: Chat },\n  messages: { [chatId]: Message[] },\n  users: { [userId]: User },\n  presence: { [userId]: { online: boolean, lastSeen: timestamp } },\n  currentChat: string | null,\n  unreadCounts: { [chatId]: number },\n  typing: { [chatId]: Set<userId> }\n}\n```\n\n**State Management Patterns:**\n1. **Redux/Zustand**: Global state for chats, users\n2. **React Context**: Theme, auth state\n3. **Local State**: UI state (modals, dropdowns)\n4. **IndexedDB**: Persistent message cache\n5. **Optimistic Updates**: Update UI immediately, sync later\n\n**Key Considerations:**\n- Normalize data (avoid nested arrays)\n- Pagination for message history\n- Virtual scrolling for long chat lists\n- Memoization to prevent re-renders",
+            a: "State Structure:\n```javascript\n{\n  chats: { [chatId]: Chat },\n  messages: { [chatId]: Message[] },\n  users: { [userId]: User },\n  presence: { [userId]: { online: boolean, lastSeen: timestamp } },\n  currentChat: string | null,\n  unreadCounts: { [chatId]: number },\n  typing: { [chatId]: Set<userId> }\n}\n```\n\nState Management Patterns:\n1. Redux/Zustand: Global state for chats, users\n2. React Context: Theme, auth state\n3. Local State: UI state (modals, dropdowns)\n4. IndexedDB: Persistent message cache\n5. Optimistic Updates: Update UI immediately, sync later\n\nKey Considerations:\n- Normalize data (avoid nested arrays)\n- Pagination for message history\n- Virtual scrolling for long chat lists\n- Memoization to prevent re-renders",
             code: `// Zustand Store Example\nimport create from 'zustand';\n\nconst useChatStore = create((set, get) => ({\n  chats: {},\n  messages: {},\n  \n  addMessage: (chatId, message) => set((state) => ({\n    messages: {\n      ...state.messages,\n      [chatId]: [...(state.messages[chatId] || []), message]\n    }\n  })),\n  \n  markAsRead: (chatId) => set((state) => ({\n    chats: {\n      ...state.chats,\n      [chatId]: { ...state.chats[chatId], unreadCount: 0 }\n    }\n  })),\n  \n  updatePresence: (userId, presence) => set((state) => ({\n    presence: { ...state.presence, [userId]: presence }\n  }))\n}));`,
             tags: ["System Design", "State Management", "React", "Frontend"],
             followUps: [
@@ -998,7 +998,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q4. Message Synchronization: Handling offline messages and conflicts",
-            a: "**Offline Queue Pattern:**\n1. Store outgoing messages in IndexedDB when offline\n2. Assign temporary client-side IDs\n3. On reconnect, sync queue with server\n4. Server assigns real IDs, client updates references\n\n**Conflict Resolution:**\n- Use server timestamps as source of truth\n- Client timestamps for ordering before sync\n- Last-write-wins for metadata (read receipts)\n\n**Message Deduplication:**\n- Use message hash (content + sender + timestamp)\n- Check for duplicates before inserting\n- Handle duplicate delivery from server",
+            a: "Offline Queue Pattern:\n1. Store outgoing messages in IndexedDB when offline\n2. Assign temporary client-side IDs\n3. On reconnect, sync queue with server\n4. Server assigns real IDs, client updates references\n\nConflict Resolution:\n- Use server timestamps as source of truth\n- Client timestamps for ordering before sync\n- Last-write-wins for metadata (read receipts)\n\nMessage Deduplication:\n- Use message hash (content + sender + timestamp)\n- Check for duplicates before inserting\n- Handle duplicate delivery from server",
             code: "// Offline Message Queue\nclass OfflineQueue {\n  constructor() {\n    this.db = new IDBDatabase('whatsapp-offline');\n  }\n\n  async queueMessage(chatId, content) {\n    const tempId = 'temp_' + Date.now() + '_' + Math.random();\n    const message = {\n      id: tempId,\n      chatId,\n      content,\n      timestamp: Date.now(),\n      status: 'pending',\n      synced: false\n    };\n    \n    await this.db.messages.add(message);\n    return tempId;\n  }\n\n  async syncPendingMessages() {\n    const pending = await this.db.messages\n      .where('synced').equals(false)\n      .toArray();\n    \n    for (const msg of pending) {\n      try {\n        const response = await api.sendMessage(msg);\n        // Update with server ID\n        await this.db.messages.update(msg.id, {\n          id: response.id,\n          synced: true,\n          status: 'sent'\n        });\n      } catch (error) {\n        await this.db.messages.update(msg.id, {\n          status: 'failed'\n        });\n      }\n    }\n  }\n}",
             tags: ["System Design", "Offline", "Sync", "IndexedDB"],
             followUps: [
@@ -1009,7 +1009,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q5. Media Handling: Images, Videos, Documents",
-            a: "**Upload Flow:**\n1. Client compresses/resizes media (if needed)\n2. Upload to Media Service via multipart/form-data\n3. Media Service stores in object storage (S3)\n4. CDN URL returned to client\n5. Client sends message with media URL\n6. Receivers fetch from CDN\n\n**Optimizations:**\n- Lazy loading: Load thumbnails first, full image on click\n- Progressive loading: Show low-res, then high-res\n- Compression: Reduce file size before upload\n- Caching: Cache media in IndexedDB\n- Preloading: Preload next few messages' media\n\n**Security:**\n- Validate file types on client and server\n- Scan for malware\n- Rate limit uploads",
+            a: "Upload Flow:\n1. Client compresses/resizes media (if needed)\n2. Upload to Media Service via multipart/form-data\n3. Media Service stores in object storage (S3)\n4. CDN URL returned to client\n5. Client sends message with media URL\n6. Receivers fetch from CDN\n\nOptimizations:\n- Lazy loading: Load thumbnails first, full image on click\n- Progressive loading: Show low-res, then high-res\n- Compression: Reduce file size before upload\n- Caching: Cache media in IndexedDB\n- Preloading: Preload next few messages' media\n\nSecurity:\n- Validate file types on client and server\n- Scan for malware\n- Rate limit uploads",
             code: `// Media Upload with Progress\nasync function uploadMedia(file, chatId) {\n  // Compress image if needed\n  const compressed = await compressImage(file);\n  \n  const formData = new FormData();\n  formData.append('file', compressed);\n  formData.append('chatId', chatId);\n  \n  const xhr = new XMLHttpRequest();\n  \n  return new Promise((resolve, reject) => {\n    xhr.upload.onprogress = (e) => {\n      const percent = (e.loaded / e.total) * 100;\n      updateUploadProgress(percent);\n    };\n    \n    xhr.onload = () => {\n      if (xhr.status === 200) {\n        const { url, mediaId } = JSON.parse(xhr.responseText);\n        resolve({ url, mediaId });\n      } else {\n        reject(new Error('Upload failed'));\n      }\n    };\n    \n    xhr.open('POST', '/api/media/upload');\n    xhr.send(formData);\n  });\n}\n\n// Lazy load media\nfunction MediaMessage({ url, thumbnail }) {\n  const [loaded, setLoaded] = useState(false);\n  const [showFull, setShowFull] = useState(false);\n  \n  return (\n    <div onClick={() => setShowFull(true)}>\n      {!loaded && <img src={thumbnail} />}\n      {showFull && (\n        <img \n          src={url} \n          onLoad={() => setLoaded(true)}\n          loading="lazy"\n        />\n      )}\n    </div>\n  );\n}`,
             tags: ["System Design", "Media", "Upload", "Performance"],
             followUps: [
@@ -1020,7 +1020,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q6. Presence System: Online Status, Last Seen, Typing Indicators",
-            a: "**Implementation:**\n1. **Heartbeat**: Client sends ping every 30s when active\n2. **Last Activity**: Server tracks last heartbeat timestamp\n3. **Status Broadcast**: When user goes online/offline, notify contacts\n4. **Typing Indicator**: Send 'typing' event, auto-clear after 3s of inactivity\n\n**Optimizations:**\n- Batch presence updates\n- Throttle typing indicators (max 1 per second)\n- Cache presence in client (stale after 2 minutes)\n- Only show 'typing' to active chat participants\n\n**Privacy:**\n- Respect user's privacy settings (hide last seen)\n- Don't send presence to blocked users",
+            a: "Implementation:\n1. Heartbeat: Client sends ping every 30s when active\n2. Last Activity: Server tracks last heartbeat timestamp\n3. Status Broadcast: When user goes online/offline, notify contacts\n4. Typing Indicator: Send 'typing' event, auto-clear after 3s of inactivity\n\n**Optimizations:\n Batch presence updates\n Throttle typing indicators (max 1 per second)\n Cache presence in client (stale after 2 minutes)\n Only show 'typing' to active chat participants\n\nPrivacy:\n Respect user's privacy settings (hide last seen)\n Don't send presence to blocked users",
             code: `// Presence Manager\nclass PresenceManager {\n  constructor(ws) {\n    this.ws = ws;\n    this.isActive = true;\n    this.heartbeatInterval = null;\n    this.typingTimeouts = new Map();\n  }\n\n  startHeartbeat() {\n    this.heartbeatInterval = setInterval(() => {\n      if (this.isActive) {\n        this.ws.send(JSON.stringify({\n          type: 'heartbeat',\n          timestamp: Date.now()\n        }));\n      }\n    }, 30000);\n  }\n\n  sendTyping(chatId) {\n    // Throttle: max once per second\n    const lastSent = this.typingTimeouts.get(chatId);\n    if (lastSent && Date.now() - lastSent < 1000) return;\n    \n    this.ws.send(JSON.stringify({\n      type: 'typing',\n      chatId\n    }));\n    \n    this.typingTimeouts.set(chatId, Date.now());\n    \n    // Auto-clear after 3s\n    setTimeout(() => {\n      this.ws.send(JSON.stringify({\n        type: 'typing_stop',\n        chatId\n      }));\n    }, 3000);\n  }\n\n  handleVisibilityChange() {\n    document.addEventListener('visibilitychange', () => {\n      this.isActive = !document.hidden;\n      if (!this.isActive) {\n        this.ws.send(JSON.stringify({ type: 'away' }));\n      }\n    });\n  }\n}`,
             tags: ["System Design", "Presence", "Real-time", "UX"],
             followUps: [
@@ -1031,7 +1031,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q7. Performance Optimization: Virtual Scrolling, Code Splitting, Caching",
-            a: "**Virtual Scrolling:**\n- Only render visible messages (react-window, react-virtualized)\n- Estimate item heights for smooth scrolling\n- Load more messages on scroll up\n\n**Code Splitting:**\n- Lazy load chat components\n- Split by route (chat list, chat view, settings)\n- Dynamic imports for heavy features\n\n**Caching Strategy:**\n- **Memory**: Recent messages, active chats\n- **IndexedDB**: Message history, media cache\n- **Service Worker**: Offline support, background sync\n- **HTTP Cache**: Static assets, media files\n\n**Bundle Optimization:**\n- Tree shaking\n- Minification\n- Compression (gzip/brotli)\n- CDN for static assets",
+            a: "Virtual Scrolling:\n Only render visible messages (react-window, react-virtualized)\n Estimate item heights for smooth scrolling\nLoad more messages on scroll up\n\nCode Splitting:\n Lazy load chat components\n Split by route (chat list, chat view, settings)\n Dynamic imports for heavy features\n\nCaching Strategy:\nMemory: Recent messages, active chats\n- IndexedDB: Message history, media cache\n- Service Worker: Offline support, background sync\n- HTTP Cache: Static assets, media files\n\nBundle Optimization:\n Tree shaking\n- Minification\n- Compression (gzip/brotli)\n- CDN for static assets",
             code: `// Virtual Scrolling for Messages\nimport { FixedSizeList } from 'react-window';\n\nfunction MessageList({ messages }) {\n  const Row = ({ index, style }) => (\n    <div style={style}>\n      <Message message={messages[index]} />\n    </div>\n  );\n  \n  return (\n    <FixedSizeList\n      height={600}\n      itemCount={messages.length}\n      itemSize={80}\n      width="100%"\n    >\n      {Row}\n    </FixedSizeList>\n  );\n}\n\n// Code Splitting\nconst ChatView = lazy(() => import('./ChatView'));\nconst Settings = lazy(() => import('./Settings'));\n\nfunction App() {\n  return (\n    <Suspense fallback={<Loading />}>\n      <Routes>\n        <Route path="/chat/:id" element={<ChatView />} />\n        <Route path="/settings" element={<Settings />} />\n      </Routes>\n    </Suspense>\n  );\n}\n\n// Service Worker Caching\nself.addEventListener('fetch', (event) => {\n  if (event.request.url.includes('/api/messages')) {\n    event.respondWith(\n      caches.open('messages-v1').then((cache) => {\n        return fetch(event.request).then((response) => {\n          cache.put(event.request, response.clone());\n          return response;\n        });\n      })\n    );\n  }\n});`,
             tags: ["System Design", "Performance", "Optimization", "React"],
             followUps: [
@@ -1042,7 +1042,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q8. Security: End-to-End Encryption, Authentication, XSS Prevention",
-            a: "**End-to-End Encryption (E2E):**\n- Encrypt messages client-side before sending\n- Use Web Crypto API for encryption\n- Exchange keys via secure channel\n- Never store plaintext on server\n\n**Authentication:**\n- JWT tokens with short expiry\n- Refresh tokens stored in httpOnly cookies\n- QR code scan for initial pairing\n- Device fingerprinting\n\n**XSS Prevention:**\n- Sanitize user input (DOMPurify)\n- Content Security Policy (CSP)\n- Avoid innerHTML, use textContent\n- Escape user-generated content\n\n**CSRF Protection:**\n- SameSite cookies\n- CSRF tokens for state-changing operations",
+            a: "End-to-End Encryption (E2E):\n Encrypt messages client-side before sending\n Use Web Crypto API for encryption\n- Exchange keys via secure channel\n Never store plaintext on server\n\n**Authentication:\n JWT tokens with short expiry\n- Refresh tokens stored in httpOnly cookies\n- QR code scan for initial pairing\n- Device fingerprinting\n\n**XSS Prevention:\n- Sanitize user input (DOMPurify)\n- Content Security Policy (CSP)\n- Avoid innerHTML, use textContent\n- Escape user-generated content\n\nCSRF Protection:\n SameSite cookies\n CSRF tokens for state-changing operations",
             code: `// Message Encryption (Simplified)\nasync function encryptMessage(message, recipientPublicKey) {\n  const encoder = new TextEncoder();\n  const data = encoder.encode(message);\n  \n  // Generate symmetric key\n  const key = await crypto.subtle.generateKey(\n    { name: 'AES-GCM', length: 256 },\n    true,\n    ['encrypt']\n  );\n  \n  // Encrypt message\n  const encrypted = await crypto.subtle.encrypt(\n    { name: 'AES-GCM', iv: crypto.getRandomValues(new Uint8Array(12)) },\n    key,\n    data\n  );\n  \n  // Encrypt key with recipient's public key (RSA)\n  const encryptedKey = await crypto.subtle.encrypt(\n    { name: 'RSA-OAEP' },\n    recipientPublicKey,\n    await crypto.subtle.exportKey('raw', key)\n  );\n  \n  return { encrypted, encryptedKey };\n}\n\n// Input Sanitization\nimport DOMPurify from 'dompurify';\n\nfunction MessageContent({ content }) {\n  const sanitized = DOMPurify.sanitize(content, {\n    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a'],\n    ALLOWED_ATTR: ['href']\n  });\n  \n  return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;\n}\n\n// CSP Header\nContent-Security-Policy: \n  default-src 'self';\n  script-src 'self' 'unsafe-inline';\n  style-src 'self' 'unsafe-inline';\n  img-src 'self' data: https:;\n  connect-src 'self' wss://chat.whatsapp.com;`,
             tags: ["System Design", "Security", "Encryption", "Frontend"],
             followUps: [
@@ -1053,7 +1053,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q9. Search Functionality: Full-Text Search Across Messages",
-            a: "**Client-Side Search (Small Scale):**\n- Index messages in IndexedDB\n- Use Fuse.js or similar for fuzzy search\n- Search as user types (debounced)\n\n**Server-Side Search (Large Scale):**\n- Elasticsearch or similar search engine\n- Index messages on ingestion\n- Search API with pagination\n- Highlight matching text\n\n**Search Features:**\n- Search by sender, date range, media type\n- Filter by chat/group\n- Search within specific chat\n- Recent searches cache",
+            a: "Client-Side Search (Small Scale):\n Index messages in IndexedDB\nUse Fuse.js or similar for fuzzy search\n Search as user types (debounced)\n\nServer-Side Search (Large Scale):\n Elasticsearch or similar search engine\n- Index messages on ingestion\n- Search API with pagination\n- Highlight matching text\n\n**Search Features:**\n- Search by sender, date range, media type\n- Filter by chat/group\n- Search within specific chat\n- Recent searches cache",
             code: `// Client-Side Search with IndexedDB\nclass MessageSearch {\n  constructor(db) {\n    this.db = db;\n    this.index = null;\n  }\n\n  async buildIndex() {\n    const messages = await this.db.messages.toArray();\n    this.index = new Fuse(messages, {\n      keys: ['content', 'sender.name'],\n      threshold: 0.3,\n      includeScore: true\n    });\n  }\n\n  async search(query, filters = {}) {\n    if (!this.index) await this.buildIndex();\n    \n    let results = this.index.search(query);\n    \n    // Apply filters\n    if (filters.chatId) {\n      results = results.filter(r => r.item.chatId === filters.chatId);\n    }\n    if (filters.dateFrom) {\n      results = results.filter(r => r.item.timestamp >= filters.dateFrom);\n    }\n    \n    return results.map(r => r.item);\n  }\n}\n\n// Debounced Search Input\nfunction SearchBar() {\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState([]);\n  \n  const debouncedSearch = useMemo(\n    () => debounce(async (q) => {\n      if (q.length > 2) {\n        const res = await searchMessages(q);\n        setResults(res);\n      } else {\n        setResults([]);\n      }\n    }, 300),\n    []\n  );\n  \n  useEffect(() => {\n    debouncedSearch(query);\n  }, [query]);\n  \n  return (\n    <input\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder="Search messages..."\n    />\n  );\n}`,
             tags: ["System Design", "Search", "IndexedDB", "UX"],
             followUps: [
@@ -1064,7 +1064,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q10. Group Chat Features: Adding Members, Admin Controls, Notifications",
-            a: "**Group Management:**\n- Add/remove members (with permissions)\n- Admin roles (admin, member)\n- Group settings (name, description, photo)\n- Mute notifications per group\n\n**Message Handling:**\n- Broadcast to all members\n- Handle member join/leave events\n- Show 'X added Y' system messages\n- Read receipts per member\n\n**Optimizations:**\n- Batch member updates\n- Lazy load member list\n- Cache group metadata\n- Optimistic UI for member actions",
+            a: "Group Management:\n Add/remove members (with permissions)\n Admin roles (admin, member)\n Group settings (name, description, photo)\nMute notifications per group\n\nMessage Handling:\n Broadcast to all members\n Handle member join/leave events\n Show 'X added Y' system messages\n- Read receipts per member\n\nOptimizations:\n Batch member updates\n Lazy load member list\n Cache group metadata\n Optimistic UI for member actions",
             code: "// Group Chat Component\nfunction GroupChat({ groupId }) {\n  const [group, setGroup] = useState(null);\n  const [members, setMembers] = useState([]);\n  \n  useEffect(() => {\n    // Load group info\n    loadGroup(groupId).then(setGroup);\n    loadMembers(groupId).then(setMembers);\n    \n    // Subscribe to group events\n    ws.on('group_member_added', (data) => {\n      if (data.groupId === groupId) {\n        setMembers(prev => [...prev, data.member]);\n        addSystemMessage(data.addedBy + ' added ' + data.member.name);\n      }\n    });\n    \n    ws.on('group_member_removed', (data) => {\n      if (data.groupId === groupId) {\n        setMembers(prev => prev.filter(m => m.id !== data.memberId));\n        addSystemMessage(data.removedBy + ' removed ' + data.member.name);\n      }\n    });\n  }, [groupId]);\n  \n  const addMember = async (userId) => {\n    // Optimistic update\n    const tempMember = { id: userId, name: 'Loading...' };\n    setMembers(prev => [...prev, tempMember]);\n    \n    try {\n      await api.addGroupMember(groupId, userId);\n      // Server will broadcast update\n    } catch (error) {\n      // Revert on error\n      setMembers(prev => prev.filter(m => m.id !== userId));\n    }\n  };\n  \n  return (\n    <div>\n      <GroupHeader group={group} members={members} />\n      <MessageList chatId={groupId} />\n      <MessageInput chatId={groupId} />\n    </div>\n  );\n}",
             tags: ["System Design", "Group Chat", "Real-time", "UX"],
             followUps: [
@@ -1075,7 +1075,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q11. Read Receipts and Message Status: Sent, Delivered, Read",
-            a: "**Message States:**\n1. **Pending**: Queued locally, not sent\n2. **Sent**: Delivered to server\n3. **Delivered**: Received by recipient's device\n4. **Read**: Recipient opened the chat\n\n**Implementation:**\n- Server tracks delivery status\n- Client sends 'read' event when message is viewed\n- Update message status optimistically\n- Batch read receipts (don't send one per message)\n\n**Privacy:**\n- User can disable read receipts\n- Show 'sent' but not 'read' if disabled\n- Don't send read receipt for system messages",
+            a: "Message States:\n1. Pending: Queued locally, not sent\n2. Sent: Delivered to server\n3. Delivered: Received by recipient's device\n4. Read: Recipient opened the chat\n\nImplementation:\n Server tracks delivery status\n Client sends 'read' event when message is viewed\n Update message status optimistically\n Batch read receipts (don't send one per message)\n\nPrivacy:\n User can disable read receipts\n Show 'sent' but not 'read' if disabled\n Don't send read receipt for system messages",
             code: "// Message Status Tracking\nclass MessageStatusManager {\n  constructor(ws) {\n    this.ws = ws;\n    this.readReceiptQueue = [];\n    this.lastReadReceipt = Date.now();\n  }\n\n  markAsRead(chatId, messageIds) {\n    // Batch read receipts (max once per 2 seconds)\n    const now = Date.now();\n    if (now - this.lastReadReceipt < 2000) {\n      this.readReceiptQueue.push(...messageIds);\n      return;\n    }\n    \n    const allIds = [...this.readReceiptQueue, ...messageIds];\n    this.readReceiptQueue = [];\n    this.lastReadReceipt = now;\n    \n    this.ws.send(JSON.stringify({\n      type: 'read_receipt',\n      chatId,\n      messageIds: allIds\n    }));\n  }\n\n  handleDeliveryStatus(messageId, status) {\n    // Update local message status\n    updateMessageStatus(messageId, status);\n    \n    // Show in UI\n    if (status === 'delivered') {\n      showDoubleCheckmark(messageId);\n    } else if (status === 'read') {\n      showBlueCheckmark(messageId);\n    }\n  }\n}\n\n// Track message visibility\nfunction useMessageReadTracking(chatId, messages) {\n  const observerRef = useRef(null);\n  \n  useEffect(() => {\n    const observer = new IntersectionObserver((entries) => {\n      entries.forEach(entry => {\n        if (entry.isIntersecting) {\n          const messageId = entry.target.dataset.messageId;\n          markAsRead(chatId, [messageId]);\n        }\n      });\n    }, { threshold: 0.5 });\n    \n    observerRef.current = observer;\n    \n    messages.forEach(msg => {\n      const element = document.querySelector('[data-message-id=\"' + msg.id + '\"]');\n      if (element) observer.observe(element);\n    });\n    \n    return () => observer.disconnect();\n  }, [messages, chatId]);\n}",
             tags: ["System Design", "Read Receipts", "UX", "Real-time"],
             followUps: [
@@ -1086,7 +1086,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q12. Notification System: Browser Notifications, Badge Counts, Sounds",
-            a: "**Browser Notifications:**\n- Request permission on first use\n- Show notification for new messages (when tab not focused)\n- Group notifications by chat\n- Action buttons (Reply, Mark as read)\n- Click notification to open chat\n\n**Badge Count:**\n- Update favicon with unread count\n- Show badge in tab title\n- Service Worker updates badge\n\n**Sound Notifications:**\n- Play sound for new messages\n- Respect system mute/Do Not Disturb\n- User can disable per chat\n- Different sounds for different chat types",
+            a: "Browser Notifications:\n- Request permission on first use\n- Show notification for new messages (when tab not focused)\n- Group notifications by chat\n- Action buttons (Reply, Mark as read)\n- Click notification to open chat\n\nBadge Count:\n- Update favicon with unread count\n- Show badge in tab title\n- Service Worker updates badge\n\nSound Notifications:\n- Play sound for new messages\n- Respect system mute/Do Not Disturb\n- User can disable per chat\n- Different sounds for different chat types",
             code: "// Notification Manager\nclass NotificationManager {\n  constructor() {\n    this.permission = Notification.permission;\n    this.soundEnabled = true;\n  }\n\n  async requestPermission() {\n    if (this.permission === 'default') {\n      this.permission = await Notification.requestPermission();\n    }\n    return this.permission === 'granted';\n  }\n\n  showNotification(message, chat) {\n    if (this.permission !== 'granted') return;\n    if (document.hasFocus()) return; // Don't notify if tab is active\n    \n    const notification = new Notification(\n      chat.name || 'New Message',\n      {\n        body: message.content,\n        icon: chat.avatar || '/default-avatar.png',\n        badge: '/badge.png',\n        tag: chat.id, // Group notifications by chat\n        requireInteraction: false,\n        actions: [\n          { action: 'reply', title: 'Reply' },\n          { action: 'mark-read', title: 'Mark as Read' }\n        ]\n      }\n    );\n    \n    notification.onclick = () => {\n      window.focus();\n      openChat(chat.id);\n      notification.close();\n    };\n    \n    if (this.soundEnabled) {\n      this.playSound();\n    }\n  }\n\n  updateBadge(count) {\n    // Update favicon\n    if (count > 0) {\n      updateFaviconWithBadge(count);\n      document.title = '(' + count + ') WhatsApp Web';\n    } else {\n      resetFavicon();\n      document.title = 'WhatsApp Web';\n    }\n    \n    // Service Worker badge (if supported)\n    if ('setAppBadge' in navigator) {\n      navigator.setAppBadge(count);\n    }\n  }\n\n  playSound() {\n    const audio = new Audio('/notification.mp3');\n    audio.volume = 0.5;\n    audio.play().catch(() => {}); // Ignore errors\n  }\n}\n\n// Service Worker Notification\nself.addEventListener('push', (event) => {\n  const data = event.data.json();\n  \n  event.waitUntil(\n    self.registration.showNotification(data.title, {\n      body: data.body,\n      icon: data.icon,\n      badge: '/badge.png',\n      tag: data.chatId\n    })\n  );\n});",
             tags: ["System Design", "Notifications", "PWA", "UX"],
             followUps: [
@@ -1097,7 +1097,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q13. Scalability: Handling Millions of Users and Messages",
-            a: "**Database Sharding:**\n- Shard by user ID or chat ID\n- Horizontal scaling across multiple DB instances\n- Consistent hashing for shard selection\n\n**Caching Layer:**\n- Redis for hot data (active chats, presence)\n- CDN for static assets and media\n- Client-side caching (IndexedDB)\n\n**Load Balancing:**\n- Multiple WebSocket servers behind load balancer\n- Sticky sessions (same user → same server)\n- Health checks and auto-scaling\n\n**Message Queue:**\n- Kafka/RabbitMQ for async message processing\n- Separate queues for different priorities\n- Batch processing for efficiency",
+            a: "Database Sharding:\n- Shard by user ID or chat ID\n- Horizontal scaling across multiple DB instances\n- Consistent hashing for shard selection\n\n**Caching Layer:**\n- Redis for hot data (active chats, presence)\n- CDN for static assets and media\n- Client-side caching (IndexedDB)\n\n**Load Balancing:**\n- Multiple WebSocket servers behind load balancer\n- Sticky sessions (same user → same server)\n- Health checks and auto-scaling\n\n**Message Queue:**\n- Kafka/RabbitMQ for async message processing\n- Separate queues for different priorities\n- Batch processing for efficiency",
             diagram: `Scalability Architecture
 
 [Load Balancer]
@@ -1120,7 +1120,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q14. Testing Strategy: Unit Tests, Integration Tests, E2E Tests",
-            a: "**Unit Tests:**\n- Test individual components (Message, ChatList)\n- Test utility functions (encryption, formatting)\n- Mock WebSocket and API calls\n- Use Jest + React Testing Library\n\n**Integration Tests:**\n- Test component interactions\n- Test state management flows\n- Test WebSocket message handling\n\n**E2E Tests:**\n- Test complete user flows (send message, receive message)\n- Use Playwright or Cypress\n- Test across browsers\n- Test offline/online scenarios\n\n**Performance Tests:**\n- Load testing for WebSocket connections\n- Measure render performance\n- Test with large message lists",
+            a: "Unit Tests:\n- Test individual components (Message, ChatList)\n- Test utility functions (encryption, formatting)\n- Mock WebSocket and API calls\n- Use Jest + React Testing Library\n\n**Integration Tests:**\n- Test component interactions\n- Test state management flows\n- Test WebSocket message handling\n\n**E2E Tests:**\n- Test complete user flows (send message, receive message)\n- Use Playwright or Cypress\n- Test across browsers\n- Test offline/online scenarios\n\n**Performance Tests:**\n- Load testing for WebSocket connections\n- Measure render performance\n- Test with large message lists",
             code: "// Unit Test Example\nimport { render, screen, fireEvent } from '@testing-library/react';\nimport { MessageInput } from './MessageInput';\n\ndescribe('MessageInput', () => {\n  it('sends message on Enter key', () => {\n    const onSend = jest.fn();\n    render(<MessageInput onSend={onSend} />);\n    \n    const input = screen.getByPlaceholderText('Type a message...');\n    fireEvent.change(input, { target: { value: 'Hello' } });\n    fireEvent.keyDown(input, { key: 'Enter' });\n    \n    expect(onSend).toHaveBeenCalledWith('Hello');\n  });\n});\n\n// Integration Test\nimport { render, waitFor } from '@testing-library/react';\nimport { ChatView } from './ChatView';\nimport { mockWebSocket } from './test-utils';\n\ndescribe('ChatView Integration', () => {\n  it('displays new message when received via WebSocket', async () => {\n    const ws = mockWebSocket();\n    render(<ChatView chatId=\"123\" />);\n    \n    ws.simulateMessage({\n      type: 'new_message',\n      chatId: '123',\n      message: { id: '1', content: 'Test', sender: 'Alice' }\n    });\n    \n    await waitFor(() => {\n      expect(screen.getByText('Test')).toBeInTheDocument();\n    });\n  });\n});\n\n// E2E Test (Playwright)\nimport { test, expect } from '@playwright/test';\n\ntest('send and receive message', async ({ page }) => {\n  await page.goto('/chat/123');\n  \n  // Send message\n  await page.fill('[data-testid=\"message-input\"]', 'Hello');\n  await page.press('[data-testid=\"message-input\"]', 'Enter');\n  \n  // Wait for message to appear\n  await expect(page.locator('text=Hello')).toBeVisible();\n  \n  // Simulate receiving message\n  await page.evaluate(() => {\n    window.ws.simulateMessage({\n      type: 'new_message',\n      message: { content: 'Hi there!' }\n    });\n  });\n  \n  await expect(page.locator('text=Hi there!')).toBeVisible();\n});",
             tags: ["System Design", "Testing", "Quality", "Frontend"],
             followUps: [
@@ -1148,7 +1148,7 @@ export const ebookContent: ChapterContent[] = [
         items: [
           {
             q: "Q1. High-Level Architecture: How would you design a URL Shortener frontend?",
-            a: "**Core Components:**\n\n1. **Client (Browser)**: React/Vue frontend for URL shortening interface\n2. **Short URL Generator**: Client-side validation + API call\n3. **Redirect Handler**: Fast redirect logic with analytics tracking\n4. **Analytics Dashboard**: Real-time stats, charts, filters\n5. **API Gateway**: REST endpoints for create, read, analytics\n6. **Cache Layer**: CDN + browser cache for redirects\n7. **Analytics Service**: Click tracking, geolocation, referrer tracking\n8. **Database**: URL mappings, analytics data (time-series DB)\n\n**Key Design Principles:**\n- Fast redirects (minimal latency, cached responses)\n- Real-time analytics updates\n- QR code generation for short URLs\n- Bulk URL shortening\n- Custom alias support\n- Link expiration and password protection\n\n**User Flows:**\n1. **Shorten**: User enters long URL → Generate short code → Display short URL + QR code\n2. **Redirect**: User clicks short URL → Track analytics → Redirect to original URL\n3. **Analytics**: User views dashboard → Show clicks, locations, referrers, time-series data\n\n💡 **Try the Interactive Lab**: Enable 'System Design Lab' in the toolbar above to experiment with URL shortening, redirect flows, analytics tracking, and explore the architecture interactively!",
+            a: "Core Components:\n\n1. Client (Browser): React/Vue frontend for URL shortening interface\n2. **Short URL Generator**: Client-side validation + API call\n3. **Redirect Handler**: Fast redirect logic with analytics tracking\n4. **Analytics Dashboard**: Real-time stats, charts, filters\n5. **API Gateway**: REST endpoints for create, read, analytics\n6. **Cache Layer**: CDN + browser cache for redirects\n7. **Analytics Service**: Click tracking, geolocation, referrer tracking\n8. **Database**: URL mappings, analytics data (time-series DB)\n\n**Key Design Principles:**\n- Fast redirects (minimal latency, cached responses)\n- Real-time analytics updates\n- QR code generation for short URLs\n- Bulk URL shortening\n- Custom alias support\n- Link expiration and password protection\n\n**User Flows:**\n1. **Shorten**: User enters long URL → Generate short code → Display short URL + QR code\n2. **Redirect**: User clicks short URL → Track analytics → Redirect to original URL\n3. **Analytics**: User views dashboard → Show clicks, locations, referrers, time-series data\n\n💡 **Try the Interactive Lab**: Enable 'System Design Lab' in the toolbar above to experiment with URL shortening, redirect flows, analytics tracking, and explore the architecture interactively!",
             diagram: `URL Shortener Architecture
 
 [Browser Client]
@@ -1206,7 +1206,7 @@ export const ebookContent: ChapterContent[] = [
           },
           {
             q: "Q5. Caching Strategy: CDN, browser cache, and service workers",
-            a: "**Caching Layers:**\n1. **CDN Cache**: Cache redirect mappings at edge (Cloudflare, CloudFront)\n2. **Browser Cache**: Cache API responses (short URL → long URL mapping)\n3. **Service Worker**: Offline support, cache redirects\n4. **Memory Cache**: In-memory cache for frequently accessed URLs\n\n**Cache Invalidation:**\n- TTL-based expiration (e.g., 1 hour for redirects)\n- Manual invalidation when URL is updated/deleted\n- Version-based cache keys\n\n**Cache Strategy:**\n- **Redirects**: Cache aggressively (long TTL, CDN)\n- **Analytics**: Don't cache (always fresh data)\n- **URL List**: Cache with short TTL (5 minutes)\n- **Static Assets**: Cache forever with versioning",
+            a: "Caching Layers:\n1. CDN Cache: Cache redirect mappings at edge (Cloudflare, CloudFront)\n2. Browser Cache: Cache API responses (short URL → long URL mapping)\n3. Service Worker: Offline support, cache redirects\n4. Memory Cache: In-memory cache for frequently accessed URLs\n\nCache Invalidation:\n- TTL-based expiration (e.g., 1 hour for redirects)\n Manual invalidation when URL is updated/deleted\n Version-based cache keys\n\n**Cache Strategy:\nRedirects**: Cache aggressively (long TTL, CDN)\n- **Analytics**: Don't cache (always fresh data)\n- **URL List**: Cache with short TTL (5 minutes)\n- **Static Assets**: Cache forever with versioning",
             code: `// Service Worker for Caching Redirects\n// sw.js\nself.addEventListener('install', (event) => {\n  event.waitUntil(\n    caches.open('url-shortener-v1').then((cache) => {\n      return cache.addAll([\n        '/',\n        '/styles.css',\n        '/app.js'\n      ]);\n    })\n  );\n});\n\nself.addEventListener('fetch', (event) => {\n  const url = new URL(event.request.url);\n  \n  // Cache redirect API calls\n  if (url.pathname.startsWith('/api/url/')) {\n    event.respondWith(\n      caches.open('redirects-v1').then(async (cache) => {\n        // Check cache first\n        const cached = await cache.match(event.request);\n        if (cached) {\n          // Check if expired\n          const cachedData = await cached.json();\n          const cacheTime = cachedData.cachedAt;\n          const ttl = 3600000; // 1 hour\n          \n          if (Date.now() - cacheTime < ttl) {\n            return new Response(JSON.stringify(cachedData.data), {\n              headers: { 'Content-Type': 'application/json' }\n            });\n          }\n        }\n        \n        // Fetch from network\n        const response = await fetch(event.request);\n        if (response.ok) {\n          const data = await response.json();\n          // Store in cache with timestamp\n          await cache.put(event.request, new Response(JSON.stringify({\n            data,\n            cachedAt: Date.now()\n          }), {\n            headers: { 'Content-Type': 'application/json' }\n          }));\n        }\n        return response;\n      })\n    );\n  }\n  \n  // Network-first for analytics (always fresh)\n  else if (url.pathname.startsWith('/api/analytics')) {\n    event.respondWith(fetch(event.request));\n  }\n  \n  // Cache-first for static assets\n  else {\n    event.respondWith(\n      caches.match(event.request).then((response) => {\n        return response || fetch(event.request);\n      })\n    );\n  }\n});\n\n// Client-side Cache Manager\nclass CacheManager {\n  constructor() {\n    this.memoryCache = new Map();\n    this.maxCacheSize = 1000;\n  }\n\n  async getCachedURL(code) {\n    // Check memory cache first\n    if (this.memoryCache.has(code)) {\n      const cached = this.memoryCache.get(code);\n      if (Date.now() - cached.timestamp < 3600000) { // 1 hour\n        return cached.data;\n      }\n      this.memoryCache.delete(code);\n    }\n\n    // Check service worker cache\n    if ('caches' in window) {\n      const cache = await caches.open('redirects-v1');\n      const cached = await cache.match(\`/api/url/\${code}\`);\n      if (cached) {\n        const data = await cached.json();\n        if (data.cachedAt && Date.now() - data.cachedAt < 3600000) {\n          this.memoryCache.set(code, {\n            data: data.data,\n            timestamp: data.cachedAt\n          });\n          return data.data;\n        }\n      }\n    }\n\n    return null;\n  }\n\n  setCachedURL(code, data) {\n    // Add to memory cache\n    if (this.memoryCache.size >= this.maxCacheSize) {\n      // Remove oldest entry\n      const firstKey = this.memoryCache.keys().next().value;\n      this.memoryCache.delete(firstKey);\n    }\n    this.memoryCache.set(code, {\n      data,\n      timestamp: Date.now()\n    });\n  }\n\n  invalidateCache(code) {\n    this.memoryCache.delete(code);\n    // Also invalidate service worker cache\n    if ('caches' in window) {\n      caches.open('redirects-v1').then(cache => {\n        cache.delete(\`/api/url/\${code}\`);\n      });\n    }\n  }\n}\n\n// Usage in Redirect Handler\nconst cacheManager = new CacheManager();\n\nasync function getURLWithCache(code) {\n  // Check cache first\n  const cached = await cacheManager.getCachedURL(code);\n  if (cached) {\n    return cached;\n  }\n\n  // Fetch from API\n  const response = await fetch(\`/api/url/\${code}\`);\n  const data = await response.json();\n\n  // Cache result\n  cacheManager.setCachedURL(code, data);\n\n  return data;\n}`,
             tags: ["System Design", "Caching", "Service Worker", "Performance"],
             followUps: [
@@ -1247,7 +1247,7 @@ export const ebookContent: ChapterContent[] = [
     items: [
       {
         q: "[Amazon] Debounce / Search / Optimization",
-        a: "- **Debounce**: Limit rate of function execution.\n- **Search**: Autocomplete with caching.\n- **Optimization**: Virtualization for 1000+ components."
+        a: "Debounce: Limit rate of function execution.\nSearch: Autocomplete with caching.\nOptimization: Virtualization for 1000+ components."
       },
       {
         q: "[Google] Infinite Scroll / Hooks / Nav",
@@ -1255,11 +1255,11 @@ export const ebookContent: ChapterContent[] = [
       },
       {
         q: "[Meta] Comments / Optimistic UI / State",
-        a: "- **Nested Comments**: Recursive component rendering.\n- **Optimistic UI**: Update state immediately, revert on API fail.\n- **State**: Redux/Context for large apps."
+        a: "Nested Comments: Recursive component rendering.\nOptimistic UI: Update state immediately, revert on API fail.\nState: Redux/Context for large apps."
       },
       {
         q: "[Microsoft] Drag-Drop / Forms / Collaborative",
-        a: "- **Drag-Drop**: HTML5 API or library.\n- **Multi-step Form**: State management for wizard.\n- **Collaborative Editor**: WebSockets + OT/CRDTs."
+        a: "Drag-Drop: HTML5 API or library.\nMulti-step Form: State management for wizard.\nCollaborative Editor: WebSockets + OT/CRDTs."
       },
       {
         q: "[Swiggy/Zomato] Food Ordering / Filters",
@@ -1482,7 +1482,7 @@ export const ebookContent: ChapterContent[] = [
         items: [
           {
             q: "Q1. What is Cross-Site Request Forgery (CSRF)? Explain how it works.",
-            a: "**Cross-Site Request Forgery (CSRF)** is a web security vulnerability where an attacker tricks a **logged-in user’s browser** into sending an **unwanted request** to a trusted website.\n\nBecause browsers automatically attach **cookies/session tokens** to requests, the server may treat the forged request as legitimate.\n\n**How it works (core idea):**\n1. Victim is authenticated on `bank.com` (session cookie stored).\n2. Victim visits attacker-controlled site `evil.com`.\n3. `evil.com` triggers a request (form/image/fetch) to `bank.com`.\n4. Browser auto-sends victim’s cookies to `bank.com`.\n5. Server executes the action if there is no CSRF protection.\n\n**Impact:** Unauthorized state-changing actions (change email/password, transfer money, add admin user, change settings).",
+            a: "**Cross-Site Request Forgery (CSRF)** is a web security vulnerability where an attacker tricks a **logged-in user’s browser** into sending an **unwanted request** to a trusted website.\n\nBecause browsers automatically attach **cookies/session tokens** to requests, the server may treat the forged request as legitimate.\n\nHow it works (core idea):\n1. Victim is authenticated on `bank.com` (session cookie stored).\n2. Victim visits attacker-controlled site `evil.com`.\n3. `evil.com` triggers a request (form/image/fetch) to `bank.com`.\n4. Browser auto-sends victim’s cookies to `bank.com`.\n5. Server executes the action if there is no CSRF protection.\n\n**Impact:** Unauthorized state-changing actions (change email/password, transfer money, add admin user, change settings).",
             code: `// CSRF Example: Attacker forces a state-changing request\n// Victim is logged in to https://bank.com (cookie-based session)\n\n// Attacker page on https://evil.com\n// Auto-submitting a hidden form to bank.com\n\nconst formHtml = \`\n<form action="https://bank.com/transfer" method="POST">\n  <input type="hidden" name="to" value="attacker" />\n  <input type="hidden" name="amount" value="50000" />\n</form>\n<script>document.forms[0].submit()</script>\n\`;\n\nconsole.log('Attacker delivers this HTML to victim:', formHtml);\n\n// If bank.com relies only on cookies, the request may succeed without CSRF defenses.`,
             playground: true,
             diagram: `CSRF Attack Flow\n\n[Victim] logs into [bank.com]\n   | (session cookie stored)\n   v\n[Victim] visits [evil.com]\n   |\n   | evil.com triggers a POST/GET to bank.com\n   v\n[Victim Browser] --- sends request + cookies ---> [bank.com]\n   |\n   v\n[bank.com] performs action (if no CSRF protection)\n\nKey point: cookies are sent automatically by the browser.`,

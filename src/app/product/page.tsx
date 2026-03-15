@@ -1,12 +1,15 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Navbar from './Navbar';
 import Hero from './Hero';
+import InteractiveDemo from './InteractiveDemo';
 import Features from './Features';
 import ReaderShowcase from './ReaderShowcase';
 import SampleGenerator from './SampleGenerator';
 import Testimonials from './Testimonials';
 import Pricing from './Pricing';
+import ComparisonTable from './ComparisonTable';
 import Footer from './Footer';
 import Reader from './Reader';
 import Login from './Login';
@@ -15,6 +18,39 @@ import { CheckIcon } from './Icons';
 import { db } from '@/firebase/firebase';
 
 type ViewState = 'landing' | 'login' | 'reader' | 'underConstruction';
+
+const curriculumSections = [
+  {
+    slug: 'frontend-interview-preparation-course',
+    title: 'Frontend Interview Preparation Course',
+    description:
+      'A complete frontend interview preparation course covering JavaScript fundamentals, the event loop, advanced React, Next.js, frontend system design, and machine coding interview practice. Built to take you from Senior to Staff-level interviews.',
+  },
+  {
+    slug: 'advanced-react-next-js-course',
+    title: 'Advanced React & Next.js Course',
+    description:
+      'Master advanced React and Next.js with React Server Components, App Router, streaming, edge rendering, and micro-frontends. Go beyond CRUD apps and learn how top-tier teams architect production systems.',
+  },
+  {
+    slug: 'frontend-system-design-course',
+    title: 'Frontend System Design Course',
+    description:
+      'Learn frontend system design for real interview problems: server-driven UI frameworks, scalable dashboards, infinite feeds, and edge-powered personalization. Practice the exact type of whiteboard and take-home problems you will be asked.',
+  },
+  {
+    slug: 'machine-coding-interview-practice',
+    title: 'Machine Coding Interview Practice',
+    description:
+      'Hands-on machine coding interview practice with Kanban boards, drag & drop lists, infinite scroll feeds, and real-time components. Get instant feedback with tests that mirror FAANG-style machine coding rounds.',
+  },
+  {
+    slug: 'javascript-event-loop-course',
+    title: 'JavaScript Event Loop Course',
+    description:
+      'Deep-dive JavaScript event loop course with interactive labs that simulate the call stack, Web APIs, and callback queue. Understand event loop phases so you never get surprised by async behavior in interviews again.',
+  },
+];
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('landing');
@@ -105,6 +141,7 @@ const App: React.FC = () => {
       {/* Main Landing Page Content */}
       <div className="pt-20">
         <Hero />
+        <InteractiveDemo />
 
         {/* Premium Features Banner - Compact & Impactful */}
         <section className="relative py-12 md:py-16 overflow-hidden">
@@ -302,65 +339,73 @@ const App: React.FC = () => {
         </section>
 
         <Features />
-        <ReaderShowcase />
-        <SampleGenerator />
-        <Testimonials />
 
-        {/* Pricing Section with manual purchase handler */}
-        <section id="pricing" className="py-24 bg-gradient-to-b from-white to-slate-50 relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-semibold text-slate-900 mb-4">Invest in Your Career</h2>
-              <p className="text-slate-600">The price of a few coffees. The ROI of a Staff Engineer's salary.</p>
+        {/* SEO-focused curriculum overview for key interview topics */}
+        {/* Curriculum overview */}
+        <section className="bg-white py-20 md:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                Curriculum overview
+              </div>
+
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-slate-900 md:text-4xl">
+                A complete frontend interview prep system
+              </h2>
+
+              <p className="mt-4 text-base leading-8 text-slate-600 md:text-lg">
+                The program is organized into focused modules that map to how strong
+                frontend candidates are actually evaluated: JavaScript foundations,
+                modern React architecture, system design, and hands-on coding rounds.
+              </p>
             </div>
 
-            <div className="max-w-lg mx-auto bg-white rounded-3xl overflow-hidden shadow-2xl border-2 border-brand-200 relative">
-              <div className="absolute top-0 right-0 bg-gradient-to-r from-brand-500 to-accent-500 text-white text-xs font-semibold px-4 py-2 rounded-bl-lg shadow-md shadow-black/10">
-                LIMITED OFFER
-              </div>
-              <div className="p-8 md:p-12 text-center border-b border-slate-200 bg-gradient-to-br from-white to-brand-50/30">
-                <h3 className="text-2xl font-medium text-slate-900 mb-2">The Ultimate Guide (Vol 2)</h3>
-                <div className="flex items-baseline justify-center gap-2 mb-6">
-                  <span className="text-5xl font-semibold bg-gradient-to-r from-brand-600 to-accent-600 bg-clip-text text-transparent">₹449</span>
-                  <span className="text-xl text-slate-400 line-through">₹1999</span>
-                </div>
-                <button
-                  onClick={handlePurchaseClick}
-                  className="w-full py-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-xl font-semibold text-lg shadow-lg shadow-black/15 transition-all transform hover:scale-[1.02] hover:shadow-xl hover:shadow-black/20"
+            <div className="mt-14 grid gap-6 md:grid-cols-2">
+              {curriculumSections.map((section) => (
+                <article
+                  key={section.slug}
+                  className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_16px_40px_rgba(15,23,42,0.08)] md:p-7"
                 >
-                  Instantly Upgrade My Career
-                </button>
-                <p className="mt-4 text-xs text-slate-500">Includes lifetime updates for Next.js 15+</p>
-              </div>
+                  <div className="mb-5 flex items-start justify-between gap-4">
+                    <div className="rounded-2xl bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600">
+                      Module
+                    </div>
+                    <span className="text-xs text-slate-400">Focused track</span>
+                  </div>
 
-              <div className="p-8 md:p-12 bg-gradient-to-br from-slate-50 to-white">
-                <h4 className="text-slate-900 font-medium mb-6 uppercase tracking-wider text-sm">Everything Inside:</h4>
-                <ul className="space-y-4 text-left">
-                  <li className="flex items-start gap-3 text-slate-700">
-                    <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
-                    <span>Next.js 14 App Router Deep Dive</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-slate-700">
-                    <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
-                    <span>Advanced React Server Components</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-slate-700">
-                    <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
-                    <span>Machine Coding: Kanban Board, Infinite Feed</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-slate-700">
-                    <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
-                    <span>System Design: Designing WhatsApp Web</span>
-                  </li>
-                  <li className="flex items-start gap-3 text-slate-700">
-                    <CheckIcon className="w-5 h-5 text-brand-500 shrink-0" />
-                    <span className="flex items-center gap-2">Web Security: XSS Deep Dive <span className="px-1.5 py-0.5 text-[9px] font-bold bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full">NEW</span></span>
-                  </li>
-                </ul>
-              </div>
+                  <h3 className="text-xl font-semibold tracking-[-0.02em] text-slate-900">
+                    {section.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600 md:text-[15px]">
+                    {section.description}
+                  </p>
+
+                  <div className="mt-auto pt-6">
+                    <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+                      <p className="text-xs font-medium text-slate-500">
+                        Interview-focused · Practical depth
+                      </p>
+
+                      <Link
+                        href={`/product/${section.slug}`}
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-slate-900 transition-all group-hover:gap-2 hover:text-brand-600"
+                      >
+                        Learn more
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
+        <ReaderShowcase />
+        <SampleGenerator />
+        <Testimonials />
+        <ComparisonTable />
+        <Pricing />
 
         <Footer />
       </div>

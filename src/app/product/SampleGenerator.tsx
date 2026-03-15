@@ -15,12 +15,8 @@ const SampleGenerator: React.FC = () => {
     setLogs(prev => [...prev, text]);
   };
 
-  useEffect(() => {
-    // Only scroll if there are actual logs and the ref is available
-    if (logs.length > 0 && logsEndRef.current) {
-      logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [logs]);
+  // Removed automatic scroll behavior to prevent the page from moving
+  // when new logs are added after clicking "RUN GENERATOR".
 
   const handleGenerate = async () => {
     setLoading(true);

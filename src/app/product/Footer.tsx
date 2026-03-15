@@ -12,14 +12,14 @@ const Footer: React.FC = () => {
               Helping developers crack the code to their dream jobs. The most comprehensive guide to frontend engineering interviews.
             </p>
           </div>
-          <div>
+          {/* <div>
             <h4 className="text-slate-900 font-semibold mb-4">Resources</h4>
             <ul className="space-y-2 text-slate-600 text-sm">
               <li><a href="#" className="hover:text-brand-600 transition-colors">Free Sample</a></li>
               <li><a href="#" className="hover:text-brand-600 transition-colors">Blog</a></li>
               <li><a href="#" className="hover:text-brand-600 transition-colors">Cheatsheets</a></li>
             </ul>
-          </div>
+          </div> */}
           <div>
             <h4 className="text-slate-900 font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-slate-600 text-sm">
